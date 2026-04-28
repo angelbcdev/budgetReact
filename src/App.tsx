@@ -1,5 +1,6 @@
+import { RouterProvider } from "react-router";
 import "./App.css";
-import { Router } from "./Routes";
+import { router} from "./Routes";
 
 
 
@@ -15,7 +16,7 @@ document.body.appendChild(script);
 
 
 function App() {
-  return (<Router />);
+  return ( <RouterProvider router={router} />);
 }
 
 export default App;

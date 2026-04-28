@@ -1,28 +1,30 @@
+import AddNewTransactions from "../components/AddNewTransactions";
 import AllTransactions from "../components/AllTransactions";
 import BudgetHome from "../components/BudgetHome";
+import { allIcons } from "../UI/allIicons";
 
 
 
 export const routes = [
   {
-    name: "Home",
+    name: "Add",
     path: "/",
-    element: <BudgetHome/> ,
+    icon: allIcons.plus,
   },
   {
-    name: "Transactions",
+    name: "Home",
+    path: "/home",
+    icon: allIcons.home,
+  },
+  
+  {
+    name: "History",
     path: "/transactions",
-    element: <AllTransactions/> ,
-  }
-  ,
+    icon: allIcons.history,
+  },
   {
     name: "Settings",
-    path: "/Settings",
-    element: <BudgetHome/> ,
+    path: "/settings",
+    icon: allIcons.gear,
   },
-  {
-    name: "Others",
-    path: "/others",
-    element: <h1 className="text-3xl font-bold underline">test heoo this is the second window</h1> ,
-  }
-]
+];

@@ -1,4 +1,11 @@
 export type TransactionType = "spending" | "saving" | "credit_card_payment";
+export type SavingsMethod = "morgage" | "savings" | "stoks" | "cripto";
+
+export const typeTransactionAvailable: TransactionType[] = [
+  "spending",
+  "saving",
+  "credit_card_payment",
+];
 
 export type PaymentMethod = "checking" | "credit_card_blue" | "credit_card_red";
 
@@ -10,7 +17,83 @@ export type Category =
   | "amazon"
   | "savings"
   | "credit_card_payment"
-  | "other";
+  | "other"
+  | "house";
+export const fliterCategoryAvailable: Category[] = [
+  "food",
+  "transport",
+  "house",
+  "bills",
+  "amazon",
+  "drinks",
+  "other",
+];
+export const savingsMethodAvailable: SavingsMethod[] = [
+  "morgage",
+  "savings",
+  "stoks",
+  "cripto",
+];
+
+export const paymentMethodAvailable: PaymentMethod[] = [
+  "credit_card_red",
+  "credit_card_blue",
+  "checking",
+];
+export const categoryMeta = {
+  food: { icon: "🍔", bg: "bg-orange-100" },
+  transport: { icon: "🚗", bg: "bg-blue-100" },
+  drinks: { icon: "🍹", bg: "bg-pink-100" },
+  bills: { icon: "💸", bg: "bg-yellow-100" },
+  amazon: { icon: "🛍️", bg: "bg-pink-100" },
+  savings: { icon: "💰", bg: "bg-green-100" },
+  credit_card_payment: { icon: "💳", bg: "bg-purple-100" },
+  health: { icon: "💊", bg: "bg-green-100" },
+  entertainment: { icon: "🎬", bg: "bg-purple-100" },
+  utilities: { icon: "💡", bg: "bg-yellow-100" },
+  shopping: { icon: "🛍️", bg: "bg-pink-100" },
+  other: { icon: "❓", bg: "bg-gray-100" },
+  morgage: { icon: "🏠", bg: "bg-blue-100" },
+  stoks: { icon: "📉", bg: "bg-green-100" },
+  credit_card_red: { icon: "💳", bg: "bg-red-100" },
+  credit_card_blue: { icon: "💳", bg: "bg-blue-100" },
+  checking: { icon: "💰", bg: "bg-green-100" },
+  cripto: { icon: "₿", bg: "bg-green-100" },
+  house: { icon: "🏠", bg: "bg-blue-100" },
+};
+
+export const subCateriesAvailable = {
+  food: ["restaurant", "delivery", "homemade"],
+  transport: ["gas", "car_repair", "uber"],
+  drinks: ["beer", "rum", "whiskey"],
+  bills: [
+    "mortgage",
+    "electricity",
+    "internet",
+    "car insurance",
+    "hose's gas",
+    "water",
+  ],
+  amazon: [
+    "electronics",
+    "household",
+    "clothing",
+    "other_amazon",
+    "books",
+    "clothes",
+    "games",
+  ],
+  savings: [],
+  credit_card_payment: [],
+  other: [],
+  morgage: [],
+  stoks: [],
+  credit_card_red: [],
+  credit_card_blue: [],
+  checking: [],
+  cripto: ["bitcoin", "etherium"],
+  house: ["trash tickets", "decoration", "forniture", "other", "utils"],
+};
 
 export type Subcategory =
   // food
@@ -48,7 +131,7 @@ export interface Transaction {
   title: string;
   description: string;
   amount: number; // negative = expense, positive = income/saving
-  date: string; // ISO format
+  date: string | Date; // ISO format
   type: TransactionType;
   category: Category;
   subcategory: Subcategory;

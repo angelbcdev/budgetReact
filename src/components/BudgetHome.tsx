@@ -2,14 +2,10 @@
 
 
 import { useBookContext } from "../provide/budget";
+import { allIcons } from "../UI/allIicons";
 import { Layout } from "../UI/Layout";
 
-const allIcons = {
-  creditCard:<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-credit-card-pay"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M12 19h-6a3 3 0 0 1 -3 -3v-8a3 3 0 0 1 3 -3h12a3 3 0 0 1 3 3v4.5" /><path d="M3 10h18" /><path d="M16 19h6" /><path d="M19 16l3 3l-3 3" /><path d="M7.005 15h.005" /><path d="M11 15h2" /></svg>,
-  trendingDown:<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-trending-down"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M3 7l6 6l4 -4l8 8" /><path d="M21 10l0 7l-7 0" /></svg>,
-  tredingUp:<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-trending-up"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M3 17l6 -6l4 4l8 -8" /><path d="M14 7l7 0l0 7" /></svg>
-  ,wallet:<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-wallet"><path stroke="none" d="M0 0h24v24H0z" fill="none" /><path d="M17 8v-3a1 1 0 0 0 -1 -1h-10a2 2 0 0 0 0 4h12a1 1 0 0 1 1 1v3m0 4v3a1 1 0 0 1 -1 1h-12a2 2 0 0 1 -2 -2v-12" /><path d="M20 12v4h-4a2 2 0 0 1 0 -4h4" /></svg>
-}
+
 
 
 const SubCuantity = ({icon, title, cuantity}: {icon: JSX.Element, title: string, cuantity: number}) => {
@@ -32,7 +28,7 @@ const BudgetHome = () => {
 
   const data = {
     month: "April",
-    year: 2023,
+    year: 2026,
     totalBalance: 2000.89,
     totalIncome: 1500.02,
     totalExpenses: 500.13
@@ -51,7 +47,7 @@ const BudgetHome = () => {
       color: "#0000FF"
     },
     {
-      title: "Card green",
+      title: "Checking ",
       cuantity: 500.13,
       color: "#00FF00"
     }
@@ -85,12 +81,12 @@ const BudgetHome = () => {
   
   return(
     <Layout>
-      <main className="flex flex-col gap-4 ">
-      <div className="flex flex-row gap-4 pl-2 items-center">
-        <h3 className="text-4xl font-bold ">{data.month}</h3>
-      <h6 className="text-3xl font-light text-gray-600 "> {data.year}</h6>
+      <main className="flex flex-col gap-4   w-98 mx-auto">
+      <div className="flex flex-row gap-4 pl-2 pt-4  relative w-44">
+        <h3 className="text-5xl font-bold ">{data.month}</h3>
+      <h6 className="text-2xl font-light text-gray-600 absolute right-0 bottom-0 "> {data.year}</h6>
       </div>
-      <section className="flex flex-col  gap-2  bg-linear-to-l to-blue-500 from-blue-800 h-50 p-4 text-white rounded-2xl ">
+      <section className="flex flex-col  gap-2  bg-linear-to-l to-blue-500 from-blue-800 h-50 p-4 text-white rounded-2xl  shadow-xl">
         <div className="flex flex-row gap-2">
           {allIcons.wallet}
           <span className="text-mediumd font-bold ">Total Balance</span>
@@ -111,12 +107,21 @@ const BudgetHome = () => {
             <p className="text-xl font-bold pl-2 ">Cash Flow  </p>
             <div className="flex flex-row gap-2 justify-center pt-2 ">
               {
-                dataCards.map((card) => (
-                  <div style={{borderColor: card.color +80, backgroundColor: card.color +90}} key={card.title} className={`flex flex-col justify-center gap-2 w-full border pl-2 py-2 rounded-lg shadow-lg`}>
+                dataCards.map((card) => {
+
+                  const gradientStyle = {
+                        fontSize: '20px',
+                    fontWeight: 'bold',
+                        background: `linear-gradient(to left,  ${card.color +90} ,${card.color +68} )`,
+                  
+                      };
+      
+                  return(
+                  <div style={gradientStyle} key={card.title} className={`flex flex-col justify-center gap-2 w-full  pl-2 py-2 rounded-lg shadow-xl text-[#1d1d1d]`}>
                     <div className="text-sm flex flex-row items-center gap-2 font-black " ><span  className="text-2xl">{ allIcons.creditCard}</span> {card.title}</div>
                     <p className="pl-2  ">${card.cuantity}</p>
                   </div>
-                ))
+                )})
               }
               
 
@@ -130,15 +135,19 @@ const BudgetHome = () => {
             <p className="text-xl font-bold pl-2 ">Savings Goals  </p>
             <div className="grid grid-cols-2 grid-rows-2 gap-2 justify-center pt-2 ">
               {
-                dataSavingsGoals.map((card) => (
-                  <div  key={card.title} className={`flex flex-col justify-center gap-1 w-full border p-2 rounded-lg shadow-lg bg-white`}>
+                dataSavingsGoals.map((card) => {
+                    
+                                      
+                  
+                  return (
+                  <div  key={card.title} className={`flex flex-col justify-center gap-1 w-full p-2 rounded-lg shadow-lg bg-white`}>
                     <p className="text-sm font-bold ">{card.title}</p>
-                    <div className="w-full h-2 bg-linear-to-t from-gray-500 to-gray-300 rounded-2xl relative m-1 shadow-2xl">
+                    <div className="w-full h-2 bg-linear-to-t from-gray-500 to-gray-300 rounded-2xl relative m-1 shadow-xl">
                       <div style={{width: `${(card.cuantity / card.Total) * 100}%`}} className=" h-full bg-linear-to-t   from-green-600 to-green-400 rounded-2xl relative" ></div>
                     </div>
                     <p className="text-sm text-gray-600 text-right font-light ">${card.cuantity} / ${card.Total}</p>
                   </div>
-                ))
+                )})
               }
               
 

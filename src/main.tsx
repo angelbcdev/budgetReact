@@ -1,19 +1,20 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
-import { BrowserRouter } from "react-router";
-import App from "./App.tsx";
+
 
 import {BudgetContextProvider } from "./provide/budget/Budgetcontext.tsx";
+import { RouterProvider } from "react-router";
+import { router } from "./Routes/index.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <BrowserRouter>
+  
     <BudgetContextProvider>
   
-      <App />
+      <RouterProvider router={router} />
   
       </BudgetContextProvider>
-      </BrowserRouter>
+     
   </StrictMode>
 );
