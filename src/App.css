@@ -1,0 +1,16 @@
+.myScroll {
+  position: sticky;
+  top: 0;
+  left: 0;
+  animation: upNavar linear forwards;
+  animation-timeline: scroll();
+}
+
+@keyframes upNavar {
+  0% {
+    transform: translateY(-56px);
+  }
+  100% {
+    transform: translateY(-120px);
+  }
+}
