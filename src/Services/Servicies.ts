@@ -1,0 +1,64 @@
+import type { Transaction } from "../Models/DataTransactions";
+
+export const settings = {
+  id: import.meta.env.VITE_GOOGLE_ID,
+  url: import.meta.env.VITE_SHEET,
+};
+
+export class Servicies {
+  constructor() {
+    console.log("Servicies");
+  }
+  static async getSheetData(sheetName: string) {
+    try {
+      const url = `${settings.url}?sheetName=${encodeURIComponent(sheetName)}`;
+
+      const response = await fetch(url);
+
+      if (!response.ok) throw new Error("Network response was not ok");
+
+      const data = await response.json();
+
+      return data;
+    } catch (error) {
+      console.error("Fetch error:", error);
+    }
+  }
+  static async sendSheetDataTransaction({
+    sheetName,
+    transaction,
+  }: {
+    sheetName: string;
+    transaction: Transaction;
+  }) {
+    const payload = {
+      sheetName,
+      ...transaction, // ← this might be the problem
+    };
+
+    fetch(settings.url, {
+      method: "POST",
+
+      body: JSON.stringify(payload),
+    });
+  }
+  static async sendSheetDataCategories({
+    mainCategorie,
+    newSubCategorie,
+  }: {
+    mainCategorie: string;
+    newSubCategorie: string;
+  }) {
+    const payload = {
+      sheetName: "subCategories",
+      category: mainCategorie,
+      subcategory: newSubCategorie, // ← this might be the problem
+    };
+
+    fetch(settings.url, {
+      method: "POST",
+
+      body: JSON.stringify(payload),
+    });
+  }
+}

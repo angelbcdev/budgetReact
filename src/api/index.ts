@@ -23,16 +23,6 @@ export async function getSheetData(sheetName: string) {
   }
 }
 
-// export const sendSheetData = async () => {
-//   fetch(settings.url, {
-//     method: "POST",
-//     body: JSON.stringify({
-//       sheetName: "Sending",
-//       ...transactionsAll,
-//     }),
-//   });
-// };
-
 export const sendSheetData = async ({
   sheetName,
   transaction,
@@ -53,10 +43,12 @@ export const sendSheetData = async ({
 };
 
 export const sendSheetDataAll = async () => {
-  for (const t of transactionsAll) {
+  const categorie = "Amazon";
+  for (const t of ["Phone", "Laptop", "Tablet", "Camera", "Headphones"]) {
     const payload = {
-      sheetName: "Spending3",
-      ...t, // ← this might be the problem
+      sheetName: "subCategories",
+      category: categorie,
+      subcategory: t, // ← this might be the problem
     };
 
     fetch(settings.url, {

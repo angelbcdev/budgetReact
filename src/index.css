@@ -1,1 +1,6 @@
 @import "tailwindcss";
+
+:root {
+  --color-mybgColor: #f2f2f7;
+  --spacing-base: 16px;
+}
