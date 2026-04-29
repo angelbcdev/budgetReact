@@ -1,24 +1,27 @@
 import { useState ,useRef, useEffect } from "react";
-import { categoryMeta, fliterCategoryAvailable, paymentMethodAvailable, savingsMethodAvailable, subCateriesAvailable, typeTransactionAvailable, type Category, type PaymentMethod, type TransactionType } from "../Models/dummyData";
+import { categoryMeta, fliterCategoryAvailable, paymentMethodAvailable, savingsMethodAvailable, subCateriesAvailable, typeTransactionAvailable, type Category, type PaymentMethod, type Subcategory, type TransactionType } from "../Models/dummyData";
 import { Layout } from "../UI/Layout";
 import { allIcons } from "../UI/allIicons";
+import { useBudgetContext } from "../provide/budget";
+import { Transaction } from "../Models/DataTransactions";
 
 
 
 interface ITransaction {
-  title: string;
+  title: string | null;
   description: string;
   date: Date ;
   amount: string;
-  category: string;
-  type: string;
-  paymentMethod: string
-  subcategory: string[]
+  category: Category;
+  type: TransactionType;
+  paymentMethod: PaymentMethod
+  subcategory: Subcategory[]
 }
 
 const AddNewTransactions = () => {
+  const { saveNewTransaction } = useBudgetContext();
   const [defaultTypeTransaction, setDefaultTypeTransaction] = useState<TransactionType>("spending");
-  const [defaultCategory, setDefaultCategory] = useState("food");
+  const [defaultCategory, setDefaultCategory] = useState<Category>("food");
   const [showModal, setShowModal] = useState(false);
   const [categoryToShow, setCategoryToShow] = useState<string[]>(fliterCategoryAvailable);
   const [paymentMethodToShow, setPaymentMethodToShow] = useState<PaymentMethod>("credit_card_blue");
@@ -26,9 +29,11 @@ const AddNewTransactions = () => {
   const [dataTransaction, setDataTransaction] = useState<ITransaction>({
     title: defaultCategory,
     description: "",
-    date: new Date(),
+    date: new Date(
+      
+    ),
     amount: "0",
-    category: "",
+    category: defaultCategory,
     type: defaultTypeTransaction,
     paymentMethod: paymentMethodToShow,
     subcategory: []
@@ -37,72 +42,76 @@ const AddNewTransactions = () => {
  
 
   const createTransaction = () => {
-    console.log(dataTransaction);
+    
+    const dataForSave = new Transaction({
+      title: dataTransaction?.title || "No title",
+      description: dataTransaction.description,
+      amount: Number(dataTransaction.amount),
+      date: dataTransaction.date,
+      type: dataTransaction.type ,
+      category: dataTransaction.category ,
+      subcategory: dataTransaction.subcategory ,
+      paymentMethod: dataTransaction.category != "checking" ? dataTransaction.paymentMethod  : "paycheck"
+    });
 
-    // setDefaultTypeTransaction("spending");
-    // setDefaultCategory("food");
-    // setDataTransaction({
-    //   title: "",
-    // description: "",
-    // date: undefined,
-    // amount: "0",
-    // category: defaultCategory,
-    // type: defaultTypeTransaction,
-    // paymentMethod: "credit_card_blue",
-    // subcategory: []
-    // })
+    
+    saveNewTransaction(dataForSave, () => {
+    
+       setDataTransaction({
+    title: defaultCategory,
+    description: "",
+         date: new Date(),
+    amount: "0",
+    category: defaultCategory,
+    type: defaultTypeTransaction,
+    paymentMethod: paymentMethodToShow,
+    subcategory: []
+  });
+    })
+
     
   }
 
 
   const selectCurrentType =(newType: TransactionType) => {
     setDefaultTypeTransaction(newType);
-    const typeConfig = {
-  spending: {
-    categories: fliterCategoryAvailable,
-    defaultCategory: "food",
-        title: null,
-    defaultPaymentMethod: paymentMethodToShow,
-  },
-  saving: {
-    categories: savingsMethodAvailable,
-    defaultCategory: "savings",
-    title: "saving",
-    defaultPaymentMethod: "checking_account",
-  },
-  credit_card_payment: {
-    categories: paymentMethodAvailable.filter((method) => method !== "checking"),
-    defaultCategory: "credit_card_red",
-    title: "payment",
-    defaultPaymentMethod: "checking_account",
-  },
-};
+
+    switch (newType) {
+      case "spending":
+        setCategoryToShow(fliterCategoryAvailable);
+        setDefaultCategory("food");
+        setDataTransaction(data => ({...data, title: null ,paymentMethod: paymentMethodToShow ,type:"spending"  }))
+        break;
+
+      case "saving":
+        setCategoryToShow(savingsMethodAvailable);
+        setDefaultCategory("savings");
+        setDataTransaction(data => ({...data, title: "Savings" ,paymentMethod: "checking" ,category:"savings" ,type:"saving" }))
+        break;
+
+      case "credit_card_payment":
+        setCategoryToShow(paymentMethodAvailable);
+        setDefaultCategory("credit_card_red");
+        setDataTransaction(data => ({...data, title: "payment" ,paymentMethod: "checking" ,category:"credit_card_red" ,type:"credit_card_payment" }))
+        break;
     
-   setDefaultTypeTransaction(newType);
+      default:
+        break;
+    }
 
-  const config = typeConfig[newType];
 
-  if (!config) {
-    setCategoryToShow([]);
-    return;
-  }
 
-  setCategoryToShow(config.categories);
-  setDefaultCategory(config.defaultCategory);
 
-  setDataTransaction((prev) => ({
-    ...prev,
-    type: newType,
-    category: config.defaultCategory,
-    paymentMethod: config.defaultPaymentMethod,
-    ...(config.title ? { title: config.title } : {}),
-  }));
+    
+   
+
 
   }
 
   const selectCurrentCategory = (newCategory:Category) => {
     setDefaultCategory(newCategory);
-    setDataTransaction({...dataTransaction, category: newCategory})
+
+    setDataTransaction({...dataTransaction, category: newCategory , title: newCategory })
   }
 
   
@@ -367,7 +376,7 @@ const handleNumber = (key: string) => {
     const [int, dec] = value.split(".");
 
     // limit integer digits (max 4 → 9999)
-    if (!value.includes(".") && int.length >= 4) return data;
+    if (!value.includes(".") && int.length >= 5) return data;
 
     // limit decimals (max 2)
     if (value.includes(".") && dec?.length >= 2) return data;
@@ -397,7 +406,7 @@ const handleDelete = () => {
     value = value.slice(0, -1);
 
     value = normalize(value);
- console.log(value);
+ 
     return { ...data, amount: value };
   });
 };
@@ -478,7 +487,7 @@ const HeathersTransactions = ({ setShowModal ,setDataTransaction , dataTransacti
             type="date" name="date" onChange={addValue} ></input>
           </label>
          {canSelectMethod ? <label>
-            <select   ref={selectorRef} defaultValue={dataTransaction.paymentMethod} title="category" name="paymentMethod" onChange={addValue} className="w-32  h-8 border rounded">
+            <select   ref={selectorRef} defaultValue={dataTransaction.paymentMethod} title="category" name="paymentMethod" onChange={addValue} className="w-32 pl-4 border-gray-300 bg-white  h-8 border rounded">
               {
               paymentMethodAvailable.map((method) => {
                 let tilte = ""

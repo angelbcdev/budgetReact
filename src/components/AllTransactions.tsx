@@ -1,47 +1,43 @@
-import { categoryMeta, fliterCategoryAvailable, transactionsAll, type Transaction } from "../Models/dummyData";
-import { useState ,useRef } from "react";
+import { categoryMeta, fliterCategoryAvailable } from "../Models/dummyData";
+import { useState ,useRef, useEffect } from "react";
 import { Layout } from "../UI/Layout";
 import { allIcons } from "../UI/allIicons";
+import { useBudgetContext } from "../provide/budget";
+import type { Transaction } from "../Models/DataTransactions";
 
 
 const AllTransactions = () => {
+  const { transactionsData } = useBudgetContext();
   const [activeFilter, setActiveFilter] = useState("All");
+  
   const [search, setSearch] = useState("");
   const inputRer = useRef(null)
   const minimunSearch = 3;
   const currentMonth = new Date().getMonth();
   const currentMonthName = new Date().toLocaleString("en-US", { month: "long" });
-  const dataForTransactions = transactionsAll.map(t => {
-    
-    
-    const [y, m, d] = t.date as string ? t.date?.split("-").map(Number) : [0, 0, 0];
-  
+  const [filterByMonth, setFilterByMonth] = useState(true);
 
-  return {
-    ...t,
-    amount: Math.abs(t.amount),
-    date: new Date(y, m - 1, d), // local time ✅
-  };
-}).filter(t => fliterCategoryAvailable.includes(t.category));
+  const dataForTransactions = transactionsData //.filter(t => fliterCategoryAvailable.includes(t.category));
 
   const types = ["All", ...fliterCategoryAvailable];
 
-  const filtered: Transaction[] = search.length < minimunSearch ?
+ const filtered: any[] = search.length < minimunSearch ?
     activeFilter === "All"
       ? dataForTransactions
       : dataForTransactions.filter((t) => t.category === activeFilter)
-    : dataForTransactions.filter((t) => t.title.toLowerCase().includes(search.toLowerCase()) || t.description.toLowerCase().includes(search.toLowerCase()));
+    : dataForTransactions.filter((t) => t.title.toLowerCase().includes(search.toLowerCase()) || t.description.toLowerCase().includes(search.toLowerCase()) || t.category.toLowerCase().includes(search.toLowerCase()) || t.subcategory.join(" ").toLowerCase().includes(search.toLowerCase()) || t.paymentMethod.toLowerCase().includes(search.toLowerCase()));
 
-  const groups: Record<string, Transaction[]> = groupByDate(filtered , currentMonth);
+ const groups: Record<string, Transaction[] > = groupByDate(filtered , currentMonth , filterByMonth);
 
+  
 
 
   const resetSearch = () => {
     setSearch("");
-    setActiveFilter("All");
+    // setActiveFilter("All");
     if (inputRer.current) {
       inputRer.current.value = "";
-    inputRer.current.focus();
+   
    }
   };
 
@@ -57,31 +53,49 @@ const AllTransactions = () => {
       </div>
          
 
-          <div className="flex gap-2 mt-4">
+          <div className="flex gap-2 mt-2  flex-row items-center justify-between w-90 mx-auto">
              <input
   ref={inputRer}
   onChange={(e) => setSearch(e.target.value)}
   type="text"
   placeholder="Search"
-  className="bg-gray-50 border border-gray-300 text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-78 p-2.5"
+  className="bg-gray-50 border border-gray-300 text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-80 p-2.5"
 />
             <button
-              onClick={resetSearch}
-              className={`${search.length < 1 ? "text-gray-400" : "text-red-400" }  `}>{allIcons.trashCan}</button> 
+              onClick={resetSearch} 
+              className={`${search.length < 1 ? "text-gray-400" : "text-red-400" }  bg-gray-700 size-10 rounded-full flex justify-center items-center `}>{allIcons.trashCan}</button> 
          </div>
         </div>
 
 
       {/* HEADER */}
-      <div className="sticky w-92 mx-auto top-0 bg-[#f2f2f7]/80 backdrop-blur-xl border-b border-black/10 px-5 pt-2 pb-4">
+      <div className="sticky w-94 mx-auto top-0  backdrop-blur-xl border-b border-black/10 px-2 pt-2 pb-4">
         <div className="flex justify-between items-end">
           <h1 className="text-xl font-semibold text-gray-900">
             Categories
-          </h1>
+            </h1>
+            
+            <div className="flex bg-gray-400 rounded-md p-px">
+              
+              {
+                [true , false].map((f, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setFilterByMonth(f)}
+                    className={` text-[12px] w-14 rounded-sm  whitespace-nowrap transition overflow-hidden
+                    ${
+                      f === filterByMonth
+                        ? "bg-green-500 text-white "
+                        : " text-gray-900"
+                    }`}
+                  >
+                    {f ? "Month" : "All"}
+                  </button>
+                ))
+              }
+            </div>
 
-          <span className="bg-green-500 text-white text-xs font-semibold px-2 py-1 w-18 text-center rounded-full">
-            {filtered.length} items
-          </span>
+         
         </div>
 
         {/* FILTER */}
@@ -90,7 +104,7 @@ const AllTransactions = () => {
             <button
               key={t}
               onClick={() => { setActiveFilter(t); setSearch(""); inputRer.current.value = ""  }}
-              className={`px-3 py-1 text-sm rounded-full border whitespace-nowrap transition overflow-hidden
+              className={`px-2 py-1 text-sm rounded-md border whitespace-nowrap transition overflow-hidden
                 ${
                   activeFilter === t
                     ? "bg-blue-500 text-white border-blue-500"
@@ -103,33 +117,7 @@ const AllTransactions = () => {
         </div>
       </div>
 
-      {/* SUMMARY */}
-      {/* <div className="flex gap-2 px-5 mt-4">
-        <div className="flex-1 bg-white rounded-xl p-3">
-          <p className="text-xs text-gray-400 uppercase">Spent</p>
-          <p className="text-lg font-semibold text-red-500">
-            {formatAmount(spent)}
-          </p>
-        </div>
-
-        <div className="flex-1 bg-white rounded-xl p-3">
-          <p className="text-xs text-gray-400 uppercase">Earned</p>
-          <p className="text-lg font-semibold text-green-500">
-            {formatAmount(earned)}
-          </p>
-        </div>
-
-        <div className="flex-1 bg-white rounded-xl p-3">
-          <p className="text-xs text-gray-400 uppercase">Net</p>
-          <p
-            className={`text-lg font-semibold ${
-              net < 0 ? "text-red-500" : "text-green-500"
-            }`}
-          >
-            {formatAmount(net)}
-          </p>
-        </div>
-      </div> */}
+     
 
         <div className="h-110 w-97  overflow-scroll rounded-b-2xl mt-1   m-auto ">
             {/* LIST */}
@@ -145,6 +133,7 @@ const AllTransactions = () => {
                 icon: "💳",
                 bg: "bg-gray-100",
               };
+           
 
               return (
                 <div
@@ -161,17 +150,22 @@ const AllTransactions = () => {
 
                   {/* TEXT */}
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900 truncate">
+                    <p className="text-sm font-medium text-gray-900 truncate w-44 capitalize  text-ellipsis">
                       {txn.title}
                     </p>
 
-                    <p className="text-xs text-gray-500 truncate">
+                    <p className="text-xs text-gray-500 truncate w-44  text-ellipsis">
                       {txn.description}
                     </p>
-
-                    <span className="inline-block mt-1 text-[11px] px-2 py-0.5 rounded bg-gray-100 text-gray-600">
-                      {txn.subcategory.replaceAll("_", " ")}
-                    </span>
+                      <div className="flex gap-1   p-px">
+                      {
+                        txn.subcategory.map((sub: string) => (
+                          <span key={sub} className="inline-block  text-[11px] px-2 py-0.5 rounded-xl bg-gray-100 text-gray-600">
+                      {sub}
+                      </span>
+                        ))
+                    }
+                      </div>
                   </div>
 
                   {/* AMOUNT */}
@@ -179,7 +173,7 @@ const AllTransactions = () => {
                     <p
                       className={`text-md font-semibold text-gray-800`}
                     >
-                      {formatAmount(txn.amount)}
+                      {formatAmount(txn)}
                     </p>
 
                     <p className="text-[11px] text-gray-400">
@@ -192,9 +186,14 @@ const AllTransactions = () => {
                 </div>
               );
             })}
+
           </div>
+          
         </div>
       ))}
+          <div className=" w-full h-20">
+          
+          </div>
             </div>
     </div>
       
@@ -217,51 +216,45 @@ export default AllTransactions;
 const paymentLabels = {
   credit_card_red: "Visa •• Red",
   credit_card_blue: "Visa •• Blue",
-  debit_card: "Debit Card",
-  cash: "Cash",
-  bank_transfer: "Bank Transfer",
+  paycheck: "Paycheck",
+  checking: "checking",
+
 };
 
-function formatAmount(n : number) {
+function formatAmount(t: Transaction) {
+  const n = t.amount;
   const abs = Math.abs(n).toLocaleString("en-US", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   });
-  return  "$ " + abs;
+  return  "$ "+ `${t.paymentMethod === "paycheck" ? "+" : "" }  ` + abs;
 }
 
-function formatDate(d : Date | string) {
-  return new Date(d).toLocaleDateString("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-  });
-}
 
-function groupByDate(txns: Transaction[] , currentMonth: number) {
-  const data = txns.reduce((acc, t) => {
-    const key = formatDate(t.date);
-    
-      const month = new Date(t.date).getMonth();
-      if (month !== currentMonth) return acc;
-    
+function groupByDate(
+  txns: Transaction[],
+  currentMonth: number,
+  filter: boolean = false
+): Record<string, Transaction[]> {
+  return txns.reduce((acc, t) => {
+    // ✅ SAFE parsing (no timezone issues)
+    const dateToString = new Date(t.date).toISOString().split("T")[0];
+    const [year, month, day] = dateToString.split("-").map(Number);
+
+    const monthIndex = month - 1; // JS months are 0-based
+
+    // ✅ correct filter
+    if (filter && monthIndex !== currentMonth) return acc;
+
+    const key = new Date(year, monthIndex, day).toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    });
+
     if (!acc[key]) acc[key] = [];
     acc[key].push(t);
+
     return acc;
-  }, {
-     
-  } as Record<string, Transaction[]>);
-
-  return data;
+  }, {} as Record<string, Transaction[]>);
 }
-
-
-// function groupByDate(txns) {
-//   return txns.reduce((acc, t) => {
-//     const key = formatDate(t.date); // already Date object
-//     if (!acc[key]) acc[key] = [];
-//     acc[key].push(t);
-//     return acc;
-//   }, {});
-// }
-
