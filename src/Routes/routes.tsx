@@ -1,6 +1,4 @@
-import AddNewTransactions from "../components/AddNewTransactions";
-import AllTransactions from "../components/AllTransactions";
-import BudgetHome from "../components/BudgetHome";
+
 import { allIcons } from "../UI/allIicons";
 
 

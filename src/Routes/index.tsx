@@ -6,23 +6,26 @@ import { authLoader } from "../provide/func";
 import BudgetHome from "../components/BudgetHome";
 import AddNewTransactions from "../components/AddNewTransactions";
 import AllTransactions from "../components/AllTransactions";
+import Settings from "../components/Settings";
 
 
 export const router = createBrowserRouter([
-  
+  {
+    path: "/login",
+    element: <Loging />,
+  },
   {
     path: "/",
-    loader: authLoader, // 🔐 runs BEFORE layout
+    loader: authLoader, // 🔐 protected
     element: <MainLayout />,
-    children:  [
+    children: [
       {
-        index: false,
         path: "home",
         element: <BudgetHome />,
       },
       {
         index: true,
-       
+        //  path: "add",
         element: <AddNewTransactions />,
       },
       {
@@ -31,19 +34,14 @@ export const router = createBrowserRouter([
       },
       {
         path: "settings",
-        element: <BudgetHome />, // change later
+        element: <Settings />,
       },
-      {
-    path: "/login",
-    element: <Loging />,
-  },
     ],
-  }, {
+  },
+  {
     path: "*",
-    loader: authLoader, // 🔐 runs BEFORE layout
-    element: <p> 404</p>,
-    
-  }
+    element: <p>404</p>,
+  },
 ]);
 
 

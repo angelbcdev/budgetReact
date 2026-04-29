@@ -1,25 +1,18 @@
 
 
 
-import { useState } from "react";
-import { categoryMeta } from "../Models/dummyData";
+import {  useState } from "react";
 import { useBudgetContext } from "../provide/budget";
 import { allIcons } from "../UI/allIicons";
 import { Layout } from "../UI/Layout";
+import { validateSavingDataToShow, type TKEY_SUMMARY } from "../provide/hooks/useSummaryTransactions";
+import { DataShowListCategory } from "../UI/DataShowListCategory";
 
 
-/**
- * 
- * TODO:
- * - move monee mor morger account and may morgage
- * - payment of card red and blue
- * - savings goals
- *  - view for transaction and deleted option
- * 
- * 
- */
 
-const SubCuantity = ({icon, title, cuantity}: {icon: JSX.Element, title: string, cuantity: number}) => {
+
+
+const SubCuantity = ({icon, title, cuantity}: {icon: any, title: string, cuantity: number}) => {
   return(
    <div>
             
@@ -33,79 +26,97 @@ const SubCuantity = ({icon, title, cuantity}: {icon: JSX.Element, title: string,
 }
 
 const BudgetHome = () => {
-  const { summaryHomeData } = useBudgetContext();
+  const { summaryHomeData  ,curentDate ,global ,currentMonthGoals } = useBudgetContext();
   const [sortAsc, setSortAsc] = useState(true);
+  // const safeSummary = summaryHomeData ?? null;
 
+  
+  // if (!safeSummary ) {
+  // return <Layout>Loading...</Layout>;
+  // }
+  
 
+   
 
 
 
   const dataCards = [
     {
       title: "Card Red",
-      cuantity: summaryHomeData.totalCardRed.toFixed(2),
+      cuantity: summaryHomeData?.totalCardRed.toFixed(2) ?? 0,
       color: "#FF0000"
     },
     {
       title: "Card blue",
-      cuantity: summaryHomeData.totalCardBlue.toFixed(2),
+      cuantity: summaryHomeData?.totalCardBlue.toFixed(2) ?? 0,
       color: "#0000FF"
     }
   ]
+
+
+ 
+
   const dataSavingsGoals = [
     {
       title: "Morgage Savings Goal",
-      cuantity: summaryHomeData.savingMorgage.toFixed(2),
-      Total: 1400,
+      cuantity: summaryHomeData?.savingsMorgage.toFixed(2) ?? 0,
+      Total: currentMonthGoals?.savingsMorgage.toFixed(2) ?? 0,
       
     },
     {
       title: "Savings DCU",
-      cuantity: summaryHomeData.savingBank.toFixed(2),
-      Total: 300,
+      cuantity: summaryHomeData?.savingsBank.toFixed(2) ?? 0,
+      Total: currentMonthGoals?.savingsBank.toFixed(2) ?? 0,
       
     },
     {
       title: "Stocks Market",
-      cuantity: summaryHomeData.savingsStocks.toFixed(2),
-      Total: 200,
+      cuantity: summaryHomeData?.savingsStocks.toFixed(2) ?? 0,
+      Total: currentMonthGoals?.savingsStocks.toFixed(2) ?? 0,
     },
     
     {
       title: "crypto Currency",
-      cuantity: summaryHomeData.savingsCrypto.toFixed(2),
-      Total: 100,
+      cuantity: summaryHomeData?.savingsCrypto.toFixed(2) ?? 0,
+      Total: currentMonthGoals?.savingsCrypto.toFixed(2) ?? 0,
       
     }
   ]
-  const dataByCategory = Object.keys(summaryHomeData.databyCatefory).map((category) => ({ category, cuantity: summaryHomeData.databyCatefory[category as keyof typeof summaryHomeData.databyCatefory]
+  const dataByCategory =  Object.entries(summaryHomeData?.databyCatefory ?? {}).map(([category, cuantity]) => ({ category, cuantity })) 
     
-  }))
-
+   
+  const globalData = Object.entries(global).map(([category, cuantity]) => ({ category, cuantity })
+  ).filter(e => validateSavingDataToShow.includes(e.category as TKEY_SUMMARY) )
+ 
   return(
     <Layout>
       <main className="flex flex-col gap-4   w-98 mx-auto">
-      <div className="flex flex-row gap-4 pl-2 pt-4  relative w-44">
-        <h3 className="text-5xl font-bold ">{summaryHomeData.month}</h3>
-      <h6 className="text-2xl font-light text-gray-600 absolute right-0 bottom-0 "> {summaryHomeData.year}</h6>
+        <div className="flex flex-row justify-between items-end ">
+
+      <div className="flex flex-row gap-4 pl-2 pt-4  relative w-44 items-center ">
+        <h3 className="text-5xl font-bold ">{curentDate.month}</h3>
+        <h6 className="text-2xl font-light text-gray-600 relative  top-3"> {curentDate.year}</h6>
       </div>
+          
+        </div>
       <section className="flex flex-col  gap-2  bg-linear-to-l to-blue-500 from-blue-800 h-50 p-4 text-white rounded-2xl  shadow-md">
         <div className="flex flex-row gap-2">
           {allIcons.wallet}
           <span className="text-mediumd font-bold ">Total Balance</span>
         </div>
-        <p className="text-4xl font-bold ">${summaryHomeData.totalBalance}</p>
+        <p className="text-4xl font-bold ">${summaryHomeData?.totalBalance ?? 0}</p>
         <div className="bg-white h-px w-[90%] rounded mx-auto"></div>
         <div className="flex flex-row  gap-20">
         
-          <SubCuantity icon={allIcons.tredingUp} title="Income" cuantity={summaryHomeData.totalIncome} />
+          <SubCuantity icon={allIcons.tredingUp} title="Income" cuantity={summaryHomeData?.totalIncome ?? 0} />
       
-          <SubCuantity icon={allIcons.trendingDown} title="Expenses" cuantity={summaryHomeData.totalExpenses} />
+          <SubCuantity icon={allIcons.trendingDown} title="Expenses" cuantity={summaryHomeData?.totalExpenses ?? 0} />
       
 
       </div>
         </section>
         <section className="flex flex-col gap-4  h-100 overflow-scroll ">
+          {/* Cash Flow */}
         <section>
           <div >
             <p className="text-xl text-gray-800 font-md pl-2 ">Cash Flow  </p>
@@ -113,12 +124,13 @@ const BudgetHome = () => {
               {
                 dataCards.map((card) => {
 
-                 
+                  const isPositive = Number(card.cuantity) > 0
+                  const numberToFixed = Math.abs(Number(card.cuantity)).toFixed(2)
       
                   return(
                   <div  key={card.title} className={`flex flex-col justify-center gap-2 w-full bg-white  pl-2 py-2 border border-gray-100 rounded-lg shadow-sm text-gray-800`}>
                     <div className="text-sm flex flex-row items-center gap-2 font-black " ><span  className="text-xl">{ allIcons.creditCard}</span> {card.title}</div>
-                    <p className="pl-9  ">${card.cuantity}</p>
+                    <p className={`text-xl  ${isPositive ? "text-red-500" : "text-green-500"} pl-9  `}>$ {numberToFixed}</p>
                   </div>
                 )})
               }
@@ -127,15 +139,15 @@ const BudgetHome = () => {
             </div>
           </div>
 
-        </section>
-
+          </section>
+          {/* Savings Goals */}
          <section>
           <div>
             <p className="text-xl text-gray-800 font-md pl-2  ">Savings Goals  </p>
             <div className="grid grid-cols-2 grid-rows-2 gap-2 justify-center pt-2 ">
               {
                 dataSavingsGoals.map((card) => {
-                    let percentage = (card.cuantity / card.Total) * 100
+                    let percentage = (Number(card.cuantity) / Number(card.Total)) * 100
                      
                     if (percentage > 100) {
                       percentage = 100
@@ -157,76 +169,12 @@ const BudgetHome = () => {
           </div>
 
         </section>
+              {/* Categories speends */}
+         
+          <DataShowListCategory  title="By Categories"  showSort data={dataByCategory} valueSort={sortAsc} setSortToggle={setSortAsc} />
+          <DataShowListCategory  title="Globals Savings"  sizeScroll={150} data={globalData} valueSort={true} setSortToggle={() => {}} />
+                {/* Globals Savings */}
 
-          <section>
-            <div className="flex flex-row justify-between mb-4">
-              <p className="text-xl text-gray-800 font-md pl-2  mb-2">By Categories  </p>
-
-              <div className="flex bg-gray-400 rounded-md p-px h-6">
-              
-              {
-                [true , false].map((f, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setSortAsc(f)}
-                    className={` text-[12px] w-14 rounded-sm  whitespace-nowrap transition overflow-hidden
-                    ${
-                      f === sortAsc
-                        ? "bg-green-500 text-white "
-                        : " text-gray-900"
-                    }`}
-                  >
-                    {f ? "↓" : "↑"}
-                  </button>
-                ))
-              }
-            </div>
-            </div>
-            
-            <div className="flex flex-col  justify-center  rounded-2xl overflow-hidden  w-97 border mx-auto border-gray-200 ">
-              {
-
-                dataByCategory.sort((a, b) => {
-                  
-                  if (sortAsc) {
-                    return b.cuantity - a.cuantity
-                  }else {
-                    return a.cuantity - b.cuantity
-                  }
-                  
-                  
-                }) && dataByCategory.map((c) => {
-                const meta = categoryMeta[c.category as keyof typeof categoryMeta] || {
-                icon: "💳",
-                bg: "bg-gray-100",
-                };
-                  const cuantity = c.cuantity
-                  if (cuantity === 0) {
-                    return null;
-                  }
-                  return(
-                  <div  key={c.category} className={`flex flex-row justify-between gap-2 w-full  bg-white  pl-2 py-2 border border-gray-100  shadow-sm text-gray-800`}>
-                      
-                      <div className="flex flex-row items-center gap-2 ">
-                        <div
-                    className={`w-10 h-10 flex items-center justify-center rounded-full ${meta.bg}`}
-                  >
-                    <span className="text-lg">{meta.icon}</span>
-                        </div>
-                        <p className="pl-  ">{c.category}</p>
-                      </div>
-                      
-                      
-                      <p className="pr-10  ">${cuantity.toFixed(2)}</p>
-                  </div>
-                )}) 
-                }
-
-
-            </div>
-            <div className="h-20"></div>
-            
-          </section>
 
        </section>
       
@@ -236,3 +184,5 @@ const BudgetHome = () => {
 };
 
 export default BudgetHome; 
+
+

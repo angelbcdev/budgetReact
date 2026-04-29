@@ -6,7 +6,17 @@ import type { Transaction } from "../../Models/DataTransactions";
 // TYPES (adjust if you already have them)
 // ─────────────────────────────────────────
 
-
+export type TKEY_SUMMARY =
+  | "savingsMorgage"
+  | "savingsBank"
+  | "savingsStocks"
+  | "savingsCrypto"
+  | "totalBalance"
+  | "totalIncome"
+  | "totalExpenses"
+  | "totalCardRed"
+  | "totalCardBlue"
+  | "totalCheckingAccount";
 
 export interface ISummaryHomeData {
   totalBalance: number;
@@ -15,16 +25,12 @@ export interface ISummaryHomeData {
   totalCardRed: number;
   totalCardBlue: number;
   totalCheckingAccount: number;
-  savingMorgage: number;
-  savingBank: number;
+  savingsMorgage: number;
+  savingsBank: number;
   savingsStocks: number;
   savingsCrypto: number;
   databyCatefory: Record<Category, number>;
 }
-
-
-
-
 
 type MonthlySummary = Record<string, ISummaryHomeData>;
 
@@ -32,6 +38,12 @@ type MonthlySummary = Record<string, ISummaryHomeData>;
 // HOOK
 // ─────────────────────────────────────────
 
+export const validateSavingDataToShow: TKEY_SUMMARY[] = [
+  "savingsMorgage",
+  "savingsBank",
+  "savingsStocks",
+  "savingsCrypto",
+];
 export function useSummary(transactions: Transaction[]) {
   // 🔹 create empty summary
   const createEmptySummary = (): ISummaryHomeData => ({
@@ -41,8 +53,8 @@ export function useSummary(transactions: Transaction[]) {
     totalCardRed: 0,
     totalCardBlue: 0,
     totalCheckingAccount: 0,
-    savingMorgage: 0,
-    savingBank: 0,
+    savingsMorgage: 0,
+    savingsBank: 0,
     savingsStocks: 0,
     savingsCrypto: 0,
     databyCatefory: {
@@ -65,17 +77,40 @@ export function useSummary(transactions: Transaction[]) {
   });
 
   // 🔹 apply transaction logic (your logic cleaned)
-  const applyTransaction = (
-    acc: ISummaryHomeData,
-    t: Transaction
-  ) => {
+  const applyTransaction = (acc: ISummaryHomeData, t: Transaction) => {
     const amount = Math.abs(t.amount);
 
-    // INCOME
-    if (t.paymentMethod === "paycheck" || t.type === "income") {
-      acc.totalIncome += amount;
-      acc.totalCheckingAccount += amount;
+    // PAYCHECK
+    if (
+      t.type === "credit_card_payment" &&
+      t.paymentMethod === "paycheck" &&
+      t.category === "checking"
+    ) {
       acc.totalBalance += amount;
+      acc.totalCheckingAccount += amount;
+      acc.totalIncome += amount;
+      return;
+    }
+    // PAY CREDIT dataCards
+    if (
+      t.type == "credit_card_payment" &&
+      t.paymentMethod == "paycheck" &&
+      (t.category == "credit_card_red" || t.category == "credit_card_blue")
+    ) {
+      if (t.category == "credit_card_blue") {
+        acc.totalCardBlue -= amount;
+      } else if (t.category == "credit_card_red") {
+        acc.totalCardRed -= amount;
+      }
+
+      acc.totalBalance -= amount;
+      return;
+    }
+
+    //PAY Morgage
+    if (t.type === "spending" && t.paymentMethod === "morgage") {
+      acc.savingsMorgage -= amount;
+
       return;
     }
 
@@ -86,10 +121,10 @@ export function useSummary(transactions: Transaction[]) {
 
       switch (t.category) {
         case "morgage":
-          acc.savingMorgage += amount;
+          acc.savingsMorgage += amount;
           break;
         case "savings":
-          acc.savingBank += amount;
+          acc.savingsBank += amount;
           break;
         case "stocks":
           acc.savingsStocks += amount;
@@ -103,7 +138,6 @@ export function useSummary(transactions: Transaction[]) {
 
     // SPENDING
     if (t.type === "spending") {
-      acc.totalBalance -= amount;
       acc.totalExpenses += amount;
       acc.databyCatefory[t.category] += amount;
 
@@ -113,6 +147,9 @@ export function useSummary(transactions: Transaction[]) {
           break;
         case "credit_card_red":
           acc.totalCardRed += amount;
+          break;
+        case "checking":
+          acc.totalBalance -= amount;
           break;
       }
     }
@@ -153,12 +190,16 @@ export function useSummary(transactions: Transaction[]) {
   const sortedMonths = useMemo(() => {
     return Object.keys(monthly).sort((a, b) => b.localeCompare(a));
   }, [monthly]);
+  const allMonthsData = useMemo(() => {
+    return Object.keys(monthly);
+  }, [monthly]);
 
   return {
     global,
     monthly,
     currentMonth,
-    currentMonthKey,
+    lastMonth: currentMonthKey,
     sortedMonths,
+    allMonthsData,
   };
 }

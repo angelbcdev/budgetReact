@@ -9,7 +9,8 @@ export type PaymentMethod =
   | "checking"
   | "credit_card_blue"
   | "credit_card_red"
-  | "paycheck";
+  | "paycheck"
+  | "morgage";
 
 export type Category =
   | "food"
@@ -107,10 +108,19 @@ export const subCateriesAvailable: Record<Category, Subcategory[]> = {
   credit_card_blue: [],
   checking: [],
   crypto: ["bitcoin", "etherium"],
-  house: ["trash tickets", "decoration", "forniture", "other", "utils"],
+  house: [
+    "trash tickets",
+    "decoration",
+    "forniture",
+    "other",
+    "utils",
+    "mortgage",
+  ],
 };
 
 export type Subcategory =
+  | "payment card"
+
   // general
   | "books"
   | "clothes"

@@ -21,17 +21,25 @@ export interface IServiciesDB {
     sheetName: TKEY_SERVICES;
     transaction: Transaction;
   }): Promise<boolean>;
-  sendSheetDataCategories({
-    mainCategorie,
-    newSubCategorie,
-  }: {
-    mainCategorie: TKEY_SERVICES;
-    newSubCategorie: string;
-  }): Promise<void>;
+  // sendSheetDataCategories({
+  //   mainCategorie,
+  //   newSubCategorie,
+  // }: {
+  //   mainCategorie: TKEY_SERVICES;
+  //   newSubCategorie: string;
+  // }): Promise<void>;
+
+  // handleDelete({ sheetName }: { sheetName: TKEY_SERVICES }): Promise<boolean>;
 }
 
 export class ServiciesLocal implements IServiciesDB {
   constructor() {}
+  handleDelete({ sheetName }: { sheetName: TKEY_SERVICES }): Promise<boolean> {
+    return new Promise((resolve) => {
+      localStorage.removeItem(sheetName);
+      resolve(true);
+    });
+  }
 
   getSheetData(sheetName: TKEY_SERVICES): Promise<any> {
     return new Promise((resolve) => {
@@ -53,73 +61,67 @@ export class ServiciesLocal implements IServiciesDB {
       resolve(true);
     });
   }
-  sendSheetDataCategories({
-    mainCategorie,
-    newSubCategorie,
-  }: {
-    mainCategorie: TKEY_SERVICES;
-    newSubCategorie: string;
-  }): Promise<void> {
-    throw new Error("Method not implemented.");
-  }
 }
 
-// export class GoogleSheetsServicies implements IServiciesDB {
-//   allData: Transaction[] = [];
-//   constructor() {
-//     console.log("Servicies");
-//   }
+export class GoogleSheetsServicies implements IServiciesDB {
+  allData: Transaction[] = [];
+  constructor() {}
 
-//   async getSheetData(sheetName: string) {
-//     try {
-//       const url = `${settings.url}?sheetName=${encodeURIComponent(sheetName)}`;
+  handleDelete() {}
 
-//       const response = await fetch(url);
+  async getSheetData(sheetName: string) {
+    try {
+      const url = `${settings.url}?sheetName=${encodeURIComponent(sheetName)}`;
 
-//       if (!response.ok) throw new Error("Network response was not ok");
+      const response = await fetch(url);
 
-//       const data = await response.json();
+      if (!response.ok) throw new Error("Network response was not ok");
 
-//       return data;
-//     } catch (error) {
-//       console.error("Fetch error:", error);
-//     }
-//   }
-//   async sendSheetDataTransaction({
-//     sheetName,
-//     transaction,
-//   }: {
-//     sheetName: string;
-//     transaction: Transaction;
-//   }) {
-//     const payload = {
-//       sheetName,
-//       ...transaction, // ← this might be the problem
-//     };
+      const data = await response.json();
+      const dataToReturn = data.map((item: any) => new Transaction(item));
 
-//     fetch(settings.url, {
-//       method: "POST",
+      return dataToReturn;
+    } catch (error) {
+      console.error("Fetch error:", error);
+    }
+  }
+  async sendSheetDataTransaction({
+    sheetName,
+    transaction,
+  }: {
+    sheetName: string;
+    transaction: Transaction;
+  }) {
+    const payload = {
+      sheetName,
+      ...transaction.toSheetRow(), // ← this might be the problem
+    };
 
-//       body: JSON.stringify(payload),
-//     });
-//   }
-//   async sendSheetDataCategories({
-//     mainCategorie,
-//     newSubCategorie,
-//   }: {
-//     mainCategorie: string;
-//     newSubCategorie: string;
-//   }) {
-//     const payload = {
-//       sheetName: "subCategories",
-//       category: mainCategorie,
-//       subcategory: newSubCategorie, // ← this might be the problem
-//     };
+    const data = await fetch(settings.url, {
+      method: "POST",
 
-//     fetch(settings.url, {
-//       method: "POST",
+      body: JSON.stringify(payload),
+    });
+    if (!data.ok) return false;
+    return true;
+  }
+  // async sendSheetDataCategories({
+  //   mainCategorie,
+  //   newSubCategorie,
+  // }: {
+  //   mainCategorie: string;
+  //   newSubCategorie: string;
+  // }) {
+  //   const payload = {
+  //     sheetName: "subCategories",
+  //     category: mainCategorie,
+  //     subcategory: newSubCategorie, // ← this might be the problem
+  //   };
 
-//       body: JSON.stringify(payload),
-//     });
-//   }
-// }
+  //   fetch(settings.url, {
+  //     method: "POST",
+
+  //     body: JSON.stringify(payload),
+  //   });
+  // }
+}

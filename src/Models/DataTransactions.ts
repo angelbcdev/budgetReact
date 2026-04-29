@@ -30,10 +30,15 @@ export class Transaction implements ITransaction {
   subcategory: Subcategory[];
   paymentMethod: PaymentMethod;
 
-  constructor(data: Omit<ITransaction, "id">) {
+  constructor(data: ITransaction) {
     this.validate(data);
 
-    this.id = crypto.randomUUID();
+    if (typeof data.subcategory === "string") {
+      const oldValue: string = data.subcategory;
+      (data.subcategory as string[]) = oldValue.split(",");
+    }
+
+    this.id = data.id ?? crypto.randomUUID();
     this.title = data.title;
     this.description = data.description;
     this.amount = data.amount;
@@ -57,7 +62,7 @@ export class Transaction implements ITransaction {
       title: this.title,
       description: this.description,
       amount: this.amount,
-      date: this.date.toISOString(),
+      date: String(this.date),
       type: this.type,
       category: this.category,
       subcategory: this.subcategory.join(", "),

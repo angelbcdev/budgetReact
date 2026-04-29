@@ -1,9 +1,10 @@
 import { useState ,useRef, useEffect } from "react";
-import { categoryMeta, fliterCategoryAvailable, paymentMethodAvailable, savingsMethodAvailable, subCateriesAvailable, typeTransactionAvailable, type Category, type PaymentMethod, type Subcategory, type TransactionType } from "../Models/dummyData";
+import {fliterCategoryAvailable, paymentMethodAvailable, savingsMethodAvailable, subCateriesAvailable, typeTransactionAvailable, type Category, type PaymentMethod, type Subcategory, type TransactionType } from "../Models/dummyData";
 import { Layout } from "../UI/Layout";
 import { allIcons } from "../UI/allIicons";
 import { useBudgetContext } from "../provide/budget";
 import { Transaction } from "../Models/DataTransactions";
+import SelectorContainer from "../UI/SelectorContainer";
 
 
 
@@ -19,42 +20,115 @@ interface ITransaction {
 }
 
 const AddNewTransactions = () => {
-  const { saveNewTransaction } = useBudgetContext();
+  const { saveNewTransaction , validateBalance ,validatePaymentCard} = useBudgetContext();
   const [defaultTypeTransaction, setDefaultTypeTransaction] = useState<TransactionType>("spending");
   const [defaultCategory, setDefaultCategory] = useState<Category>("food");
   const [showModal, setShowModal] = useState(false);
   const [categoryToShow, setCategoryToShow] = useState<string[]>(fliterCategoryAvailable);
-  const [paymentMethodToShow, setPaymentMethodToShow] = useState<PaymentMethod>("credit_card_blue");
+  const [balanceNotification, setBalanceNotification] = useState({
+    show: false,
+    message: ""});
+ 
 
   const [dataTransaction, setDataTransaction] = useState<ITransaction>({
     title: defaultCategory,
     description: "",
-    date: new Date(
-      
-    ),
+    date: new Date(),
     amount: "0",
     category: defaultCategory,
     type: defaultTypeTransaction,
-    paymentMethod: paymentMethodToShow,
+    paymentMethod: "credit_card_blue",
     subcategory: []
   })
 
  
 
   const createTransaction = () => {
+
+    if (dataTransaction.paymentMethod == "checking" && dataTransaction.category !== "checking"  && !validateBalance(Number(dataTransaction.amount))) {
+      
+      setBalanceNotification({
+        show: true,
+        message: "You don't have enough money"})
+      setTimeout(() => {
+        setBalanceNotification({
+          show: false,
+          message: ""
+        })
+      },3500)
+      return
+    }
+
+    if (
+      dataTransaction.paymentMethod == "checking" && dataTransaction.type == "credit_card_payment" &&
+      (dataTransaction.category == "credit_card_blue" || dataTransaction.category == "credit_card_red") &&
+      !validatePaymentCard(dataTransaction.category, Number(dataTransaction.amount) , (newAmount:string) => setDataTransaction((data) => ({...data, amount: newAmount}))))
+    {
+      const msj = dataTransaction.category == "credit_card_blue" ? "Blue Card" : "Red Card"
+      setBalanceNotification({
+        show: true,
+        message: " Exceeded for payment of " + msj
+      })
+
+      
+      
+      setTimeout(() => {
+        setBalanceNotification({
+          show: false,
+          message: ""
+        })
+      },3500)
+
+     
+      return
+    }
+   
+
+    const validatePayMorgage = dataTransaction.type == "spending" && dataTransaction.category == "house" && dataTransaction.subcategory.includes("mortgage")
+    const validateIsPayCheck = dataTransaction.category == "checking" && dataTransaction.type == "credit_card_payment"
+    const validatePayCreditCard = dataTransaction.type == "credit_card_payment" && ( dataTransaction.category == "credit_card_blue" || dataTransaction.category == "credit_card_red")
+    const checkValidationsPayment = ():PaymentMethod => {
+      if (validatePayMorgage) {
+        return "morgage"
+      }
+      if (validateIsPayCheck) {
+        return "paycheck"
+      }
+      if (validatePayCreditCard) {
+        return "paycheck"
+      }
+      return dataTransaction.paymentMethod
+    }
+
+    const checkValidationTitle = ():string => {
+      if (validatePayCreditCard) {
+
+        return dataTransaction.category == "credit_card_blue" ? "Payment Blue Card " : "Payment Red Card "
+      }
+      return dataTransaction.title || "No title"
+    }
+
+    const validateSubcategory = ():Subcategory[] => {
+      if (validatePayCreditCard) {
+        return [ "payment card" ]
+      }
+      return dataTransaction.subcategory
+    }
     
     const dataForSave = new Transaction({
-      title: dataTransaction?.title || "No title",
+      id: crypto.randomUUID(),
+      title: checkValidationTitle(),
       description: dataTransaction.description,
       amount: Number(dataTransaction.amount),
       date: dataTransaction.date,
       type: dataTransaction.type ,
       category: dataTransaction.category ,
-      subcategory: dataTransaction.subcategory ,
-      paymentMethod: dataTransaction.category != "checking" ? dataTransaction.paymentMethod  : "paycheck"
+      subcategory: validateSubcategory() ,
+      paymentMethod: checkValidationsPayment()
     });
 
-    
+   
+ 
     saveNewTransaction(dataForSave, () => {
     
        setDataTransaction({
@@ -64,7 +138,7 @@ const AddNewTransactions = () => {
     amount: "0",
     category: defaultCategory,
     type: defaultTypeTransaction,
-    paymentMethod: paymentMethodToShow,
+    paymentMethod: "credit_card_blue",
     subcategory: []
   });
     })
@@ -80,7 +154,7 @@ const AddNewTransactions = () => {
       case "spending":
         setCategoryToShow(fliterCategoryAvailable);
         setDefaultCategory("food");
-        setDataTransaction(data => ({...data, title: null ,paymentMethod: paymentMethodToShow ,type:"spending"  }))
+        setDataTransaction(data => ({...data, title: null ,paymentMethod: "credit_card_blue" ,type:"spending"  }))
         break;
 
       case "saving":
@@ -121,7 +195,16 @@ const AddNewTransactions = () => {
 
   return(
     <Layout>
+      {
+        balanceNotification.show
+         && <div
+          onClick={() => setBalanceNotification({ show: false, message: "" })}
+          className="fixed top-0 left-0 w-screen h-screen flex z-80 justify-center items-center bg-black/50">
+        <div className="text-md text-red-600 absolute top-44 rounded-md  shadow-2xl fade-in w-90 bg-red-200 z-20 py-2 left-10 flex justify-center uppercase " > {balanceNotification.message}</div>
+        </div>
+      }
       {showModal && <Modal setShowModal={setShowModal}
+        
         
         
         defaultCategory={defaultCategory as Category} dataTransaction={dataTransaction} setDataTransaction={setDataTransaction} />}
@@ -137,9 +220,17 @@ const AddNewTransactions = () => {
         <TypeTransaction selectCurrentType={selectCurrentType} defaultTypeTransaction={defaultTypeTransaction} />
        
       </div>
-      <SelectCurrentCategory categoryToShow={categoryToShow} defaultCategory={defaultCategory as Category} selectCurrentCategory={selectCurrentCategory} />
-      <HeathersTransactions defaultTypeTransaction={defaultTypeTransaction} setPaymentMethodToShow={setPaymentMethodToShow} setShowModal={setShowModal}  dataTransaction={dataTransaction}  setShowModal={setShowModal} setDataTransaction={setDataTransaction} />
+      <section className=" justify-center flex flex-col items-center">
+        
+           <SelectorContainer options={categoryToShow.map((category) => category)} selecteOption={defaultCategory} changeOtion={(option) => selectCurrentCategory(option as Category)} />
+      
+      
+      <HeathersTransactions defaultTypeTransaction={defaultTypeTransaction} setShowModal={setShowModal} dataTransaction={dataTransaction} setDataTransaction={setDataTransaction} />
+   
+        </section>
       <Keyboard  createTransaction={createTransaction} dataTransaction={dataTransaction}  setDataTransaction={setDataTransaction} />
+    
+    
     </Layout>
     )
 };
@@ -173,16 +264,13 @@ setDataTransaction: React.Dispatch<React.SetStateAction<ITransaction>>
     const name = e.target.name;
     setDataTransaction((data) => ({...data, [name]: value + 1}))
   }
-  const addSubcategory = (newSubcategory: string) => {
-    if (dataTransaction.subcategory.includes(newSubcategory)) {
-      setDataTransaction((data) => ({...data, subcategory: data.subcategory.filter((sub) => sub !== newSubcategory)}))
-    } else {
-      setDataTransaction((data) => {
-        return {...data, subcategory: [...data.subcategory, newSubcategory]}
-      })
-    }
-    }
-  
+const addSubcategory = (newSubcategory: string) => {
+  if (dataTransaction.subcategory.includes(newSubcategory as Subcategory)) {
+    setDataTransaction((data) => ({...data, subcategory: data.subcategory.filter((sub: Subcategory) => sub !== newSubcategory)}))
+  } else {
+    setDataTransaction((data) => ({...data, subcategory: [...data.subcategory, newSubcategory as Subcategory]}))
+  }
+}
 
   return (
     <div
@@ -282,38 +370,38 @@ setDataTransaction: React.Dispatch<React.SetStateAction<ITransaction>>
   );
 };
 
-const SelectCurrentCategory = ({categoryToShow, defaultCategory, selectCurrentCategory}:{categoryToShow:string[], defaultCategory:Category, selectCurrentCategory: (newCategory:Category) => void}) => {
-  return (
-    <div className="flex flex-row gap-4 overflow-scroll  justify-evenly relative  items-center     rounded-2xl p-3  ">
-        {
-          categoryToShow.map((category) => {
-            const isSelected = defaultCategory === category;
+// const SelectCurrentCategory = ({categoryToShow, defaultCategory, selectCurrentCategory}:{categoryToShow:string[], defaultCategory:Category, selectCurrentCategory: (newCategory:Category) => void}) => {
+//   return (
+//     <div className="flex flex-row gap-4 overflow-scroll  justify-evenly relative  items-center     rounded-2xl p-3  ">
+//         {
+//           categoryToShow.map((category) => {
+//             const isSelected = defaultCategory === category;
 
-            let title = "";
-            if (category === "credit_card_blue") {
-              title = "blue card";
-            }else if (category === "credit_card_red") {
-              title = "red card";
-            }
+//             let title = "";
+//             if (category === "credit_card_blue") {
+//               title = "blue card";
+//             }else if (category === "credit_card_red") {
+//               title = "red card";
+//             }
             
-            else {
-              title = category;
-            }
-            return(
-              <div
-                key={category}
-                onClick={() => selectCurrentCategory(category as Category)}
-                className={`flex flex-row gap-1.5  relative  items-center  transition-all ease-in duration-100 capitalize  ${isSelected ? "bg-blue-600 text-white" : "text-gray-700 bg-white"}  w-31 rounded-md py-1 px-3 `}>
-                <span>{categoryMeta[category as keyof typeof categoryMeta]?.icon }</span>
-                <h3 className="text-md  capitalize">{title}</h3>
+//             else {
+//               title = category;
+//             }
+//             return(
+//               <div
+//                 key={category}
+//                 onClick={() => selectCurrentCategory(category as Category)}
+//                 className={`flex flex-row gap-1.5  relative  items-center  transition-all ease-in duration-100 capitalize  ${isSelected ? "bg-blue-600 text-white" : "text-gray-700 bg-white"}  w-31 rounded-md py-1 px-3 `}>
+//                 <span>{categoryMeta[category as keyof typeof categoryMeta]?.icon }</span>
+//                 <h3 className="text-md  capitalize">{title}</h3>
               
-              </div>
-            )
-          })
-          }
-      </div>
-  )
-}
+//               </div>
+//             )
+//           })
+//           }
+//       </div>
+//   )
+// }
 
 const TypeTransaction = ({selectCurrentType, defaultTypeTransaction}: {selectCurrentType: (type: TransactionType) => void ,defaultTypeTransaction: TransactionType}) => {
   return (
@@ -458,7 +546,7 @@ const validateInput = (key: string) => {
       <button
         disabled={!isReadyToSubmit}
         onClick={handleSubmit}
-        className={`mt-2  h-10 w-full ${isReadyToSubmit ? "bg-blue-400" : "bg-gray-400"} text-white rounded-lg text-base font-semibold`}
+        className={`mt-2  h-10 w-60 ${isReadyToSubmit ? "bg-blue-400" : "bg-gray-400"} text-white rounded-lg text-base font-semibold`}
       >
         Add Transaction
       </button>
@@ -466,21 +554,32 @@ const validateInput = (key: string) => {
   );
 };
 
-const HeathersTransactions = ({ setShowModal ,setDataTransaction , dataTransaction , defaultTypeTransaction }: { defaultTypeTransaction: string, dataTransaction: ITransaction, setShowModal: React.Dispatch<React.SetStateAction<boolean>> , setDataTransaction: React.Dispatch<React.SetStateAction<ITransaction>> }) => {
+const HeathersTransactions = (
+  { setShowModal, setDataTransaction, dataTransaction, defaultTypeTransaction }:
+   {
+    setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
+    setDataTransaction: React.Dispatch<React.SetStateAction<ITransaction>>;
+    dataTransaction: ITransaction;
+      defaultTypeTransaction: string
+   
+   }
+   ) => {
   const selectorRef = useRef<HTMLSelectElement>(null);
-  
+  const {validateBalance} = useBudgetContext()
   
   const addValue = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const value = e.target.value;
     const name = e.target.name;
+  
+    
     setDataTransaction((data) => ({...data, [name]: value}))
   }
   const canSelectMethod = defaultTypeTransaction === "spending"
   return(
-    <div className="flex flex-col gap-4 justify-center relative  items-center w-94 mx-auto     rounded-2xl py-4 px-3 ">
+    <div className="flex flex-col gap-4 justify-center relative  items-center w-full max-w-94 mx-auto     rounded-2xl p-1 px-3 ">
         <div className="flex flex-row gap-2 items-center justify-center ">
           
-        <label className={`px-2  ${!canSelectMethod ? "w-88 ml-3" : "w-54"} py-1 flex flex-row gap-2 items-center justify-center rounded-md bg-white text-gray-700    transition-all ease-in-out duration-300 capitalize `}>
+        <label className={`px-2  ${!canSelectMethod ? "w-88 ml-3" : "w-54"} py-1 flex flex-row gap-2 items-center justify-center rounded-md bg-white text-gray-700    capitalize `}>
           <input
             placeholder="Date"
             defaultValue={new Date().toISOString().split("T")[0]}
@@ -500,6 +599,10 @@ const HeathersTransactions = ({ setShowModal ,setDataTransaction , dataTransacti
                 else {
                   tilte = method
                 }
+                  if (method === "checking" && !validateBalance()) {
+                    return
+                  }
+
                   return(
                     <option key={method} value={method}>{tilte}</option>
                   )

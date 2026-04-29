@@ -1,32 +1,69 @@
-import { categoryMeta, fliterCategoryAvailable } from "../Models/dummyData";
-import { useState ,useRef, useEffect } from "react";
+import { categoryMeta, fliterCategoryAvailable, type PaymentMethod } from "../Models/dummyData";
+import { useState ,useRef } from "react";
 import { Layout } from "../UI/Layout";
 import { allIcons } from "../UI/allIicons";
 import { useBudgetContext } from "../provide/budget";
 import type { Transaction } from "../Models/DataTransactions";
+import SelectorContainer from "../UI/SelectorContainer";
 
 
+const extraFilters = ["Spend" , "Earn" ,"Saved"];
 const AllTransactions = () => {
   const { transactionsData } = useBudgetContext();
   const [activeFilter, setActiveFilter] = useState("All");
   
   const [search, setSearch] = useState("");
-  const inputRer = useRef(null)
+  const inputRer = useRef<HTMLInputElement>(null)
   const minimunSearch = 3;
   const currentMonth = new Date().getMonth();
   const currentMonthName = new Date().toLocaleString("en-US", { month: "long" });
   const [filterByMonth, setFilterByMonth] = useState(true);
 
+
   const dataForTransactions = transactionsData //.filter(t => fliterCategoryAvailable.includes(t.category));
 
-  const types = ["All", ...fliterCategoryAvailable];
+ 
+  const makeFilter = (): Transaction[] => {
 
- const filtered: any[] = search.length < minimunSearch ?
-    activeFilter === "All"
-      ? dataForTransactions
-      : dataForTransactions.filter((t) => t.category === activeFilter)
-    : dataForTransactions.filter((t) => t.title.toLowerCase().includes(search.toLowerCase()) || t.description.toLowerCase().includes(search.toLowerCase()) || t.category.toLowerCase().includes(search.toLowerCase()) || t.subcategory.join(" ").toLowerCase().includes(search.toLowerCase()) || t.paymentMethod.toLowerCase().includes(search.toLowerCase()));
+    if(search.length >= minimunSearch){
+      return dataForTransactions.filter((t) => t.title.toLowerCase().includes(search.toLowerCase()) || t.description.toLowerCase().includes(search.toLowerCase()) || t.category.toLowerCase().includes(search.toLowerCase()) || t.subcategory.join(" ").toLowerCase().includes(search.toLowerCase()) || t.paymentMethod.toLowerCase().includes(search.toLowerCase()));
 
+  
+  
+    }
+
+
+    if(activeFilter === "All"){
+      return dataForTransactions
+    }
+    if (!extraFilters.includes(activeFilter)) {
+      return(dataForTransactions.filter((t) => t.category === activeFilter))
+    }
+    if(activeFilter === "Spend"){
+      return dataForTransactions.filter((t) => t.type === "spending")
+    }
+    if(activeFilter === "Earn"){
+      return dataForTransactions.filter((t) => t.paymentMethod === "paycheck")
+    }
+    if(activeFilter === "Saved"){
+      return dataForTransactions.filter((t) => t.type === "saving")
+    }
+
+
+      return([])
+    
+    
+
+
+    
+  }
+
+  const filtered = makeFilter()
+
+  
+  
+
+  
  const groups: Record<string, Transaction[] > = groupByDate(filtered , currentMonth , filterByMonth);
 
   
@@ -50,7 +87,7 @@ const AllTransactions = () => {
             <div className="flex flex-row gap-4 pl-2 pt-4  relative  items-center  ">
               <h3 className="text-3xl font-bold ">Transactions</h3>
             <h6 className="text-3xl font-light text-gray-600 "> {currentMonthName}</h6>
-      </div>
+        </div>
          
 
           <div className="flex gap-2 mt-2  flex-row items-center justify-between w-90 mx-auto">
@@ -68,12 +105,14 @@ const AllTransactions = () => {
         </div>
 
 
-      {/* HEADER */}
-      <div className="sticky w-94 mx-auto top-0  backdrop-blur-xl border-b border-black/10 px-2 pt-2 pb-4">
+       {/* HEADER */}
+       <div className="sticky w-92 mx-auto top-0  backdrop-blur-xl border-b border-black/10 px-2 pt-2 pb-4">
         <div className="flex justify-between items-end">
           <h1 className="text-xl font-semibold text-gray-900">
             Categories
             </h1>
+
+           
             
             <div className="flex bg-gray-400 rounded-md p-px">
               
@@ -96,33 +135,22 @@ const AllTransactions = () => {
             </div>
 
          
-        </div>
+          </div>
+          
+          <SelectorContainer options={ ["All", ...fliterCategoryAvailable.map((c) => c) ,...extraFilters]} selecteOption={activeFilter} changeOtion={(t) => { setActiveFilter(t); setSearch(""); if (inputRer.current) inputRer.current.value = ""  }} />
 
         {/* FILTER */}
-        <div className="grid grid-cols-4 gap-2 mt-4">
-          {types.map((t) => (
-            <button
-              key={t}
-              onClick={() => { setActiveFilter(t); setSearch(""); inputRer.current.value = ""  }}
-              className={`px-2 py-1 text-sm rounded-md border whitespace-nowrap transition overflow-hidden
-                ${
-                  activeFilter === t
-                    ? "bg-blue-500 text-white border-blue-500"
-                    : "bg-white text-gray-700 border-gray-200"
-                }`}
-            >
-              {t}
-            </button>
-          ))}
-        </div>
-      </div>
+        
+          
+           
+       </div>
 
-     
+       
 
-        <div className="h-110 w-97  overflow-scroll rounded-b-2xl mt-1   m-auto ">
+        <div className="h-110 w-88   overflow-scroll rounded-b-2xl mt-1   mx-auto ">
             {/* LIST */}
       {Object.entries(groups).sort((a, b) => new Date(b[0]).getTime() - new Date(a[0]).getTime()) .map(([date, items]) => (
-        <div key={date} className="mt-1 w-94">
+        <div key={date} className="mt-1 w-87">
           <h2 className="px-5 text-xs h-8  font-semibold text-gray-400 uppercase sticky top-0 bg-[#f2f2f7]/00 backdrop-blur-sm flex items-center  ">
             {date}
           </h2>
@@ -133,13 +161,13 @@ const AllTransactions = () => {
                 icon: "💳",
                 bg: "bg-gray-100",
               };
-           
+              const { color, sign } = getTxnAmountStyle(txn);
 
               return (
                 <div
                   key={txn.id}
                   className="flex items-center gap-3 p-4"
-                  onClick={() => console.log(txn)}
+                  onClick={() => {}}
                 >
                   {/* ICON */}
                   <div
@@ -170,11 +198,15 @@ const AllTransactions = () => {
 
                   {/* AMOUNT */}
                   <div className="text-right pb-6">
-                    <p
-                      className={`text-md font-semibold text-gray-800`}
-                    >
-                      {formatAmount(txn)}
-                    </p>
+
+                   
+
+                    {
+                      <p className={`text-md font-semibold ${color}`}>
+                        {sign} {formatAmount(txn.amount)}
+                      </p>
+                    }
+                  
 
                     <p className="text-[11px] text-gray-400">
                       {paymentLabels[txn.paymentMethod as keyof typeof paymentLabels]}
@@ -210,24 +242,38 @@ export default AllTransactions;
 
 
 
+function getTxnAmountStyle(txn: Transaction) {
+  if (txn.paymentMethod === "paycheck" && txn.type === "credit_card_payment" && txn.category === "checking") {
+    return { color: "text-green-600", sign: "+" };
+  }
+
+  if (txn.type === "saving") {
+    return { color: "text-blue-600", sign: "" };
+  }
+
+  return { color: "text-red-600", sign: "-" };
+}
 
 
 
-const paymentLabels = {
+
+
+const paymentLabels: Record<PaymentMethod, string> = {
   credit_card_red: "Visa •• Red",
   credit_card_blue: "Visa •• Blue",
   paycheck: "Paycheck",
-  checking: "checking",
+  checking: "Checking",
+  morgage: "Morgage Account",
 
 };
 
-function formatAmount(t: Transaction) {
-  const n = t.amount;
+function formatAmount(n: number) {
+
   const abs = Math.abs(n).toLocaleString("en-US", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   });
-  return  "$ "+ `${t.paymentMethod === "paycheck" ? "+" : "" }  ` + abs;
+  return  "$ "+ abs;
 }
 
 

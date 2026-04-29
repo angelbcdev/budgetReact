@@ -1,10 +1,12 @@
 import type { Transaction } from "../Models/DataTransactions";
 
-import { transactionsAll } from "../Models/dummyData";
+// import { transactionsAll } from "../Models/dummyData";
 
 export const settings = {
   id: import.meta.env.VITE_GOOGLE_ID,
   url: import.meta.env.VITE_SHEET,
+  password: import.meta.env.VITE_PASSWORD,
+  email: import.meta.env.VITE_EMAIL,
 };
 
 export async function getSheetData(sheetName: string) {

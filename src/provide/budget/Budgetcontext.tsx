@@ -7,9 +7,11 @@ import {
   type ReactElement,
 } from "react";
 import { BudgetContext } from "./data";
-import { KEY_SERVICES, ServiciesLocal, type IServiciesDB } from "../../Services/Servicies";
+import { GoogleSheetsServicies, KEY_SERVICES,  type IServiciesDB } from "../../Services/Servicies";
 import { Transaction } from "../../Models/DataTransactions";
-import type { Category } from "../../Models/dummyData";
+
+import { useSummary, type ISummaryHomeData } from "../hooks/useSummaryTransactions";
+import { goalsDataDefault, type TKEY_GOALS, type TKEY_MONTHS } from "../interfaces";
 
 
 export interface IBudgetContext {
@@ -18,167 +20,108 @@ export interface IBudgetContext {
   isLoading: boolean
   transactionsData: Transaction[]
   saveNewTransaction: (data: Transaction, action?: () => void) => void
+  handleDelete: () => void
   summaryHomeData: ISummaryHomeData
+  currentMonthKey: string
+  changeMountToShow: (action: "<" | ">") => void
+  global: ISummaryHomeData
+  curentDate:{
+    year: string,
+    month: string,
+  }
+  validateBalance: (amount?: number) => boolean
+  validateMorgageFound: (amount?: number) => boolean
+  validatePaymentCard: (card: string, cuantity: number , acction:(newAmount: string)=>void) => boolean
   // setTransactionsData: Dispatch<Transaction[]>
   // setIsLoading: Dispatch<boolean>
+  currentMonthGoals:  Record<TKEY_GOALS, number>
 }
 
-export interface ISummaryHomeData {
-  month: string;
-  year: number;
-  totalBalance: number;
-  totalIncome: number;
-  totalExpenses: number;
-  totalCardRed: number;
-  totalCardBlue: number;
-  totalCheckingAccount: number;
-  savingMorgage: number;
-  savingBank: number;
-  savingsStocks: number;
-  savingsCrypto: number;
-  databyCatefory: Record<Category, number> ;
-}
 
+  
+const goalsMonthly: TKEY_MONTHS = {
+  // "2026-04": {
+  //    savingsMorgage:1400,
+  //   savingsBank: 250,
+  //   savingsStocks: 250,
+  //   savingsCrypto: 100
+  // },
+  // "2026-03": {
+  //    savingsMorgage:900,
+  //   savingsBank: 900,
+  //   savingsStocks: 950,
+  //   savingsCrypto: 900
+  //  }
+    
+ }
 
 
 export const BudgetContextProvider = ({ children }: { children: ReactElement }) => {
   const [isLoading, setIsLoading] = useState(true)
   const [transactionsData, setTransactionsData] = useState<Transaction[]>([])
-  const [summaryHomeData, setSummaryHomeData] = useState<ISummaryHomeData>({
-    month: new Date().toLocaleDateString("en-US", { month: "long" }),
-    year: new Date().getFullYear(),
-    totalBalance: 0,
-    totalIncome: 0,
-    totalExpenses: 0,
-    totalCardRed: 0,
-    totalCardBlue: 0,
-    totalCheckingAccount: 0,
-    savingMorgage: 0,
-    savingBank: 0,
-    savingsStocks: 0,
-    savingsCrypto: 0,
-    databyCatefory: {
-      food: 0,
-      transport: 0,
-      drinks: 0,
-      bills: 0,
-      amazon: 0,
-      savings: 0,
-      credit_card_payment: 0,
-      other: 0,
-      morgage: 0,
-      stocks: 0,
-      crypto: 0,
-      checking: 0,
-      credit_card_blue: 0,
-      credit_card_red: 0,
-      house: 0
-    }
-  })
+  const [currentMountIndex, setCurrentMountIndex] = useState(0)
+  
+  const { global, monthly , lastMonth ,allMonthsData } = useSummary(transactionsData);
+  
+  const currentMonthKey = allMonthsData[currentMountIndex] || lastMonth
 
+  const currentMonthGoals = goalsMonthly[currentMonthKey || lastMonth ] ?? goalsDataDefault
+
+  const summaryHomeData =monthly[currentMonthKey]
+ 
+
+
+  const validateBalance = (cuantity: number = 0) => {
+    return global?.totalBalance > cuantity
+  }
+  const validateMorgageFound = (cuantity: number = 0) => {
+    return global?.savingsMorgage > cuantity
+  }
+  const validatePaymentCard = (card: string, cuantity: number = 0, acction: (newAmount: string) => void): boolean => {
+    
+    if (card === "credit_card_blue") {
+      acction(global?.totalCardBlue.toString())
+      return global?.totalCardBlue > cuantity
+    } else {
+      acction(global?.totalCardRed.toString())
+      return global?.totalCardRed > cuantity
+    }
+
+   
+  }
 
   
-  const dataBase = new ServiciesLocal()
+  const dataBase = new GoogleSheetsServicies()
 
   useEffect(() => {
     dataBase.getSheetData(KEY_SERVICES.TRANSACIONS).then((data) => {
-    
-      setTransactionsData(data)
       
-         setIsLoading(false)
+       setIsLoading(false)
+       setTransactionsData(data)
+      if (!data.success) {
+        return
+      }
+      
+        
       })
    
   }, [])
 
-
-  useEffect(() => {
-
-    const data = transactionsData.reduce((acc, transaction) => {
-
-      if (transaction.paymentMethod === "paycheck") {
-        acc.totalIncome += transaction.amount;
-        acc.totalCheckingAccount += transaction.amount;
-        acc.totalBalance += transaction.amount;
-      } else if (transaction.type === "saving") {
-        acc.totalBalance -= transaction.amount;
-        acc.databyCatefory[transaction.category] += transaction.amount;
-        switch (transaction.category) {
-          case "morgage":
-            acc.savingMorgage += transaction.amount;
-            break;
-          case "savings":
-            acc.savingBank += transaction.amount;
-            break;
-          
-          case "stocks":
-            acc.savingsStocks += transaction.amount;
-            break;
-          case "crypto":
-            acc.savingsCrypto += transaction.amount;
-            break;
-          
-          default:
-            break;
-        }
-      } else if (transaction.type === "spending") {
-        acc.totalBalance -= transaction.amount;
-        acc.totalExpenses += transaction.amount;
-        acc.databyCatefory[transaction.category] += transaction.amount;
-        switch (transaction.paymentMethod) {
-
-          case "credit_card_blue":
-            acc.totalCardBlue += transaction.amount;
-            break;
-          case "credit_card_red":
-            acc.totalCardRed += transaction.amount;
-            break;
-
-          default:
-            break;  
-        }
-      }
-
-      return acc;
-    }, {totalBalance: 0,
-    totalIncome: 0,
-    totalExpenses: 0,
-    totalCardRed: 0,
-    totalCardBlue: 0,
-    totalCheckingAccount: 0,
-    savingMorgage: 0,
-    savingBank: 0,
-    savingsStocks: 0,
-      savingsCrypto: 0,
-    databyCatefory: {
-      food: 0,
-      transport: 0,
-      drinks: 0,
-      bills: 0,
-      amazon: 0,
-      savings: 0,
-      credit_card_payment: 0,
-      other: 0,
-      morgage: 0,
-      stocks: 0,
-      crypto: 0,
-      checking: 0,
-      credit_card_blue: 0,
-      credit_card_red: 0,
-      house: 0
+  const changeMountToShow = (action: "<" | ">") => {
+    if (action === "<") {
+      setCurrentMountIndex((prev) => prev - 1 < 0 ? 0 : prev - 1)
+    } else {
+      setCurrentMountIndex((prev) => prev + 1 > allMonthsData.length - 1 ? allMonthsData.length - 1 :  prev + 1)
     }
-    } as ISummaryHomeData);
     
+  }
 
-    setSummaryHomeData(prev => ({...prev , ...data}))
-    
-  },[transactionsData])
-
+  const handleDelete = () => {
+   
+  }
 
   const saveNewTransaction = (data:Transaction ,action?:()=>void) => {
     setIsLoading(true)
-   
-    
-    
       dataBase.sendSheetDataTransaction({
       sheetName: KEY_SERVICES.TRANSACIONS,
       transaction: data
@@ -192,11 +135,23 @@ export const BudgetContextProvider = ({ children }: { children: ReactElement }) 
           action()
         }
 
-       },1200)
+       },500)
         
       })
     })
     return false
+  }
+
+
+     const [year, month] = currentMonthKey.split("-").map(Number);
+  
+  const nameMonth = new Date(year, month - 1).toLocaleString("default", {
+    month: "long",
+  });
+
+  const curentDate = {
+    year: year.toString(),
+    month: nameMonth,
   }
   const values = {
     title: "this is a test",
@@ -204,7 +159,15 @@ export const BudgetContextProvider = ({ children }: { children: ReactElement }) 
     isLoading,
     transactionsData,
     saveNewTransaction,
-    summaryHomeData
+    summaryHomeData,
+    currentMonthKey,
+    curentDate, changeMountToShow,
+    global, validateBalance,
+    validateMorgageFound,
+    currentMonthGoals,
+    validatePaymentCard,
+    handleDelete
+
   }
 
   return (

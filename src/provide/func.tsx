@@ -1,12 +1,12 @@
 import { redirect } from "react-router";
 
-export function authLoader() {
-  const token = localStorage.getItem("token");
+export async function authLoader() {
+  const user = localStorage.getItem("user");
 
-  // if (!token) {
-  //   throw redirect("/login");
-  // }
+  if (!user) {
+    throw redirect("/login"); // ✅ correct
+  }
 
-  return null;
+  return null; // ✅ always return something
 }
 
