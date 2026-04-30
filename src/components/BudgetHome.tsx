@@ -7,6 +7,8 @@ import { allIcons } from "../UI/allIicons";
 import { Layout } from "../UI/Layout";
 import { validateSavingDataToShow, type TKEY_SUMMARY } from "../provide/hooks/useSummaryTransactions";
 import { DataShowListCategory } from "../UI/DataShowListCategory";
+import {  useNavigate } from "react-router";
+import { VALID_ROUTES } from "../Routes/routes";
 
 
 
@@ -28,6 +30,7 @@ const SubCuantity = ({icon, title, cuantity}: {icon: any, title: string, cuantit
 const BudgetHome = () => {
   const { summaryHomeData  ,curentDate ,global ,currentMonthGoals } = useBudgetContext();
   const [sortAsc, setSortAsc] = useState(true);
+  const navigate = useNavigate(); 
   // const safeSummary = summaryHomeData ?? null;
 
   
@@ -43,12 +46,12 @@ const BudgetHome = () => {
   const dataCards = [
     {
       title: "Card Red",
-      cuantity: summaryHomeData?.totalCardRed.toFixed(2) ?? 0,
+      cuantity: global?.totalCardRed.toFixed(2) ?? 0,
       color: "#FF0000"
     },
     {
       title: "Card blue",
-      cuantity: summaryHomeData?.totalCardBlue.toFixed(2) ?? 0,
+      cuantity: global?.totalCardBlue.toFixed(2) ?? 0,
       color: "#0000FF"
     }
   ]
@@ -58,9 +61,9 @@ const BudgetHome = () => {
 
   const dataSavingsGoals = [
     {
-      title: "Morgage Savings Goal",
-      cuantity: summaryHomeData?.savingsMorgage.toFixed(2) ?? 0,
-      Total: currentMonthGoals?.savingsMorgage.toFixed(2) ?? 0,
+      title: "Mortgage Savings Goal",
+      cuantity: summaryHomeData?.savingsMortgage.toFixed(2) ?? 0,
+      Total: currentMonthGoals?.savingsMortgage.toFixed(2) ?? 0,
       
     },
     {
@@ -86,12 +89,17 @@ const BudgetHome = () => {
     
    
   const globalData = Object.entries(global).map(([category, cuantity]) => ({ category, cuantity })
-  ).filter(e => validateSavingDataToShow.includes(e.category as TKEY_SUMMARY) )
+  ).filter(e => validateSavingDataToShow.includes(e.category as TKEY_SUMMARY))
+  
+
+  const manualNavigation = () => {
+    navigate(VALID_ROUTES.Graph ,{ state: { data: "GENERAL" } }) 
+  }
  
   return(
     <Layout>
-      <main className="flex flex-col gap-4   w-98 mx-auto">
-        <div className="flex flex-row justify-between items-end ">
+      <main className="flex flex-col    w-98 mx-auto">
+        <div className="flex flex-row justify-between items-end mb-4 ">
 
       <div className="flex flex-row gap-4 pl-2 pt-4  relative w-44 items-center ">
         <h3 className="text-5xl font-bold ">{curentDate.month}</h3>
@@ -99,12 +107,15 @@ const BudgetHome = () => {
       </div>
           
         </div>
-      <section className="flex flex-col  gap-2  bg-linear-to-l to-blue-500 from-blue-800 h-50 p-4 text-white rounded-2xl  shadow-md">
+        
+        <section
+          onClick={manualNavigation}
+          className="flex flex-col  gap-2  bg-linear-to-l to-blue-500 from-blue-800 h-50 p-4 text-white rounded-2xl  shadow-md">
         <div className="flex flex-row gap-2">
           {allIcons.wallet}
           <span className="text-mediumd font-bold ">Total Balance</span>
         </div>
-        <p className="text-4xl font-bold ">${summaryHomeData?.totalBalance ?? 0}</p>
+        <p className="text-4xl font-bold ">${global?.totalBalance ?? 0}</p>
         <div className="bg-white h-px w-[90%] rounded mx-auto"></div>
         <div className="flex flex-row  gap-20">
         
@@ -115,10 +126,14 @@ const BudgetHome = () => {
 
       </div>
         </section>
-        <section className="flex flex-col gap-4  h-100 overflow-scroll ">
+
+
+        <section className="flex flex-col gap-4  h-125 overflow-scroll   relative ">
+          {/* backdrop-blur-[3px]  */}
+          <div className="w-98 h-2   backdrop-blur-[3px]     fixed  " ></div>
           {/* Cash Flow */}
         <section>
-          <div >
+          <div className="mt-4 " >
             <p className="text-xl text-gray-800 font-md pl-2 ">Cash Flow  </p>
             <div className="flex flex-row gap-2 justify-center pt-2 ">
               {

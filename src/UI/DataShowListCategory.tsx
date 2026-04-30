@@ -1,35 +1,24 @@
-import { categoryMeta } from "../Models/dummyData";
+import { useState } from "react";
+import { CATEGORY_META } from "../Models/dummyData";
+import { allIcons } from "./allIicons";
 
 export const DataShowListCategory = ({ title, data, sizeScroll = 10, showSort = false, valueSort, setSortToggle }:
   {title: string,showSort?: boolean,sizeScroll?: number, data: { category: string, cuantity: number }[], valueSort: boolean, setSortToggle: React.Dispatch<React.SetStateAction<boolean>> }) => {
-  
+  const [showDataWithCero , setShowDataWithCero] = useState(false)
   if (!data) {
     return null;
   }
   return (
     <section>
             <div className="flex flex-row justify-between mb-2">
-              <p className="text-xl text-gray-800 font-md pl-2  mb-1">{title}   </p>
-
-            {showSort &&  <div className="flex bg-gray-400 rounded-md p-px h-6">
-              
-              {
-                [true , false].map((f, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setSortToggle(f)}
-                    className={` text-[12px] w-14 rounded-sm  whitespace-nowrap transition overflow-hidden
-                    ${
-                      f === valueSort
-                        ? "bg-green-500 text-white "
-                        : " text-gray-900"
-                    }`}
-                  >
-                    {f ? "↓" : "↑"}
-                  </button>
-                ))
-              }
-            </div>}
+        <p
+          onClick={() => setShowDataWithCero(!showDataWithCero)}
+          className="text-xl text-gray-500  font-md pl-2  mb-1">{title}   </p>
+{/* <span className="text-gray-300 text-lg">›</span> */}
+        {showSort && <BiToogleButton
+          
+          title={[allIcons.myArrowup, allIcons.myArrowDown]}
+          data={[true, false]} valueSort={valueSort} setSortToggle={setSortToggle} />}
             </div>
             
             <div className="flex flex-col  justify-center  rounded-2xl overflow-hidden  w-97 border mx-auto border-gray-200 ">
@@ -45,12 +34,12 @@ export const DataShowListCategory = ({ title, data, sizeScroll = 10, showSort = 
                   
                   
                 }) && data.map((c) => {
-                const meta = categoryMeta[c.category as keyof typeof categoryMeta] || {
+                const meta = CATEGORY_META[c.category as keyof typeof CATEGORY_META] || {
                 icon: "💳",
                 bg: "bg-gray-100",
                 };
                   const cuantity = c.cuantity
-                  if (cuantity === 0) {
+                  if (cuantity === 0 && !showDataWithCero) {
                     return null;
                   }
                   return(
@@ -77,4 +66,29 @@ export const DataShowListCategory = ({ title, data, sizeScroll = 10, showSort = 
             
           </section>
   )
+}
+
+export const BiToogleButton = ({data, valueSort, setSortToggle ,title }: {data: any[], title: any[] ,  valueSort: boolean, setSortToggle: React.Dispatch<React.SetStateAction<boolean>>}) => {
+  
+
+
+  return(<div className="flex bg-gray-300 rounded-md p-px h-6">
+              
+              {
+                data.map((f, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setSortToggle(f)}
+                    className={` text-[12px] w-14 rounded-sm flex justify-center items-center  whitespace-nowrap transition overflow-hidden
+                    ${
+                      f === valueSort
+                        ? "bg-gray-100 text-blue-500 "
+                        : " text-gray-900"
+                    }`}
+                  >
+                    {title[i] ?? ""}
+                  </button>
+                ))
+              }
+            </div>)
 }

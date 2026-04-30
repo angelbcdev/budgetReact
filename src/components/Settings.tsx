@@ -6,15 +6,16 @@ import { Layout } from "../UI/Layout";
 
 
 const Settings = () => {
-  const { changeMountToShow, curentDate, currentMonthGoals, handleDelete } =
+  const { changeMountToShow, curentDate, currentMonthGoals, handleDelete , handleUpdate } =
     useBudgetContext();
+  const version = "Version 1.0.0";
 
   const data = Object.keys(currentMonthGoals).map((key) => {
     return {
       name: key,
       value: currentMonthGoals[key as TKEY_GOALS],
       action: () => {
-        console.log(key);
+        
       },
     };
   });
@@ -40,6 +41,7 @@ const Settings = () => {
         },
       ]
     },
+    
     {
       title: "Goals for this month",
       data: data
@@ -52,6 +54,12 @@ const Settings = () => {
           value: 0,
           action: () => {
             handleDelete()
+          },
+        },{
+          name: "Update data",
+          value: 0,
+          action: () => {
+            handleUpdate()
           },
         },
       ]
@@ -66,7 +74,7 @@ const Settings = () => {
           <h6 className="text-3xl font-light text-gray-600 "> </h6>
         </div>
       </div>
-      <div className="flex flex-col overflow-scroll h-140 ">
+      <div className="flex flex-col overflow-auto h-175 ">
          <section className="flex flex-row w-full max-w-94 mx-auto justify-between  items-end mb-2 ">
         <div className="flex flex-row gap-4  pt-4  relative w-44  items-center ">
           <h3 className="text-2xl font-bold ">{curentDate.month}</h3>
@@ -76,24 +84,22 @@ const Settings = () => {
           </h3>
         </div>
 
-        {/* <SelectorContainer
-          size={30}
-          options={["<", ">"]}
-          selecteOption={">"}
-          changeOtion={(icon) => changeMountToShow(icon != "<" ? ">" : "<")}
-        /> */}
         </section>
         
 
-      {settinsButtos.map((item) => (
-        <ListButtonShow key={item.title} data={item.data} title={item.title} />
-      ))}
+        <div>
+           {settinsButtos.map((item) => (
+          <ListButtonShow key={item.title} data={item.data} title={item.title} />
+           ))}
+          <p className="text-center text-gray-600 ">{version}</p>
+          <div className=" h-40  "></div>
+        </div>
      
-     {/* <ListButtonShow data={[{ name: "Delete all data", value:0, action: () => handleDelete() }]} title="Storage" /> */}
-     
-
-
-     </div>
+    
+        
+      
+        
+      </div>
     </Layout>
   );
 };

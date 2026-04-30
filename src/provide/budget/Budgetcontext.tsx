@@ -7,7 +7,7 @@ import {
   type ReactElement,
 } from "react";
 import { BudgetContext } from "./data";
-import { GoogleSheetsServicies, KEY_SERVICES,  type IServiciesDB } from "../../Services/Servicies";
+import { GoogleSheetsServicies, KEY_SERVICES,        type IServiciesDB } from "../../Services/Servicies";
 import { Transaction } from "../../Models/DataTransactions";
 
 import { useSummary, type ISummaryHomeData } from "../hooks/useSummaryTransactions";
@@ -21,33 +21,39 @@ export interface IBudgetContext {
   transactionsData: Transaction[]
   saveNewTransaction: (data: Transaction, action?: () => void) => void
   handleDelete: () => void
+  handleUpdate: () => void
   summaryHomeData: ISummaryHomeData
   currentMonthKey: string
   changeMountToShow: (action: "<" | ">") => void
+  allMonthsData:string[]
+
   global: ISummaryHomeData
   curentDate:{
     year: string,
     month: string,
   }
   validateBalance: (amount?: number) => boolean
-  validateMorgageFound: (amount?: number) => boolean
+  validateMortgageFound: (amount?: number) => boolean
   validatePaymentCard: (card: string, cuantity: number , acction:(newAmount: string)=>void) => boolean
   // setTransactionsData: Dispatch<Transaction[]>
   // setIsLoading: Dispatch<boolean>
-  currentMonthGoals:  Record<TKEY_GOALS, number>
+  currentMonthGoals: Record<TKEY_GOALS, number>
+  lastMonth: string
+  allMonthsDataSort: Record<string, ISummaryHomeData>
+  acumulateMonth: Record<string, ISummaryHomeData>
 }
 
 
   
 const goalsMonthly: TKEY_MONTHS = {
   // "2026-04": {
-  //    savingsMorgage:1400,
+  //    savingsMortgage:1400,
   //   savingsBank: 250,
   //   savingsStocks: 250,
   //   savingsCrypto: 100
   // },
   // "2026-03": {
-  //    savingsMorgage:900,
+  //    savingsMortgage:900,
   //   savingsBank: 900,
   //   savingsStocks: 950,
   //   savingsCrypto: 900
@@ -59,9 +65,12 @@ const goalsMonthly: TKEY_MONTHS = {
 export const BudgetContextProvider = ({ children }: { children: ReactElement }) => {
   const [isLoading, setIsLoading] = useState(true)
   const [transactionsData, setTransactionsData] = useState<Transaction[]>([])
-  const [currentMountIndex, setCurrentMountIndex] = useState(0)
   
-  const { global, monthly , lastMonth ,allMonthsData } = useSummary(transactionsData);
+  const { global, monthly, lastMonth, allMonthsData ,    acumulateMonth,
+ } = useSummary(transactionsData);
+  
+  const [currentMountIndex, setCurrentMountIndex] = useState(allMonthsData.findIndex((f) => f === lastMonth))
+
   
   const currentMonthKey = allMonthsData[currentMountIndex] || lastMonth
 
@@ -72,26 +81,27 @@ export const BudgetContextProvider = ({ children }: { children: ReactElement }) 
 
 
   const validateBalance = (cuantity: number = 0) => {
-    return global?.totalBalance > cuantity
+    return global?.totalBalance >= cuantity
   }
-  const validateMorgageFound = (cuantity: number = 0) => {
-    return global?.savingsMorgage > cuantity
+  const validateMortgageFound = (cuantity: number = 0) => {
+
+    return global?.savingsMortgage >= cuantity
   }
   const validatePaymentCard = (card: string, cuantity: number = 0, acction: (newAmount: string) => void): boolean => {
     
     if (card === "credit_card_blue") {
       acction(global?.totalCardBlue.toString())
-      return global?.totalCardBlue > cuantity
+      return global?.totalCardBlue >= cuantity
     } else {
       acction(global?.totalCardRed.toString())
-      return global?.totalCardRed > cuantity
+      return global?.totalCardRed >= cuantity
     }
 
    
   }
 
   
-  const dataBase = new GoogleSheetsServicies()
+  const dataBase =  new GoogleSheetsServicies() //new ServiciesLocal() //
 
   useEffect(() => {
     dataBase.getSheetData(KEY_SERVICES.TRANSACIONS).then((data) => {
@@ -103,7 +113,9 @@ export const BudgetContextProvider = ({ children }: { children: ReactElement }) 
       }
       
         
-      })
+    })
+    
+    
    
   }, [])
 
@@ -117,7 +129,15 @@ export const BudgetContextProvider = ({ children }: { children: ReactElement }) 
   }
 
   const handleDelete = () => {
+   dataBase.handleDelete({
+    sheetName: KEY_SERVICES.TRANSACIONS
+   }).then((data) => {
    
+     if (data) {
+       window.location.reload()
+      setTransactionsData([])
+    }
+   })
   }
 
   const saveNewTransaction = (data:Transaction ,action?:()=>void) => {
@@ -125,21 +145,20 @@ export const BudgetContextProvider = ({ children }: { children: ReactElement }) 
       dataBase.sendSheetDataTransaction({
       sheetName: KEY_SERVICES.TRANSACIONS,
       transaction: data
-    }).then(() => {
-      dataBase.getSheetData(KEY_SERVICES.TRANSACIONS).then((update) => {
-       setTimeout(() => {
-     
-          setTransactionsData(update)
+      }).then(() => {
+        const newTransactions = [...transactionsData, data]
+        setTransactionsData(newTransactions)
           setIsLoading(false)
         if (action) {
           action()
         }
-
-       },500)
-        
-      })
+      
     })
     return false
+  }
+
+  const handleUpdate = () => {
+    dataBase.handleUpdate(transactionsData)
   }
 
 
@@ -163,10 +182,15 @@ export const BudgetContextProvider = ({ children }: { children: ReactElement }) 
     currentMonthKey,
     curentDate, changeMountToShow,
     global, validateBalance,
-    validateMorgageFound,
+    validateMortgageFound,
     currentMonthGoals,
     validatePaymentCard,
-    handleDelete
+    handleDelete,
+    allMonthsData,
+    lastMonth,
+    allMonthsDataSort: monthly,
+    acumulateMonth,
+    handleUpdate
 
   }
 

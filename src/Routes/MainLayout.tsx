@@ -16,7 +16,8 @@ export default function MainLayout() {
         <Outlet />
      </div>
     
-      <div className="text-6xl text-red-600 absolute bottom-2 z-10 flex justify-center  w-full">
+      <div className="text-6xl  absolute bottom-2 z-10 flex justify-center  w-full ">
+        <div className="w-107.5 h-23.75   backdrop-blur-[3px]    absolute top-9 rounded-b-4xl" ></div>
          <Navbar />
     </div>
   

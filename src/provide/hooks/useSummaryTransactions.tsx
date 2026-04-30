@@ -7,7 +7,7 @@ import type { Transaction } from "../../Models/DataTransactions";
 // ─────────────────────────────────────────
 
 export type TKEY_SUMMARY =
-  | "savingsMorgage"
+  | "savingsMortgage"
   | "savingsBank"
   | "savingsStocks"
   | "savingsCrypto"
@@ -25,7 +25,7 @@ export interface ISummaryHomeData {
   totalCardRed: number;
   totalCardBlue: number;
   totalCheckingAccount: number;
-  savingsMorgage: number;
+  savingsMortgage: number;
   savingsBank: number;
   savingsStocks: number;
   savingsCrypto: number;
@@ -39,11 +39,12 @@ type MonthlySummary = Record<string, ISummaryHomeData>;
 // ─────────────────────────────────────────
 
 export const validateSavingDataToShow: TKEY_SUMMARY[] = [
-  "savingsMorgage",
+  "savingsMortgage",
   "savingsBank",
   "savingsStocks",
   "savingsCrypto",
 ];
+
 export function useSummary(transactions: Transaction[]) {
   // 🔹 create empty summary
   const createEmptySummary = (): ISummaryHomeData => ({
@@ -53,7 +54,7 @@ export function useSummary(transactions: Transaction[]) {
     totalCardRed: 0,
     totalCardBlue: 0,
     totalCheckingAccount: 0,
-    savingsMorgage: 0,
+    savingsMortgage: 0,
     savingsBank: 0,
     savingsStocks: 0,
     savingsCrypto: 0,
@@ -66,7 +67,7 @@ export function useSummary(transactions: Transaction[]) {
       savings: 0,
       credit_card_payment: 0,
       other: 0,
-      morgage: 0,
+      mortgage: 0,
       stocks: 0,
       crypto: 0,
       checking: 0,
@@ -75,6 +76,32 @@ export function useSummary(transactions: Transaction[]) {
       house: 0,
     },
   });
+
+  // 🔹 merge two summaries into one (suma campo a campo)
+  const mergeSummaries = (
+    a: ISummaryHomeData,
+    b: ISummaryHomeData
+  ): ISummaryHomeData => {
+    const categories = Object.keys(a.databyCatefory) as Category[];
+    const databyCatefory = {} as Record<Category, number>;
+    categories.forEach((cat) => {
+      databyCatefory[cat] = a.databyCatefory[cat] + b.databyCatefory[cat];
+    });
+
+    return {
+      totalBalance:         a.totalBalance         + b.totalBalance,
+      totalIncome:          a.totalIncome          + b.totalIncome,
+      totalExpenses:        a.totalExpenses         + b.totalExpenses,
+      totalCardRed:         a.totalCardRed          + b.totalCardRed,
+      totalCardBlue:        a.totalCardBlue         + b.totalCardBlue,
+      totalCheckingAccount: a.totalCheckingAccount  + b.totalCheckingAccount,
+      savingsMortgage:       a.savingsMortgage        + b.savingsMortgage,
+      savingsBank:          a.savingsBank           + b.savingsBank,
+      savingsStocks:        a.savingsStocks         + b.savingsStocks,
+      savingsCrypto:        a.savingsCrypto         + b.savingsCrypto,
+      databyCatefory,
+    };
+  };
 
   // 🔹 apply transaction logic (your logic cleaned)
   const applyTransaction = (acc: ISummaryHomeData, t: Transaction) => {
@@ -107,11 +134,13 @@ export function useSummary(transactions: Transaction[]) {
       return;
     }
 
-    //PAY Morgage
-    if (t.type === "spending" && t.paymentMethod === "morgage") {
-      acc.savingsMorgage -= amount;
-
+    //PAY Mortgage
+    if (t.type === "credit_card_payment" && t.paymentMethod === "mortgage") {
+      acc.savingsMortgage -= amount;
       return;
+    }
+    if (acc.databyCatefory[t.category]) {
+      acc.databyCatefory[t.category] = 0
     }
 
     // SAVINGS
@@ -120,8 +149,8 @@ export function useSummary(transactions: Transaction[]) {
       acc.databyCatefory[t.category] += amount;
 
       switch (t.category) {
-        case "morgage":
-          acc.savingsMorgage += amount;
+        case "mortgage":
+          acc.savingsMortgage += amount;
           break;
         case "savings":
           acc.savingsBank += amount;
@@ -190,8 +219,23 @@ export function useSummary(transactions: Transaction[]) {
   const sortedMonths = useMemo(() => {
     return Object.keys(monthly).sort((a, b) => b.localeCompare(a));
   }, [monthly]);
+
   const allMonthsData = useMemo(() => {
     return Object.keys(monthly);
+  }, [monthly]);
+
+  // 🔹 accumulated monthly (cada mes incluye el acumulado de todos los anteriores)
+  const acumulateMonth = useMemo(() => {
+    const sorted = Object.keys(monthly).sort((a, b) => a.localeCompare(b)); // asc: ene → dic
+    const result: MonthlySummary = {};
+    let runningTotal = createEmptySummary();
+
+    sorted.forEach((key) => {
+      runningTotal = mergeSummaries(runningTotal, monthly[key]);
+      result[key] = { ...runningTotal };
+    });
+
+    return result;
   }, [monthly]);
 
   return {
@@ -201,5 +245,6 @@ export function useSummary(transactions: Transaction[]) {
     lastMonth: currentMonthKey,
     sortedMonths,
     allMonthsData,
+    acumulateMonth,
   };
 }

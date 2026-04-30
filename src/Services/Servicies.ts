@@ -29,7 +29,8 @@ export interface IServiciesDB {
   //   newSubCategorie: string;
   // }): Promise<void>;
 
-  // handleDelete({ sheetName }: { sheetName: TKEY_SERVICES }): Promise<boolean>;
+  handleUpdate(data?: Transaction[]): void;
+  handleDelete({ sheetName }: { sheetName: TKEY_SERVICES }): Promise<boolean>;
 }
 
 export class ServiciesLocal implements IServiciesDB {
@@ -61,18 +62,35 @@ export class ServiciesLocal implements IServiciesDB {
       resolve(true);
     });
   }
+
+  handleUpdate(data?: Transaction[]): void {
+    if (!data) return;
+    const db = new GoogleSheetsServicies();
+    data.map((f) => {
+      db.sendSheetDataTransaction({
+        sheetName: KEY_SERVICES.TRANSACIONS,
+        transaction: f,
+      });
+    });
+  }
 }
 
 export class GoogleSheetsServicies implements IServiciesDB {
   allData: Transaction[] = [];
   constructor() {}
-
-  handleDelete() {}
+  handleUpdate(_: Transaction[]): void {
+    return;
+    throw new Error("Method not implemented.");
+  }
+  handleDelete(_: { sheetName: TKEY_SERVICES }): Promise<boolean> {
+    return new Promise((resolve) => {
+      resolve(false);
+    });
+  }
 
   async getSheetData(sheetName: string) {
     try {
       const url = `${settings.url}?sheetName=${encodeURIComponent(sheetName)}`;
-
       const response = await fetch(url);
 
       if (!response.ok) throw new Error("Network response was not ok");

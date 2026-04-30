@@ -7,6 +7,8 @@ import BudgetHome from "../components/BudgetHome";
 import AddNewTransactions from "../components/AddNewTransactions";
 import AllTransactions from "../components/AllTransactions";
 import Settings from "../components/Settings";
+import ShowGrap from "../components/ShowGrap";
+import{ Layout }from "../UI/Layout";
 
 
 export const router = createBrowserRouter([
@@ -36,29 +38,17 @@ export const router = createBrowserRouter([
         path: "settings",
         element: <Settings />,
       },
+      {
+        path: "graph",
+        element: <ShowGrap />,
+        }
     ],
   },
   {
     path: "*",
-    element: <p>404</p>,
+    element: <Layout>404</Layout>,
   },
 ]);
 
 
 
-
-// export const Router = () => {
-//   return (
-//     <main
-//     onTuchMove={e => e.preventDefault()} 
-//       className="w-107.5 h-200  border  flex flex-col relative z-0 ">
-      
-//     <Routes>
-//       {routes.map((route) => (
-//         <Route key={route.path} path={route.path} element={route.element} />
-//       ))}
-//       </Routes>
-//        <Navbar/>
-//       </main>
-//   );
-// }

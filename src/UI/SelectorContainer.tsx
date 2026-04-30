@@ -12,8 +12,8 @@ const SelectorContainer = ({
   const rows = chunkArray(options, 4);
 
   const getTitle = (type: string) => {
-    if (type === "credit_card_blue") return "blue card";
-    if (type === "credit_card_red") return "red card";
+    if (type === "credit_card_blue") return "blue C.";
+    if (type === "credit_card_red") return "red C.";
     return type;
   };
 
