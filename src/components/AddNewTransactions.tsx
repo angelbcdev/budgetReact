@@ -16,7 +16,7 @@ import { useBudgetContext } from "../provide/budget";
 import { Transaction } from "../Models/DataTransactions";
 import SelectorContainer from "../UI/SelectorContainer";
 
-interface ITransaction {
+export  interface ITransaction {
   title: string | null;
   description: string;
   date: Date;
@@ -615,6 +615,27 @@ const Keyboard = ({
   const handleSubmit = () => {
     createTransaction();
   };
+  useEffect(()=>{
+
+    const evenListener = (e:any)=>{
+      if (keyBoard.includes(e.key)){
+        validateInput(e.key)
+      }
+      if(e.key == "Enter"){
+        handleSubmit()
+      }
+       if(e.key == "Backspace"){
+        validateInput("<")
+      }
+     
+    }
+    document.addEventListener("keydown",evenListener)
+
+    return()=>{
+    
+      document.removeEventListener("keydown", evenListener)
+    }
+  },[])
 
   const validateInput = (key: string) => {
     triggerAnimation();
