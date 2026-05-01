@@ -11,46 +11,52 @@ import { allCategoryAvailable, paymentMethodAvailable, typeTransactionAvailable,
 
 interface IMultiTrnsaction {
     amount: string;
-  category: Category;
-  type: TransactionType;
-  paymentMethod: PaymentMethod;
+  category: Category | "";
+  type: TransactionType| "";
+  paymentMethod: PaymentMethod | "";
   title: string | null;
   description: string;
+  isReaddy:boolean;
 }
 
 const emptyData:IMultiTrnsaction={
     amount:"",
     title:"",
     description:"",
-    category:"other",
-    type:"spending",
-    paymentMethod:"credit_card_blue",
+    category:"",
+    type:"",
+    paymentMethod: "",//"credit_card_blue",
+    isReaddy:false
   
 }
 //TODO:ITransaction
 const MultiTransactions = ()=>{
     const minRow = 2
     const [numberTransactions , setNumberTransactions] = useState(minRow)
-    const [allNewsTransactions , setAllNewTransactions] = useState<IMultiTrnsaction[]>(new Array(minRow).fill(emptyData))
+    const [allNewsTransactions , setAllNewTransactions] = useState<IMultiTrnsaction[]>(
+  Array.from({ length: minRow }, () => ({ ...emptyData })));
     const maxRow = 10
     
 
-    const handleRows =(action:"+"|"-")=>{
-        const isAdd = action == "+"
-        if (isAdd && numberTransactions + 1 <= maxRow){
-            setNumberTransactions( numberTransactions + 1 )
-            setAllNewTransactions([...allNewsTransactions , emptyData])
-            return
-        }
-         if (!isAdd && numberTransactions - 1 >= minRow){
-            const oldData = [...allNewsTransactions]
-            oldData.pop()
-            setAllNewTransactions(oldData)
-            setNumberTransactions( numberTransactions - 1 )
-            return
-        }
-          
+    const handleRows = (action: "+" | "-") => {
+  setAllNewTransactions((prev) => {
+    if (action === "+" && prev.length < maxRow) {
+      return [...prev, { ...emptyData }];
     }
+
+    if (action === "-" && prev.length > minRow) {
+      return prev.slice(0, -1);
+    }
+
+    return prev;
+  });
+
+  setNumberTransactions((prev) => {
+    if (action === "+" && prev < maxRow) return prev + 1;
+    if (action === "-" && prev > minRow) return prev - 1;
+    return prev;
+  });
+};
    
 
     const createMultipleTransactions = ()=>{
@@ -74,9 +80,15 @@ const MultiTransactions = ()=>{
                 <section className="flex  flex-col   pb-10 gap-2 overflow-y-auto rounded-xl h-120  ">
                 <div className="bg-white rounded-md px-4">
                     {
-                    new Array(numberTransactions).fill(0).map((_,i)=>(
-                       <RowNewTransactions {...{allNewsTransactions , setAllNewTransactions}} key={crypto.randomUUID()} positionInList={i}/>
-                    ))
+                   allNewsTransactions.map((dataRow, i) => (
+                        <RowNewTransactions
+                            key={i}
+                            dataRow={dataRow}
+                            positionInList={i}
+                            
+                            setAllNewTransactions={setAllNewTransactions}
+                        />
+                        ))
                      }
               
                 </div>
@@ -97,46 +109,73 @@ const MultiTransactions = ()=>{
 }
 
 
-export default MultiTransactions 
 
 
 
 
-//   date: Date; [X]
-//   subcategory: Subcategory[]; [X] leave empty
-
-// 
 
 
-const RowNewTransactions = ({positionInList ,allNewsTransactions , setAllNewTransactions}:
-    {positionInList:number, allNewsTransactions:IMultiTrnsaction[] , setAllNewTransactions:React.Dispatch<React.SetStateAction<IMultiTrnsaction[]>>}) => {
-   
+
+const RowNewTransactions = ({positionInList , setAllNewTransactions ,dataRow}:
+    { dataRow:IMultiTrnsaction, positionInList:number , setAllNewTransactions:React.Dispatch<React.SetStateAction<IMultiTrnsaction[]>>}) => {
+
+
+    const [localStateReady , setLocalStateReady] = useState(false)
     
+  const onChange = (e: React.ChangeEvent<any>) => {
+  const { name, value } = e.target;
+
+  setAllNewTransactions((prev) => {
+    const copy = [...prev];
+
+    // ✅ apply change first
+    const updatedRow = {
+      ...copy[positionInList],
+      [name]: value,
+    };
+
+    // ✅ validate using updated data
+    const isReady =
+      updatedRow.amount !== "" &&
+      updatedRow.title !== "" &&
+      updatedRow.category !== "" &&
+      updatedRow.paymentMethod !== "";
+
+    // ✅ store result
+    copy[positionInList] = {
+      ...updatedRow,
+      isReaddy: isReady,
+    };
+
+    // ❌ don't do side effects here
+
+    return copy;
+  });
+};
     
-    const onChange=(index:number ,e)=>{
-            console.log(index)
-            console.log(e.target.name)
-    }
     
     return (
-        <div className="border-b border-black/10 h-40 gap-3 w-82 flex flex-col py-2">
-            
+        <div className="border-b border-black/10 h-40 gap-3 w-82 flex flex-col py-2 relative">
+            <span className="absolute -right-5 top-0" >{dataRow.isReaddy ? "OK" :"x"}</span>
             <div className="flex  gap-2">
                 <p className=" w-12 text-3xl font-bold text-center pt-3">{positionInList + 1}</p>
-               <MyInputText positionInList={positionInList} onChange={onChange} name="title"/>
-               <MyInputText positionInList={positionInList}  onChange={onChange} name="description"/>
+               <MyInputText  onChange={onChange} name="title"/>
+               <MyInputText   onChange={onChange} name="description"/>
             </div> 
             <div className="flex  gap-2">
-                <MySelector positionInList={positionInList} onChange={onChange} data={typeTransactionAvailable} name="type"/> 
-                <MySelector positionInList={positionInList} onChange={onChange} data={paymentMethodAvailable}  name="paymentMethod"/>
-                <MySelector positionInList={positionInList} onChange={onChange} data={allCategoryAvailable}  name="category"/>
+                <MySelector onChange={onChange} data={typeTransactionAvailable} name="type"/> 
+                <MySelector  onChange={onChange} data={paymentMethodAvailable}  name="paymentMethod"/>
+                <MySelector onChange={onChange} data={allCategoryAvailable}  name="category"/>
                  
             </div> 
             <div className=" flex flex-row  justify-between h-40  items-end relative">
                     <span></span>
                 <label className="flex gap-4">
                     <p>Amount:</p>
-                    <input className="border border-gray-400 w-27 px-2" placeholder="$10,000.00" type="number"/>
+                    <input 
+                    name="amount"
+                    onChange={onChange}
+                    className="border border-gray-400 w-27 px-2" placeholder="$10,000.00" type="number"/>
                 </label>
             </div>
         </div>
@@ -148,7 +187,7 @@ const RowNewTransactions = ({positionInList ,allNewsTransactions , setAllNewTran
 
 
 
-const MySelector = ({positionInList, name, data ,onChange }: { positionInList:number, name: string; data: string[] , onChange:(i:number, e:any)=>void}) => {
+const MySelector = ({ name, data ,onChange }: {  name: string; data: string[] , onChange:( e:any)=>void}) => {
   const [value, setValue] = useState("");
 
   return (
@@ -164,14 +203,12 @@ const MySelector = ({positionInList, name, data ,onChange }: { positionInList:nu
       name={name}
         value={value}
         onChange={(e) =>{ 
-            onChange(positionInList,e)
+            onChange(e)
             setValue(e.target.value);}}
         className="border border-gray-300 w-26 px-1"
       >
-        <option value=""  >
-          
-        </option>
-
+      
+            <option></option>
         {data.map((selectOption) => (
           <option key={crypto.randomUUID()} value={selectOption}>
             {selectOption}
@@ -183,7 +220,7 @@ const MySelector = ({positionInList, name, data ,onChange }: { positionInList:nu
 };
 
 
-const MyInputText = ({name ,positionInList ,onChange }:{positionInList:number, name:string ,onChange:(i:number, e:any)=>void})=>{
+const MyInputText = ({name ,onChange }:{ name:string ,onChange:( e:any)=>void})=>{
 
     return(     
     <label className="flex flex-col gap-1  relative group">
@@ -191,14 +228,17 @@ const MyInputText = ({name ,positionInList ,onChange }:{positionInList:number, n
             pointer-events-none text-gray-500
             
             group-focus-within:-top-px text-xs group-focus-within:text-blue-500 group-focus-within:bg-white">
-            {name}ee
+            {name}
         </span>
         <input 
         name={name}
-              onChange={(e)=>onChange(positionInList,e)}  
+              onChange={(e)=>onChange(e)}  
             className="border-gray-300 border rounded-sm h-6 w-34 bg-transparent px-2 py-1 outline-none focus:border-blue-500" 
             type="text" 
            
         />
     </label>)
 }
+
+
+export default MultiTransactions 
