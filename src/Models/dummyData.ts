@@ -4,24 +4,10 @@ export type TransactionType =
   | "credit_card_payment"
   | "income";
 
-export const TRANSACTION_TYPE_META: Record<
-  TransactionType,
-  { label: string; fill: string }
-> = {
-  spending: { label: "Spending", fill: "#ef4444" },
-  credit_card_payment: { label: "CC Payment", fill: "#a855f7" },
-  saving: { label: "Saving", fill: "#3b82f6" },
-  income: { label: "Income", fill: "#22c55e" },
-};
+;
 
 export type SavingsMethod = "mortgage" | "savings" | "stocks" | "crypto";
 
-export type PaymentMethod =
-  | "checking"
-  | "credit_card_blue"
-  | "credit_card_red"
-  | "paycheck"
-  | "mortgage";
 
 export type Category =
   | "food"
@@ -41,11 +27,77 @@ export type Category =
   | "credit_card_red"
   | "house";
 
+export type PaymentMethod =
+  | "checking"
+  | "credit_card_blue"
+  | "credit_card_red"
+  | "paycheck"
+  | "mortgage";
+
+export type TallTypeCategory =  Category |TransactionType  |PaymentMethod | SavingsMethod
+interface TCategory_Meta {
+  icon:string;
+  bg:string
+  label:string
+}
+const formatLabel = (key: string) =>
+  key.replaceAll("_", " ").replace(/\b\w/g, c => c.toUpperCase());
+
+const createMeta = (key: TallTypeCategory, icon: string, bg: string): TCategory_Meta => ({
+  icon,
+  bg,
+  label: formatLabel(key),
+});
+
+
+export const CATEGORY_META: Record<TallTypeCategory, TCategory_Meta> = {
+  checking: createMeta("checking", "💵", "#22c55e"),
+  credit_card_red: createMeta("credit_card_red", "💳", "#ef4444"),
+  credit_card_blue: createMeta("credit_card_blue", "💳", "#3b82f6"),
+  paycheck: createMeta("paycheck", "💼", "#16a34a"),
+ mortgage: createMeta("mortgage", "🏠", "#3b82f6"),
+
+  food: createMeta("food", "🍔", "#f97316"),
+  transport: createMeta("transport", "🚗", "#3b82f6"),
+  drinks: createMeta("drinks", "🍹", "#ec4899"),
+  bills: createMeta("bills", "💸", "#eab308"),
+  amazon: createMeta("amazon", "📦", "#ec4899"),
+  savings: createMeta("savings", "💰", "#22c55e"),
+  credit_card_payment: createMeta("credit_card_payment", "💳", "#a855f7"),
+ 
+  stocks: createMeta("stocks", "📉", "#22c55e"),
+  
+  crypto: createMeta("crypto", "₿", "#22c55e"),
+  house: createMeta("house", "🏠", "#3b82f6"),
+  other: createMeta("other", "❓", "#9ca3af"),
+  spending: createMeta("spending", "💸", "#f97316"),
+saving: createMeta("saving", "💰", "#22c55e"),
+income: createMeta("income", "💵", "#16a34a"),
+
+
+};
+
+
+export function getCategoryMeta(category: TallTypeCategory):TCategory_Meta {
+  if (CATEGORY_META[category]){
+  return CATEGORY_META[category];
+}else{
+ return {icon:"",
+  bg:"",
+  label:""}
+}
+}
+
+
+
 export const typeTransactionAvailable: TransactionType[] = [
   "spending",
   "saving",
   "credit_card_payment",
 ];
+
+
+
 export const fliterCategoryAvailable: Category[] = [
   "food",
   "transport",
@@ -69,28 +121,15 @@ export const paymentMethodAvailable: PaymentMethod[] = [
   "checking",
 ];
 
-export const CATEGORY_META = {
-  food: { icon: "🍔", bg: "bg-orange-100", fill: "#f97316" },
-  transport: { icon: "🚗", bg: "bg-blue-100", fill: "#3b82f6" },
-  drinks: { icon: "🍹", bg: "bg-pink-100", fill: "#ec4899" },
-  bills: { icon: "💸", bg: "bg-yellow-100", fill: "#eab308" },
-  amazon: { icon: "📦", bg: "bg-pink-100", fill: "#ec4899" },
-  savings: { icon: "💰", bg: "bg-green-100", fill: "#22c55e" },
-  credit_card_payment: { icon: "💳", bg: "bg-purple-100", fill: "#a855f7" },
-  health: { icon: "💊", bg: "bg-green-100", fill: "#22c55e" },
-  entertainment: { icon: "🎬", bg: "bg-purple-100", fill: "#a855f7" },
-  utilities: { icon: "💡", bg: "bg-yellow-100", fill: "#eab308" },
-  shopping: { icon: "🛍️", bg: "bg-pink-100", fill: "#ec4899" },
-  other: { icon: "❓", bg: "bg-gray-100", fill: "#9ca3af" },
-  mortgage: { icon: "🏠", bg: "bg-blue-100", fill: "#3b82f6" },
-  stocks: { icon: "📉", bg: "bg-green-100", fill: "#22c55e" },
-  credit_card_red: { icon: "💳", bg: "bg-red-100", fill: "#ef4444" },
-  credit_card_blue: { icon: "💳", bg: "bg-blue-100", fill: "#3b82f6" },
-  checking: { icon: "💵", bg: "bg-green-100", fill: "#22c55e" },
-  crypto: { icon: "₿", bg: "bg-green-100", fill: "#22c55e" },
-  house: { icon: "🏠", bg: "bg-blue-100", fill: "#3b82f6" },
-  default: { icon: "💰", bg: "bg-gray-100", fill: "#9ca3af" },
-};
+export const TRANSACTION_TYPE_META: Record<
+  TransactionType,
+  { label: string; fill: string }
+> = {
+  spending: { label: "Spending", fill: "#ef4444" },
+  credit_card_payment: { label: "CC Payment", fill: "#a855f7" },
+  saving: { label: "Saving", fill: "#3b82f6" },
+  income: { label: "Income", fill: "#22c55e" },
+}
 
 export const TYPE_META = {
   spending: { label: "Spending", fill: "#ef4444" },

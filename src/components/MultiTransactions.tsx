@@ -90,9 +90,9 @@ const RowNewTransactions = () => {
                <MyInputText name="description"/>
             </div> 
             <div className="flex  gap-2">
-                <MySelector/>
-                <MySelector/>
-                <MySelector/>
+                <MySelector  name="category"/>
+                <MySelector name="type"/>
+                <MySelector name="paymentMethod"/>
             </div>
             <div className=" flex  items-center bg-red-300">
                 <label>
@@ -106,13 +106,24 @@ const RowNewTransactions = () => {
 
 }
 
-const MySelector =()=>{
+
+
+const MySelector =({name}:{name:string})=>{
     return(
-        <select className="border border-gray-300 w-26 px-1">
+        <section className="flex gap-2 relative group">
+            <span className="absolute left-2 text-sm transition-all duration-200  
+                        pointer-events-none text-gray-500
+                        top-1/2 -translate-y-1/2 
+                        group-focus-within:-top-px group-focus-within:text-xs group-focus-within:text-blue-500 group-focus-within:bg-white">
+                        {name}
+                    </span>
+        <select  className="border border-gray-300 w-26 px-1">
+             <option value="" disabled hidden></option>
                     <option>1</option>
                     <option>2</option>
                     <option>3</option>
         </select>
+        </section>
     )
 }
 
