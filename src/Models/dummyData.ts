@@ -3,6 +3,17 @@ export type TransactionType =
   | "saving"
   | "credit_card_payment"
   | "income";
+
+export const TRANSACTION_TYPE_META: Record<
+  TransactionType,
+  { label: string; fill: string }
+> = {
+  spending: { label: "Spending", fill: "#ef4444" },
+  credit_card_payment: { label: "CC Payment", fill: "#a855f7" },
+  saving: { label: "Saving", fill: "#3b82f6" },
+  income: { label: "Income", fill: "#22c55e" },
+};
+
 export type SavingsMethod = "mortgage" | "savings" | "stocks" | "crypto";
 
 export type PaymentMethod =

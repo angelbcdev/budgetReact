@@ -10,6 +10,8 @@ import { useBudgetContext } from "../provide/budget";
 import type { Transaction } from "../Models/DataTransactions";
 import SelectorContainer from "../UI/SelectorContainer";
 import { BiToogleButton } from "../UI/DataShowListCategory";
+import { VALID_ROUTES } from "../Routes/routes";
+import { useNavigate } from "react-router";
 
 const extraFilters = ["mortgage", "Spend", "Earn", "Saved"];
 const AllTransactions = () => {
@@ -24,7 +26,7 @@ const AllTransactions = () => {
     month: "long",
   });
   const [filterByMonth, setFilterByMonth] = useState(true);
-
+  const navigate = useNavigate(); 
   const dataForTransactions = transactionsData; //.filter(t => fliterCategoryAvailable.includes(t.category));
 
   const makeFilter = (): Transaction[] => {
@@ -79,6 +81,10 @@ const AllTransactions = () => {
       inputRer.current.value = "";
     }
   };
+
+   const manualNavigation = (data: Transaction) => {
+      navigate(VALID_ROUTES.Details ,{ state: { transaction: data } }) 
+    }
 
   return (
     <Layout>
@@ -172,6 +178,7 @@ const AllTransactions = () => {
                         key={txn.id}
                         className="flex items-center gap-3 py-1 px-4"
                         onClick={() => {
+                          manualNavigation(txn)
                           console.log(txn);
                         }}
                       >
@@ -236,7 +243,7 @@ const AllTransactions = () => {
                         </div>
 
                         {/* chevron */}
-                        {/* <span className="text-gray-300 text-lg">›</span> */}
+                        <span className="text-gray-300 text-lg">›</span>
                       </div>
                     );
                   })}

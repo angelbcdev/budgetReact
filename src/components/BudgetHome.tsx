@@ -9,6 +9,7 @@ import { validateSavingDataToShow, type TKEY_SUMMARY } from "../provide/hooks/us
 import { DataShowListCategory } from "../UI/DataShowListCategory";
 import {  useNavigate } from "react-router";
 import { VALID_ROUTES } from "../Routes/routes";
+import BlurContainer from "../UI/BlurContainer";
 
 
 
@@ -129,11 +130,11 @@ const BudgetHome = () => {
 
 
         <section className="flex flex-col gap-4  h-125 overflow-scroll   relative ">
-          {/* backdrop-blur-[3px]  */}
-          <div className="w-98 h-2   backdrop-blur-[3px]     fixed  " ></div>
+        
+          <BlurContainer size={10}   />
           {/* Cash Flow */}
         <section>
-          <div className="mt-4 " >
+          <div className="" >
             <p className="text-xl text-gray-800 font-md pl-2 ">Cash Flow  </p>
             <div className="flex flex-row gap-2 justify-center pt-2 ">
               {

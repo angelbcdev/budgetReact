@@ -8,6 +8,7 @@ export const VALID_ROUTES = {
   "History": "/transactions",
   "Settings": "/settings",
   "Graph": "/graph",
+  "Details": "/transactionsDetails",
 }
 
 export const routes = [
@@ -33,8 +34,8 @@ export const routes = [
     icon: allIcons.gear,
   },
   //  {
-  //   name: "Graph",
-  //   path: VALID_ROUTES.Graph,
+  //   name: "transactions",
+  //   path: VALID_ROUTES.Details,
   //   icon: allIcons.wallet,
   // },
 ];

@@ -3,6 +3,7 @@ import { useBudgetContext } from "../provide/budget";
 import type { TKEY_GOALS } from "../provide/interfaces";
 
 import { Layout } from "../UI/Layout";
+import HeatherView from "../UI/HeatherView";
 
 
 const Settings = () => {
@@ -56,7 +57,7 @@ const Settings = () => {
             handleDelete()
           },
         },{
-          name: "Update data",
+          name: "Save Backup",
           value: 0,
           action: () => {
             handleBackup()
@@ -68,12 +69,7 @@ const Settings = () => {
 
   return (
     <Layout>
-      <div className="sticky top-0  bg-white p-4 ">
-        <div className="flex flex-row gap-4 pl-2 pt-4  relative  items-center  ">
-          <h3 className="text-3xl font-bold ">Settings</h3>
-          <h6 className="text-3xl font-light text-gray-600 "> </h6>
-        </div>
-      </div>
+     <HeatherView title="Settings" />
       <div className="flex flex-col overflow-auto h-175 ">
          <section className="flex flex-row w-full max-w-94 mx-auto justify-between  items-end mb-2 ">
         <div className="flex flex-row gap-4  pt-4  relative w-44  items-center ">

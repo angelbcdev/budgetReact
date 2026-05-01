@@ -9,6 +9,7 @@ import AllTransactions from "../components/AllTransactions";
 import Settings from "../components/Settings";
 import ShowGrap from "../components/ShowGrap";
 import{ Layout }from "../UI/Layout";
+import TransationsDetailsView from "../components/TransationsDetailsView";
 
 
 export const router = createBrowserRouter([
@@ -41,7 +42,15 @@ export const router = createBrowserRouter([
       {
         path: "graph",
         element: <ShowGrap />,
-        }
+      },
+      {
+        path: "transactionsDetails",
+        element: <TransationsDetailsView />,
+      },
+      {
+        path: "*",
+        element: <Layout>404</Layout>,
+      }
     ],
   },
   {

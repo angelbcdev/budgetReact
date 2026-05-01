@@ -36,7 +36,7 @@ export interface IServiciesDB {
 
 export class ServiciesLocal implements IServiciesDB {
   constructor() {}
-  handleUpdate(id: string): void {
+  handleUpdate(_: string): void {
     throw new Error("Method not implemented.");
   }
   handleDelete({ sheetName }: { sheetName: TKEY_SERVICES }): Promise<boolean> {
@@ -83,7 +83,7 @@ export class ServiciesLocal implements IServiciesDB {
 export class GoogleSheetsServicies implements IServiciesDB {
   allData: Transaction[] = [];
   constructor() {}
-  handleUpdate(id: string): void {
+  handleUpdate(_: string): void {
     throw new Error("Method not implemented.");
   }
   handleBackup(_: Transaction[]): void {
