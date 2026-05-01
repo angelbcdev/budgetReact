@@ -3,6 +3,7 @@ import HeatherView from "../UI/HeatherView";
 import { useRef, useState } from "react";
 import { allIcons } from "../UI/allIicons";
 import type { ITransaction } from "./AddNewTransactions";
+import { allCategoryAvailable, paymentMethodAvailable } from "../Models/dummyData";
 
 
 
@@ -90,9 +91,10 @@ const RowNewTransactions = () => {
                <MyInputText name="description"/>
             </div> 
             <div className="flex  gap-2">
-                <MySelector  name="category"/>
-                <MySelector name="type"/>
-                <MySelector name="paymentMethod"/>
+                <MySelector name="type"/> 
+                <MySelector data={paymentMethodAvailable}  name="Pay"/>
+                <MySelector data={allCategoryAvailable}  name="category"/>
+                 
             </div>
             <div className=" flex  items-center bg-red-300">
                 <label>
@@ -108,24 +110,36 @@ const RowNewTransactions = () => {
 
 
 
-const MySelector =({name}:{name:string})=>{
-    return(
-        <section className="flex gap-2 relative group">
-            <span className="absolute left-2 text-sm transition-all duration-200  
-                        pointer-events-none text-gray-500
-                        top-1/2 -translate-y-1/2 
-                        group-focus-within:-top-px group-focus-within:text-xs group-focus-within:text-blue-500 group-focus-within:bg-white">
-                        {name}
-                    </span>
-        <select  className="border border-gray-300 w-26 px-1">
-             <option value="" disabled hidden></option>
-                    <option>1</option>
-                    <option>2</option>
-                    <option>3</option>
-        </select>
-        </section>
-    )
-}
+const MySelector = ({ name, data }: { name: string; data: string[] }) => {
+  const [value, setValue] = useState("");
+
+  return (
+    <section className="flex flex-col gap-1  relative group">
+      <span className=" 2 text-sm transition-all duration-200  
+        pointer-events-none text-gray-500
+        
+        group-focus-within:-top-px text-xs group-focus-within:text-blue-500 group-focus-within:bg-white">
+        {name}
+      </span>
+
+      <select
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        className="border border-gray-300 w-26 px-1"
+      >
+        <option value="" disabled hidden>
+          Select...
+        </option>
+
+        {data.map((selectOption) => (
+          <option key={selectOption} value={selectOption}>
+            {selectOption}
+          </option>
+        ))}
+      </select>
+    </section>
+  );
+};
 
 
 const MyInputText = ({name}:{name:string})=>{

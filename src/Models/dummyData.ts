@@ -27,6 +27,25 @@ export type Category =
   | "credit_card_red"
   | "house";
 
+  export const allCategoryAvailable: Category[] = [
+  "food"
+  , "transport"
+  , "drinks"
+  , "bills"
+  , "amazon"
+  , "savings"
+  , "credit_card_payment"
+  , "other"
+  , "mortgage"
+  , "savings"
+  , "stocks"
+  , "crypto"
+  , "checking"
+  , "credit_card_blue"
+  , "credit_card_red"
+  , "house"
+];
+
 export type PaymentMethod =
   | "checking"
   | "credit_card_blue"
@@ -82,9 +101,9 @@ export function getCategoryMeta(category: TallTypeCategory):TCategory_Meta {
   if (CATEGORY_META[category]){
   return CATEGORY_META[category];
 }else{
- return {icon:"",
+ return {icon:"?",
   bg:"",
-  label:""}
+  label:"no added"}
 }
 }
 
@@ -113,6 +132,13 @@ export const savingsMethodAvailable: SavingsMethod[] = [
   "stocks",
   "crypto",
 ];
+
+
+
+
+
+
+
 
 export const paymentMethodAvailable: PaymentMethod[] = [
   "mortgage",
@@ -244,3 +270,5 @@ export type Subcategory =
   | "bravo_market"
   | "walmart"
   | "other";
+
+  
