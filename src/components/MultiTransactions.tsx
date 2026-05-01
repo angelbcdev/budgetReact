@@ -94,6 +94,11 @@ const RowNewTransactions = () => {
                 <MySelector/>
                 <MySelector/>
             </div>
+            <div className=" flex  items-center bg-red-300">
+                <label>
+                    <input className="border border-gray-400" type="number"/>
+                </label>
+            </div>
         </div>
     );
 
