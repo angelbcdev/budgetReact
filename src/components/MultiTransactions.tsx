@@ -10,7 +10,7 @@ import { allCategoryAvailable, paymentMethodAvailable, typeTransactionAvailable,
 
 
 interface IMultiTrnsaction {
-      amount: string;
+    amount: string;
   category: Category;
   type: TransactionType;
   paymentMethod: PaymentMethod;
@@ -18,20 +18,39 @@ interface IMultiTrnsaction {
   description: string;
 }
 
-
-
+const emptyData:IMultiTrnsaction={
+    amount:"",
+    title:"",
+    description:"",
+    category:"other",
+    type:"spending",
+    paymentMethod:"credit_card_blue",
+  
+}
+//TODO:ITransaction
 const MultiTransactions = ()=>{
     const [numberTransactions , setNumberTransactions] = useState(4)
-    const [allNewsTransactions , setAllNewTransactions] = useState<ITransaction[]>([])
+    const [allNewsTransactions , setAllNewTransactions] = useState<IMultiTrnsaction[]>([emptyData , emptyData])
     const maxRow = 10
     const minRow = 2
 
-    const handleAddRow =()=>{
-            setNumberTransactions(numberTransactions + 1 <= maxRow ? numberTransactions + 1 :  numberTransactions)
+    const handleRows =(action:"+"|"-")=>{
+        const isAdd = action == "+"
+        if (isAdd && numberTransactions + 1 <= maxRow){
+            setNumberTransactions( numberTransactions + 1 )
+            setAllNewTransactions([...allNewsTransactions , emptyData])
+            return
+        }
+         if (!isAdd && numberTransactions - 1 >= minRow){
+            const oldData = [...allNewsTransactions]
+            oldData.pop()
+            setAllNewTransactions(oldData)
+            setNumberTransactions( numberTransactions - 1 )
+            return
+        }
+          
     }
-    const handleDeleteRow =()=>{
-        setNumberTransactions(numberTransactions - 1 >= minRow ? numberTransactions - 1 :  numberTransactions)
-    }
+   
 
     const createMultipleTransactions = ()=>{
         console.log(allNewsTransactions)
@@ -46,8 +65,8 @@ const MultiTransactions = ()=>{
                         <input  type="date"/>
                     </label>
                     <div className="border w-20 flex p-px rounded-md text-gray-600 gap-px bg-gray-400">
-                        <button onClick={handleAddRow} className="w-1/2 bg-gray-100 rounded-l-sm" >{"+"}</button>
-                        <button onClick={handleDeleteRow} className="w-1/2 bg-gray-100 rounded-r-sm" >{"-"}</button>
+                        <button onClick={()=> handleRows("+")} className="w-1/2 bg-gray-100 rounded-l-sm" >{"+"}</button>
+                        <button onClick={()=> handleRows("-")} className="w-1/2 bg-gray-100 rounded-r-sm" >{"-"}</button>
                     </div>
                     
                 </section>
