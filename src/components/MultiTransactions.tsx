@@ -1,6 +1,6 @@
 import {Layout} from "../UI/Layout";
 import HeatherView from "../UI/HeatherView";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { allIcons } from "../UI/allIicons";
 import type { ITransaction } from "./AddNewTransactions";
 
@@ -31,7 +31,7 @@ const MultiTransactions = ()=>{
         <Layout>
             <HeatherView title="Multi Transactions" />
             <section className="pt-4 max-w-94 flex flex-col gap-4 justify-center  mx-auto  ">
-                <section className="flex   rounded-md px-4 py-2 gap-2 justify-between bg-white border border-blue-400 ">
+                <section className="flex   rounded-md px-4 py-2 gap-2 justify-between bg-white  ">
                     <p>{numberTransactions}/{maxRow} </p>
                     <label className="border rounded px-1 shadow-sm bg-white">
                         <input  type="date"/>
@@ -41,7 +41,7 @@ const MultiTransactions = ()=>{
                         <button onClick={handleDeleteRow} className="w-1/2 bg-gray-100 rounded-r-sm" >{"-"}</button>
                     </div>
                 </section>
-                <section className="flex bg-white flex-col rounded-md px-4 py-2 gap-2 overflow-y-scroll h-105 ">
+                <section className="flex bg-white flex-col rounded-md px-4 py-2 gap-2 overflow-scroll  max-h-100">
                 {
                     new Array(numberTransactions).fill(0).map((_,i)=>(
                        <RowNewTransactions key={i}/>
@@ -70,19 +70,62 @@ export default MultiTransactions
 
 
 // 
-//   title: string | null;
-//   description: string;
-//   date: Date;
+//   title: string | null;[X]
+//   description: string;[X]
+//   date: Date; [X]
 //   amount: string;
 //   category: Category;
 //   type: TransactionType;
 //   paymentMethod: PaymentMethod;
-//   subcategory: Subcategory[];
+//   subcategory: Subcategory[]; [X] leave empty
 // 
 
 
-const RowNewTransactions = ()=>{
+const RowNewTransactions = () => {
+   
+    return (
+        <div className="border-b border-black/10 h-30 gap-3 flex flex-col pt-2">
+            <div className="flex  gap-2">
+               <MyInputText name="title"/>
+               <MyInputText name="description"/>
+            </div> 
+            <div className="flex  gap-2">
+                <MySelector/>
+                <MySelector/>
+                <MySelector/>
+            </div>
+        </div>
+    );
+
+
+
+}
+
+const MySelector =()=>{
     return(
-            <div className="border-b border-black/10 h-20 " >hellos</div>
+        <select className="border border-gray-300 w-26 px-1">
+                    <option>1</option>
+                    <option>2</option>
+                    <option>3</option>
+        </select>
     )
+}
+
+
+const MyInputText = ({name}:{name:string})=>{
+
+    return(     <label className="flex gap-2 relative group">
+                    <span className="absolute left-2 text-sm transition-all duration-200  
+                        pointer-events-none text-gray-500
+                        top-1/2 -translate-y-1/2 
+                        group-focus-within:-top-px group-focus-within:text-xs group-focus-within:text-blue-500 group-focus-within:bg-white">
+                        {name}
+                    </span>
+                    <input 
+                         
+                        className="border-gray-300 border rounded-md h-6 w-34 bg-transparent px-2 py-1 outline-none focus:border-blue-500" 
+                        type="text" 
+                        name="title"
+                    />
+                </label>)
 }
