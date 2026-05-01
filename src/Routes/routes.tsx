@@ -33,6 +33,11 @@ export const routes = [
     path: VALID_ROUTES.Settings,
     icon: allIcons.gear,
   },
+  {
+    name: "multi",
+    path: "/test",
+    icon: allIcons.wallet,
+  },
   //  {
   //   name: "transactions",
   //   path: VALID_ROUTES.Details,
