@@ -74,7 +74,7 @@ const MultiTransactions = ()=>{
                 <div className="bg-white rounded-md px-4">
                     {
                     new Array(numberTransactions).fill(0).map((_,i)=>(
-                       <RowNewTransactions key={crypto.randomUUID()} positionInList={i}/>
+                       <RowNewTransactions {...{allNewsTransactions , setAllNewTransactions}} key={crypto.randomUUID()} positionInList={i}/>
                     ))
                      }
               
@@ -107,22 +107,30 @@ export default MultiTransactions
 // 
 
 
-const RowNewTransactions = ({positionInList}:{positionInList:number}) => {
+const RowNewTransactions = ({positionInList ,allNewsTransactions , setAllNewTransactions}:
+    {positionInList:number, allNewsTransactions:IMultiTrnsaction[] , setAllNewTransactions:React.Dispatch<React.SetStateAction<IMultiTrnsaction[]>>}) => {
    
+    
+    
+    const onChange=(index:number ,e)=>{
+            console.log(index)
+            console.log(e.target.name)
+    }
+    
     return (
         <div className="border-b border-black/10 h-40 gap-3 w-82 flex flex-col py-2">
             
             <div className="flex  gap-2">
                 <p className=" w-12 text-3xl font-bold text-center pt-3">{positionInList + 1}</p>
-               <MyInputText name="title"/>
-               <MyInputText name="description"/>
+               <MyInputText positionInList={positionInList} onChange={onChange} name="title"/>
+               <MyInputText positionInList={positionInList}  onChange={onChange} name="description"/>
             </div> 
-            <div className="flex  gap-2">
-                <MySelector data={typeTransactionAvailable} name="type"/> 
-                <MySelector data={paymentMethodAvailable}  name="Pay"/>
-                <MySelector data={allCategoryAvailable}  name="category"/>
+            {/* <div className="flex  gap-2">
+                <MySelector positionInList={positionInList} onChange={onChange} data={typeTransactionAvailable} name="type"/> 
+                <MySelector onChange={onChange} data={paymentMethodAvailable}  name="paymentMethod"/>
+                <MySelector onChange={onChange} data={allCategoryAvailable}  name="category"/>
                  
-            </div> 
+            </div>  */}
             <div className=" flex flex-row  justify-between h-40  items-end relative">
                     <span></span>
                 <label className="flex gap-4">
@@ -139,7 +147,7 @@ const RowNewTransactions = ({positionInList}:{positionInList:number}) => {
 
 
 
-const MySelector = ({ name, data }: { name: string; data: string[] }) => {
+const MySelector = ({ name, data ,onChange }: { positionInList:number, name: string; data: string[] , onChange:(i:number, e:any)=>void}) => {
   const [value, setValue] = useState("");
 
   return (
@@ -153,7 +161,9 @@ const MySelector = ({ name, data }: { name: string; data: string[] }) => {
 
       <select
         value={value}
-        onChange={(e) => setValue(e.target.value)}
+        onChange={(e) =>{ 
+            onChange(0,e)
+            setValue(e.target.value);}}
         className="border border-gray-300 w-26 px-1"
       >
         <option value=""  >
@@ -171,7 +181,7 @@ const MySelector = ({ name, data }: { name: string; data: string[] }) => {
 };
 
 
-const MyInputText = ({name}:{name:string})=>{
+const MyInputText = ({name ,positionInList ,onChange }:{positionInList:number, name:string ,onChange:(i:number, e:any)=>void})=>{
 
     return(     
     <label className="flex flex-col gap-1  relative group">
@@ -179,13 +189,14 @@ const MyInputText = ({name}:{name:string})=>{
             pointer-events-none text-gray-500
             
             group-focus-within:-top-px text-xs group-focus-within:text-blue-500 group-focus-within:bg-white">
-            {name}
+            {name}ee
         </span>
         <input 
-                
+        name={name}
+              onChange={(e)=>onChange(positionInList,e)}  
             className="border-gray-300 border rounded-sm h-6 w-34 bg-transparent px-2 py-1 outline-none focus:border-blue-500" 
             type="text" 
-            name="title"
+           
         />
     </label>)
 }
