@@ -29,10 +29,11 @@ const emptyData:IMultiTrnsaction={
 }
 //TODO:ITransaction
 const MultiTransactions = ()=>{
-    const [numberTransactions , setNumberTransactions] = useState(4)
-    const [allNewsTransactions , setAllNewTransactions] = useState<IMultiTrnsaction[]>([emptyData , emptyData])
-    const maxRow = 10
     const minRow = 2
+    const [numberTransactions , setNumberTransactions] = useState(minRow)
+    const [allNewsTransactions , setAllNewTransactions] = useState<IMultiTrnsaction[]>(new Array(minRow).fill(emptyData))
+    const maxRow = 10
+    
 
     const handleRows =(action:"+"|"-")=>{
         const isAdd = action == "+"
@@ -125,12 +126,12 @@ const RowNewTransactions = ({positionInList ,allNewsTransactions , setAllNewTran
                <MyInputText positionInList={positionInList} onChange={onChange} name="title"/>
                <MyInputText positionInList={positionInList}  onChange={onChange} name="description"/>
             </div> 
-            {/* <div className="flex  gap-2">
+            <div className="flex  gap-2">
                 <MySelector positionInList={positionInList} onChange={onChange} data={typeTransactionAvailable} name="type"/> 
-                <MySelector onChange={onChange} data={paymentMethodAvailable}  name="paymentMethod"/>
-                <MySelector onChange={onChange} data={allCategoryAvailable}  name="category"/>
+                <MySelector positionInList={positionInList} onChange={onChange} data={paymentMethodAvailable}  name="paymentMethod"/>
+                <MySelector positionInList={positionInList} onChange={onChange} data={allCategoryAvailable}  name="category"/>
                  
-            </div>  */}
+            </div> 
             <div className=" flex flex-row  justify-between h-40  items-end relative">
                     <span></span>
                 <label className="flex gap-4">
@@ -147,7 +148,7 @@ const RowNewTransactions = ({positionInList ,allNewsTransactions , setAllNewTran
 
 
 
-const MySelector = ({ name, data ,onChange }: { positionInList:number, name: string; data: string[] , onChange:(i:number, e:any)=>void}) => {
+const MySelector = ({positionInList, name, data ,onChange }: { positionInList:number, name: string; data: string[] , onChange:(i:number, e:any)=>void}) => {
   const [value, setValue] = useState("");
 
   return (
@@ -160,9 +161,10 @@ const MySelector = ({ name, data ,onChange }: { positionInList:number, name: str
       </span>
 
       <select
+      name={name}
         value={value}
         onChange={(e) =>{ 
-            onChange(0,e)
+            onChange(positionInList,e)
             setValue(e.target.value);}}
         className="border border-gray-300 w-26 px-1"
       >
