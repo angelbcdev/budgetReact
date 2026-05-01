@@ -121,11 +121,6 @@ const RowDataShow = ({title ,data}: {title: string , data: {name: string, value:
         }
       </div>
 
-
-
-         
-
-
     </div>
   )
 }

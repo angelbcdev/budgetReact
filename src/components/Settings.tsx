@@ -6,7 +6,7 @@ import { Layout } from "../UI/Layout";
 
 
 const Settings = () => {
-  const { changeMountToShow, curentDate, currentMonthGoals, handleDelete , handleUpdate } =
+  const { changeMountToShow, curentDate, currentMonthGoals, handleDelete , handleBackup } =
     useBudgetContext();
   const version = "Version 1.0.0";
 
@@ -59,7 +59,7 @@ const Settings = () => {
           name: "Update data",
           value: 0,
           action: () => {
-            handleUpdate()
+            handleBackup()
           },
         },
       ]

@@ -7,6 +7,7 @@ export const settings = {
   url: import.meta.env.VITE_SHEET,
   password: import.meta.env.VITE_PASSWORD,
   email: import.meta.env.VITE_EMAIL,
+  isDev: import.meta.env.VITE_IS_DEV,
 };
 
 export async function getSheetData(sheetName: string) {

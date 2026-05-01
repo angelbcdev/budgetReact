@@ -13,7 +13,7 @@ const SelectorMultipleUI = ({
   
  
   return (
-    <div className=" grid grid-cols-6  bg-gray-200 rounded-md shadow-inner-md px-2">
+    <div className=" grid grid-cols-6  bg-gray-400 rounded-md shadow-inner-md p-px">
       {monthSoported.map((type) => {
 
        const ajustDate = `${year}-${type}`
@@ -26,14 +26,14 @@ const SelectorMultipleUI = ({
           <button
             key={type}
             onClick={() => selectCurrentType(ajustDate)}
-            className={`px-2 py-1 w-flex text-sm rounded-md ${isSelected ? "bg-white text-red-600" : "text-gray-700"}    transition-all ease-in duration-100 capitalize `}
+            className={`px-2 py-1 w-flex text-sm rounded-md ${isSelected ? "bg-white text-red-600" : "text-gray-700  bg-gray-500"}    transition-all ease-in duration-100 capitalize `}
           >
             {type}
           </button>
         )
           
         } else {
-          return <span className="px-2 capitalize  text-center py-1 w-flex text-sm rounded-md text-gray-300">{type }</span>
+          return <span className="px-2 capitalize  text-center py-1 w-flex text-sm rounded-md text-gray-500  ">{type }</span>
         }
         
 

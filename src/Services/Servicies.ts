@@ -29,12 +29,16 @@ export interface IServiciesDB {
   //   newSubCategorie: string;
   // }): Promise<void>;
 
-  handleUpdate(data?: Transaction[]): void;
+  handleBackup(data?: Transaction[]): void;
+  handleUpdate(id: string): void;
   handleDelete({ sheetName }: { sheetName: TKEY_SERVICES }): Promise<boolean>;
 }
 
 export class ServiciesLocal implements IServiciesDB {
   constructor() {}
+  handleUpdate(id: string): void {
+    throw new Error("Method not implemented.");
+  }
   handleDelete({ sheetName }: { sheetName: TKEY_SERVICES }): Promise<boolean> {
     return new Promise((resolve) => {
       localStorage.removeItem(sheetName);
@@ -44,7 +48,8 @@ export class ServiciesLocal implements IServiciesDB {
 
   getSheetData(sheetName: TKEY_SERVICES): Promise<any> {
     return new Promise((resolve) => {
-      resolve(JSON.parse(localStorage.getItem(sheetName) || "[]"));
+      const data = JSON.parse(localStorage.getItem(sheetName) || "[]");
+      resolve(data.map((f: any) => new Transaction(f)));
     });
   }
   async sendSheetDataTransaction({
@@ -63,7 +68,7 @@ export class ServiciesLocal implements IServiciesDB {
     });
   }
 
-  handleUpdate(data?: Transaction[]): void {
+  handleBackup(data?: Transaction[]): void {
     if (!data) return;
     const db = new GoogleSheetsServicies();
     data.map((f) => {
@@ -78,7 +83,10 @@ export class ServiciesLocal implements IServiciesDB {
 export class GoogleSheetsServicies implements IServiciesDB {
   allData: Transaction[] = [];
   constructor() {}
-  handleUpdate(_: Transaction[]): void {
+  handleUpdate(id: string): void {
+    throw new Error("Method not implemented.");
+  }
+  handleBackup(_: Transaction[]): void {
     return;
     throw new Error("Method not implemented.");
   }
@@ -110,6 +118,7 @@ export class GoogleSheetsServicies implements IServiciesDB {
     sheetName: string;
     transaction: Transaction;
   }) {
+    console.log(transaction);
     const payload = {
       sheetName,
       ...transaction.toSheetRow(), // ← this might be the problem
