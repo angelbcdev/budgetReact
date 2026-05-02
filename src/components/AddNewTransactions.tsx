@@ -15,6 +15,11 @@ import { allIcons } from "../UI/allIicons";
 import { useBudgetContext } from "../provide/budget";
 import { Transaction } from "../Models/DataTransactions";
 import SelectorContainer from "../UI/SelectorContainer";
+import { HeathersTransactions } from "./addNewTransactions/HeatherTransactions";
+import { Keyboard } from "./addNewTransactions/Keyboard";
+import { TypeSelectorButtons } from "./addNewTransactions/TypeSelectorButtons";
+import { ModalAddTitle } from "./addNewTransactions/ModalAddTitle";
+import { BalanceNotification } from "./addNewTransactions/BalanceNotification";
 
 export  interface ITransaction {
   title: string | null;
@@ -25,6 +30,16 @@ export  interface ITransaction {
   type: TransactionType;
   paymentMethod: PaymentMethod;
   subcategory: Subcategory[];
+
+}
+
+export interface IBalanceNotification {
+    show: boolean;
+    message: string;
+    color: {
+        text: string;
+        bg: string;
+    };
 }
 
 const AddNewTransactions = () => {
@@ -38,7 +53,7 @@ const AddNewTransactions = () => {
     fliterCategoryAvailable,
   );
   const [lastDate, setLastDate] = useState<string>("");
-  const [balanceNotification, setBalanceNotification] = useState({
+  const [balanceNotification, setBalanceNotification] = useState<IBalanceNotification>({
     show: false,
     message: "",
     color: {
@@ -296,25 +311,16 @@ const AddNewTransactions = () => {
 
   return (
     <Layout>
-      {balanceNotification.show && (
-        <div
-          onClick={() => setBalanceNotification({ show: false, message: "" , color: { text: "", bg: "" }})}
-          className="fixed top-0 left-0 w-screen h-screen flex z-80 justify-center items-center bg-black/50"
-        >
-          <div style={{ color: balanceNotification.color.text , backgroundColor: balanceNotification.color.bg  }} className={`text-md  absolute top-44 rounded-md  shadow-2xl fade-in w-90  z-20 py-2 left-10 flex justify-center uppercase `}>
-            {" "}
-            {balanceNotification.message}
-          </div>
-        </div>
-      )}
-      {showModal && (
-        <Modal
+      <BalanceNotification {...{balanceNotification, setBalanceNotification}}/>
+  
+        <ModalAddTitle
+        showModal={showModal}
           setShowModal={setShowModal}
           defaultCategory={defaultCategory as Category}
           dataTransaction={dataTransaction}
           setDataTransaction={setDataTransaction}
         />
-      )}
+
 
       <div className="flex flex-col gap-4  bg-white relative  items-center   py-4 ">
         <h3 className="text-xl font-bold ">New Transaction</h3>
@@ -339,7 +345,7 @@ const AddNewTransactions = () => {
             </button>
           )}
         </div>
-        <TypeTransaction
+        <TypeSelectorButtons
           selectCurrentType={selectCurrentType}
           defaultTypeTransaction={defaultTypeTransaction}
         />
@@ -371,410 +377,7 @@ const AddNewTransactions = () => {
 
 export default AddNewTransactions;
 
-const Modal = ({
-  setShowModal,
-  setDataTransaction,
-  defaultCategory,
-  dataTransaction,
-}: {
-  setDataTransaction: React.Dispatch<React.SetStateAction<ITransaction>>;
-  setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
-  defaultCategory: Category;
-  dataTransaction: ITransaction;
-}) => {
-  const inputRef = useRef<HTMLInputElement>(null);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const buttonRef = useRef<HTMLButtonElement>(null);
 
-  useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
+;
 
-  const addValue = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    const value = e.target.value;
-    const name = e.target.name;
-    setDataTransaction((data) => ({ ...data, [name]: value + 1 }));
-  };
-  const addSubcategory = (newSubcategory: string) => {
-    if (dataTransaction.subcategory.includes(newSubcategory as Subcategory)) {
-      setDataTransaction((data) => ({
-        ...data,
-        subcategory: data.subcategory.filter(
-          (sub: Subcategory) => sub !== newSubcategory,
-        ),
-      }));
-    } else {
-      setDataTransaction((data) => ({
-        ...data,
-        subcategory: [...data.subcategory, newSubcategory as Subcategory],
-      }));
-    }
-  };
 
-  return (
-    <div
-      onClick={() => setShowModal(false)}
-      className="fixed inset-0 bg-black/50 z-50 flex px-4"
-    >
-      {/* FORM */}
-      <form
-        onClick={(e) => e.stopPropagation()}
-        className="bg-white rounded-3xl p-4 w-100 max-w-md h-115  max-h-140 relative top-4"
-        onSubmit={(e) => {
-          e.preventDefault();
-          buttonRef.current?.click(); // trigger done
-        }}
-      >
-        {/* HEADER */}
-        <div className="flex justify-between items-center mb-2">
-          <p className="text-2xl font-bold">Add Note for {defaultCategory}</p>
-
-          <button
-            type="button"
-            onClick={() => setShowModal(false)}
-            className="bg-gray-200 rounded-full w-8 h-8 flex items-center justify-center"
-          >
-            {allIcons.cancel}
-          </button>
-        </div>
-
-        {/* INPUTS */}
-        <div className="flex flex-col gap-2">
-          {/* TITLE */}
-          <input
-            ref={inputRef}
-            className="w-full h-10 text-base bg-gray-100 rounded-lg p-3 outline-none"
-            placeholder="Title"
-            name="title"
-            onChange={addValue}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                textareaRef.current?.focus(); // 👉 jump to textarea
-              }
-            }}
-          />
-
-          {/* TEXTAREA */}
-          <textarea
-            ref={textareaRef}
-            className="w-full h-30 text-base bg-gray-100 rounded-lg p-3 outline-none"
-            placeholder="Add a note..."
-            name="description"
-            onChange={addValue}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                buttonRef.current?.click(); // 👉 trigger Done
-              }
-            }}
-          />
-        </div>
-        <div
-          onClick={(e) => e.stopPropagation()}
-          className="flex w-full  flex-col gap-4     items-start   pt-2 "
-        >
-          <p className="text-lg font-semibold ">Other categories</p>
-        </div>
-
-        {/* BUTTON */}
-        <button
-          ref={buttonRef}
-          onClick={() => setShowModal(false)}
-          type="submit"
-          className="mt-4 bg-blue-600 h-13 w-full text-white rounded-lg text-base font-semibold"
-        >
-          Done
-        </button>
-        <div className="grid grid-cols-3 h-22 gap-1 pt-3   overflow-scroll">
-          {subCateriesAvailable[defaultCategory as Category].map((category) => {
-            return (
-              <div
-                onClick={() => addSubcategory(category)}
-                key={category}
-                className={`${dataTransaction.subcategory.includes(category) ? "bg-green-600 text-white " : "bg-gray-200"}
-                      flex flex-row gap-1.5  text-[13px] font-semibold relative  h-8  items-center justify-center    min-w-24 text  rounded-full py-1 px-3 `}
-              >
-                {category}
-              </div>
-            );
-          })}
-        </div>
-      </form>
-    </div>
-  );
-};
-
-const TypeTransaction = ({
-  selectCurrentType,
-  defaultTypeTransaction,
-}: {
-  selectCurrentType: (type: TransactionType) => void;
-  defaultTypeTransaction: TransactionType;
-}) => {
-  return (
-    <div className="flex flex-row  justify-between bg-gray-200 rounded-md shadow-inner-md p-px">
-      {typeTransactionAvailable.map((type) => {
-        let title = "";
-        if (type === "credit_card_payment") {
-          title = "Payment";
-        } else {
-          title = type;
-        }
-        const isSelected = defaultTypeTransaction === type;
-
-        return (
-          <button
-            key={type}
-            onClick={() => selectCurrentType(type)}
-            className={`px-2 py-1 w-22 rounded-md ${isSelected ? "bg-white text-red-600" : "text-gray-700"}    transition-all ease-in duration-100 capitalize `}
-          >
-            {title}
-          </button>
-        );
-      })}
-    </div>
-  );
-};
-
-const Keyboard = ({
-  createTransaction,
-  dataTransaction,
-  setDataTransaction,
-  triggerAnimation,
-}: {
-  triggerAnimation: () => void;
-  createTransaction: () => void;
-  dataTransaction: ITransaction;
-  setDataTransaction: React.Dispatch<React.SetStateAction<ITransaction>>;
-}) => {
-  const keyBoard = ["1", "2", "3", "4", "5", "6", "7", "8", "9", ".", "0", "<"];
-
-  const isReadyToSubmit =
-    Number(dataTransaction.amount || 0) > 0 && dataTransaction.title !== "";
-
-  const normalize = (value: string) => {
-    if (
-      !value ||
-      value === "." ||
-      value === "0." ||
-      value === "" ||
-      value === "0.0"
-    ) {
-      return "0.00";
-    }
-    return value;
-  };
-
-  const handleNumber = (key: string) => {
-    setDataTransaction((data) => {
-      let value = data.amount || "";
-
-      if (value === "0.00") value = "";
-
-      const [int, dec] = value.split(".");
-
-      // limit integer digits (max 4 → 9999)
-      if (!value.includes(".") && int.length >= 5) return data;
-
-      // limit decimals (max 2)
-      if (value.includes(".") && dec?.length >= 2) return data;
-
-      value += key;
-
-      return { ...data, amount: value };
-    });
-  };
-
-  const handleDot = () => {
-    setDataTransaction((data) => {
-      let value = data.amount || "";
-
-      if (value.includes(".")) return data;
-
-      if (value === "" || value === "0.00") value = "0";
-
-      return { ...data, amount: value + "." };
-    });
-  };
-
-  const handleDelete = () => {
-    setDataTransaction((data) => {
-      let value = data.amount || "";
-
-      value = value.slice(0, -1);
-
-      value = normalize(value);
-
-      return { ...data, amount: value };
-    });
-  };
-
-  const handleSubmit = () => {
-    createTransaction();
-  };
-  useEffect(()=>{
-
-    const evenListener = (e:any)=>{
-      if (keyBoard.includes(e.key)){
-        validateInput(e.key)
-      }
-      if(e.key == "Enter"){
-        handleSubmit()
-      }
-       if(e.key == "Backspace"){
-        validateInput("<")
-      }
-     
-    }
-    document.addEventListener("keydown",evenListener)
-
-    return()=>{
-    
-      document.removeEventListener("keydown", evenListener)
-    }
-  },[])
-
-  const validateInput = (key: string) => {
-    triggerAnimation();
-    switch (key) {
-      case ".":
-        handleDot();
-        break;
-      case "<":
-        handleDelete();
-        break;
-      default:
-        handleNumber(key);
-    }
-  };
-
-  return (
-    <div className="flex flex-col bg-white gap-1 justify-center items-center pt-4 px-3">
-      {/* DISPLAY */}
-      {/* <div className="text-sm font-semibold  text-red-500">
-     // ${Number(dataTransaction.amount || 0).toFixed(2)}
-    
-       
-      </div> */}
-
-      {/* KEYBOARD */}
-      <div className="grid grid-cols-3 gap-2">
-        {keyBoard.map((key) => (
-          <button
-            key={key}
-            onClick={() => validateInput(key)}
-            className="h-14 w-28 flex items-center justify-center bg-gray-200 rounded-md text-lg font-semibold shadow active:bg-gray-400 active:scale-95 transition-all ease-in duration-100"
-          >
-            {key === "<" ? "⌫" : key}
-          </button>
-        ))}
-      </div>
-
-      {/* ACTION */}
-      <button
-        disabled={!isReadyToSubmit}
-        onClick={handleSubmit}
-        className={`mt-2  h-10 w-60 ${isReadyToSubmit ? "bg-blue-400 active:bg-blue-600 active:scale-95 text-white" : "bg-gray-200 text-gray-500"}  rounded-lg text-base font-semibold  transition-all ease-in duration-100 `}
-      >
-        Add Transaction
-      </button>
-    </div>
-  );
-};
-
-const HeathersTransactions = ({
-  setShowModal,
-  setDataTransaction,
-  dataTransaction,
-  defaultTypeTransaction,
-  lastDate
-}: {
-  lastDate: string
-  setShowModal: React.Dispatch<React.SetStateAction<boolean>>;
-  setDataTransaction: React.Dispatch<React.SetStateAction<ITransaction>>;
-  dataTransaction: ITransaction;
-  defaultTypeTransaction: string;
-}) => {
-  const selectorRef = useRef<HTMLSelectElement>(null);
-  const { validateBalance } = useBudgetContext();
-
-  const addValue = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-  ) => {
-    const value = e.target.value;
-    const name = e.target.name;
-
-    const dataFormat = new Date(value).toISOString().split("T")[0];
-   
-    setDataTransaction((data) => ({
-      ...data,
-      [name]: name === "date" ? dataFormat : value,
-    }));
-  };
-  const canSelectMethod = defaultTypeTransaction === "spending";
-  return (
-    <div className="flex flex-col gap-4 justify-center relative  items-center w-full max-w-94 mx-auto     rounded-2xl p-1 px-3 ">
-      <div className="flex flex-row gap-2 items-center justify-center ">
-        <label
-          className={`px-2  ${!canSelectMethod ? "w-88 ml-3" : "w-54"} py-1 flex flex-row gap-2 items-center justify-center rounded-md bg-white text-gray-700    capitalize `}
-        >
-          <input
-           
-            placeholder="Date"
-  
-            defaultValue={ lastDate.length > 0 ? lastDate :  new Date().toISOString().split("T")[0]}
-            type="date"
-            name="date"
-            onChange={addValue}
-          ></input>
-        </label>
-        {canSelectMethod ? (
-          <label>
-            <select
-              ref={selectorRef}
-              defaultValue={dataTransaction.paymentMethod}
-              title="category"
-              name="paymentMethod"
-              onChange={addValue}
-              className="w-32 px-4 border-gray-300 bg-white  h-8 border rounded"
-            >
-              {paymentMethodAvailable.map((method) => {
-                let tilte = "";
-                if (method === "credit_card_blue") {
-                  tilte = "Card Blue";
-                } else if (method === "credit_card_red") {
-                  tilte = "Card Red";
-                } else {
-                  tilte = method;
-                }
-                if (method === "mortgage") return;
-
-                if (method === "checking" && !validateBalance()) {
-                  return;
-                }
-
-                return (
-                  <option key={method} value={method}>
-                    {tilte}
-                  </option>
-                );
-              })}
-            </select>
-          </label>
-        ) : (
-          <div className="w-0 h-8"></div>
-        )}
-      </div>
-      <button
-        onClick={() => setShowModal(true)}
-        className="px-2 py-1 w-full flex flex-row gap-2 items-center justify-center rounded-md bg-white text-gray-700    transition-all ease-in duration-300 capitalize "
-      >
-        <span>{allIcons.note}</span>
-        Title and Description
-      </button>
-    </div>
-  );
-};
