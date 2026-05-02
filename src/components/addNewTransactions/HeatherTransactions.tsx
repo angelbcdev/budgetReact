@@ -23,9 +23,8 @@ export const HeathersTransactions = ({
   const addValue = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
-    const value = e.target.value;
-    const name = e.target.name;
-
+    const { value , name} = e.target;
+    console.log({ value , name})
     const dataFormat = new Date(value).toISOString().split("T")[0];
    
     setDataTransaction((data) => ({
@@ -44,7 +43,7 @@ export const HeathersTransactions = ({
            
             placeholder="Date"
   
-            defaultValue={ lastDate.length > 0 ? lastDate :  new Date().toISOString().split("T")[0]}
+            defaultValue={  lastDate }
             type="date"
             name="date"
             onChange={addValue}

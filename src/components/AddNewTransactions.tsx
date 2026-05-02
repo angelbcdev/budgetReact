@@ -1,10 +1,8 @@
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import {
   fliterCategoryAvailable,
   paymentMethodAvailable,
   savingsMethodAvailable,
-  subCateriesAvailable,
-  typeTransactionAvailable,
   type Category,
   type PaymentMethod,
   type Subcategory,
@@ -20,8 +18,9 @@ import { Keyboard } from "./addNewTransactions/Keyboard";
 import { TypeSelectorButtons } from "./addNewTransactions/TypeSelectorButtons";
 import { ModalAddTitle } from "./addNewTransactions/ModalAddTitle";
 import { BalanceNotification } from "./addNewTransactions/BalanceNotification";
+import { ajustDataForTransaction, emptyNewTransactions, emptyNotification, validateEnoughBalance, validateEnoughPayCreditCart, validateEnoughPayMortgage } from "./addNewTransactions/helpers";
 
-export  interface ITransaction {
+export interface ITransaction {
   title: string | null;
   description: string;
   date: Date;
@@ -34,16 +33,16 @@ export  interface ITransaction {
 }
 
 export interface IBalanceNotification {
-    show: boolean;
-    message: string;
-    color: {
-        text: string;
-        bg: string;
-    };
+  show: boolean;
+  message: string;
+  color: {
+    text: string;
+    bg: string;
+  };
 }
 
 const AddNewTransactions = () => {
-  const { saveNewTransaction, validateBalance, validatePaymentCard ,validateMortgageFound } =
+  const { saveNewTransaction, validateBalance, validatePaymentCard, validateMortgageFound } =
     useBudgetContext();
   const [defaultTypeTransaction, setDefaultTypeTransaction] =
     useState<TransactionType>("spending");
@@ -53,66 +52,42 @@ const AddNewTransactions = () => {
     fliterCategoryAvailable,
   );
   const [lastDate, setLastDate] = useState<string>("");
-  const [balanceNotification, setBalanceNotification] = useState<IBalanceNotification>({
-    show: false,
-    message: "",
-    color: {
-      text: "",
-      bg: "",
-    }
-    
-  });
+  const [balanceNotification, setBalanceNotification] = useState<IBalanceNotification>({ ...emptyNotification });
   const [animate, setAnimate] = useState(false);
 
   const [dataTransaction, setDataTransaction] = useState<ITransaction>({
-    title: defaultCategory,
-    description: "",
-    date: new Date(),
-    amount: "0",
-    category: defaultCategory,
-    type: defaultTypeTransaction,
-    paymentMethod: "credit_card_blue",
-    subcategory: [],
+    ...emptyNewTransactions({ defaultCategory, defaultTypeTransaction })
   });
 
   const triggerAnimation = () => {
-  setAnimate(true); // reset
+    setAnimate(true); // reset
     const t = setTimeout(() => {
       clearTimeout(t);
       setAnimate(false)
     }, 150);
     return () => clearTimeout(t);
-};
+  };
+  const adjustCreditCardTotalDeb = (newAmount: string) =>
+    setDataTransaction((data) => ({ ...data, amount: newAmount }))
 
-  
-  const showNotification = ({msj , color}: {msj: string, color: {text: string, bg: string}}) => {
-       setBalanceNotification({
-        show: true,
-        message: msj,
-        color: color
-      });
-      setTimeout(() => {
-        setBalanceNotification({
-          show: false,
-          message: "",
-          color: {
-            text: "",
-            bg: "",
-          },
-        });
-      }, 1200);
+  const showNotification = ({ msj, color }: { msj: string, color: { text: string, bg: string } }) => {
+    setBalanceNotification({
+      show: true,
+      message: msj,
+      color: color
+    });
+    setTimeout(() => {
+      setBalanceNotification({ ...emptyNotification });
+    }, 1200);
   }
 
 
   const createTransaction = () => {
 
 
-   //Validate Balance
-    if (
-      (dataTransaction.paymentMethod == "checking" || dataTransaction.paymentMethod == "credit_card_blue") &&
-      dataTransaction.category !== "checking" &&
-    
-      !validateBalance(Number(dataTransaction.amount))
+    //Validate Balance
+    if (validateEnoughBalance({ dataTransaction, validateBalance })
+
     ) {
       showNotification({
         msj: "Exceeded balance",
@@ -124,25 +99,13 @@ const AddNewTransactions = () => {
       return;
     }
     // Validate Payment Card
-    
-    if (
-      dataTransaction.paymentMethod == "checking" &&
-      dataTransaction.type == "credit_card_payment" &&
-      (dataTransaction.category == "credit_card_blue" ||
-        dataTransaction.category == "credit_card_red") &&
-      !validatePaymentCard(
-        dataTransaction.category,
-        Number(dataTransaction.amount),
-        (newAmount: string) =>
-          setDataTransaction((data) => ({ ...data, amount: newAmount })),
-      )
-    ) {
+
+
+    if (validateEnoughPayCreditCart({ dataTransaction, adjustCreditCardTotalDeb, validatePaymentCard })) {
       const msj =
         dataTransaction.category == "credit_card_blue"
           ? "Blue Card"
           : "Red Card";
-      
-
       showNotification({
         msj: "Exceeded balance for " + msj,
         color: {
@@ -150,7 +113,7 @@ const AddNewTransactions = () => {
           bg: "#ffb3b3"
         }
       })
-      
+
 
       return;
     }
@@ -158,9 +121,10 @@ const AddNewTransactions = () => {
     //Validate Payment Mortgage
 
     if (
-      dataTransaction.category == "mortgage" &&
-      dataTransaction.type == "credit_card_payment" &&
-      !validateMortgageFound(Number(dataTransaction.amount))) {
+      validateEnoughPayMortgage({
+        dataTransaction, validateMortgageFound
+      })
+    ) {
       showNotification({
         msj: "Mortgage not found",
         color: {
@@ -170,66 +134,15 @@ const AddNewTransactions = () => {
       })
       return
     }
-   
-   
-    
-    const validatePayMortgage =
-      dataTransaction.type == 
-"credit_card_payment" &&
-      dataTransaction.category == "mortgage" ;
-   
-    const validateIsPayCheck =
-      dataTransaction.category == "checking" &&
-      dataTransaction.type == "credit_card_payment";
-    const validatePayCreditCard =
-      dataTransaction.type == "credit_card_payment" &&
-      (dataTransaction.category == "credit_card_blue" ||
-        dataTransaction.category == "credit_card_red");
-    
-    
-    
-    const checkValidationsPayment = (): PaymentMethod => {
-      if (validatePayMortgage) {
-        return "mortgage";
-      }
-      if (validateIsPayCheck) {
-        return "paycheck";
-      }
-      if (validatePayCreditCard) {
-        return "paycheck";
-      }
-      return dataTransaction.paymentMethod;
-    };
 
-    const checkValidationTitle = (): string => {
-      if (validatePayCreditCard) {
-        return dataTransaction.category == "credit_card_blue"
-          ? "Payment Blue Card "
-          : "Payment Red Card ";
-      }
-      return dataTransaction.title || "No title";
-    };
 
-    const validateSubcategory = (): Subcategory[] => {
-      if (validatePayCreditCard) {
-        return ["payment_card"];
-      }
-      return dataTransaction.subcategory;
-    };
+    console.log({where:"1st", dataTransaction})
+    const dataForSave:Transaction = ajustDataForTransaction({dataTransaction})
 
-    const dataForSave = new Transaction({
-      id: crypto.randomUUID(),
-      title: checkValidationTitle(),
-      description: dataTransaction.description,
-      amount: Number(dataTransaction.amount),
-      date: dataTransaction.date,
-      type: dataTransaction.type,
-      category: dataTransaction.category,
-      subcategory: validateSubcategory(),
-      paymentMethod: checkValidationsPayment(),
-    });
+    console.log({where:"after", dataForSave})
+    return
 
-   
+    if (!dataForSave) return
 
     saveNewTransaction(dataForSave, () => {
       setLastDate(String(dataForSave.date));
@@ -242,16 +155,7 @@ const AddNewTransactions = () => {
       })
 
 
-      setDataTransaction({
-        title: defaultCategory,
-        description: "",
-        date: new Date(),
-        amount: "0",
-        category: defaultCategory,
-        type: defaultTypeTransaction,
-        paymentMethod: "credit_card_blue",
-        subcategory: [],
-      });
+      setDataTransaction({ ...emptyNewTransactions({ defaultCategory, defaultTypeTransaction }) });
     });
   };
 
@@ -311,29 +215,28 @@ const AddNewTransactions = () => {
 
   return (
     <Layout>
-      <BalanceNotification {...{balanceNotification, setBalanceNotification}}/>
-  
-        <ModalAddTitle
+      <BalanceNotification {...{ balanceNotification, setBalanceNotification }} />
+
+      <ModalAddTitle
         showModal={showModal}
-          setShowModal={setShowModal}
-          defaultCategory={defaultCategory as Category}
-          dataTransaction={dataTransaction}
-          setDataTransaction={setDataTransaction}
-        />
+        setShowModal={setShowModal}
+        defaultCategory={defaultCategory as Category}
+        dataTransaction={dataTransaction}
+        setDataTransaction={setDataTransaction}
+      />
 
 
       <div className="flex flex-col gap-4  bg-white relative  items-center   py-4 ">
         <h3 className="text-xl font-bold ">New Transaction</h3>
         <div className="flex flex-row gap-4 items-center justify-center transition-all ease-in duration-300 ">
           <p
-            className={`  transition-all text-5xl font-light text-gray-600  ${
-              animate ? "scale-101 opacity-90 pr-px rotate-1" : "scale-100 opacity-100"
-            }`}
+            className={`  transition-all text-5xl font-light text-gray-600  ${animate ? "scale-101 opacity-90 pr-px rotate-1" : "scale-100 opacity-100"
+              }`}
           >
             $ {Number(dataTransaction.amount || 0).toFixed(2)}
           </p>
 
-        
+
           {Number(dataTransaction.amount || 0) != 0 && (
             <button
               onClick={() =>
