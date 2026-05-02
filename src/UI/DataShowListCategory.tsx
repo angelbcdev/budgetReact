@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CATEGORY_META } from "../Models/dummyData";
+import {  getCategoryMeta, type TallTypeCategory } from "../Models/dummyData";
 import { allIcons } from "./allIicons";
 
 export const DataShowListCategory = ({ title, data, sizeScroll = 10, showSort = false, valueSort, setSortToggle }:
@@ -10,10 +10,10 @@ export const DataShowListCategory = ({ title, data, sizeScroll = 10, showSort = 
   }
   return (
     <section>
-            <div className="flex flex-row justify-between mb-2">
+            <div className="flex flex-row justify-between items-center mb-2">
         <p
           onClick={() => setShowDataWithCero(!showDataWithCero)}
-          className="text-xl text-gray-500  font-md pl-2  mb-1 bg-red-300 p-2">{title}   </p>
+          className="text-xl text-gray-500  font-md   p-1">{title}   </p>
 {/* <span className="text-gray-300 text-lg">›</span> */}
         {showSort && <BiToogleButton
           
@@ -34,10 +34,7 @@ export const DataShowListCategory = ({ title, data, sizeScroll = 10, showSort = 
                   
                   
                 }) && data.map((c) => {
-                const meta = CATEGORY_META[c.category as keyof typeof CATEGORY_META] || {
-                icon: "💳",
-                bg: "bg-gray-100",
-                };
+                const meta = getCategoryMeta(c.category as  TallTypeCategory)
                   const cuantity = c.cuantity
                   if (cuantity === 0 && !showDataWithCero) {
                     return null;
@@ -47,11 +44,12 @@ export const DataShowListCategory = ({ title, data, sizeScroll = 10, showSort = 
                       
                       <div className="flex flex-row items-center gap-2 ">
                         <div
+                        style={{backgroundColor:meta.bg + "30"}}
                     className={`w-10 h-10 flex items-center justify-center rounded-full ${meta.bg}`}
                   >
                     <span className="text-lg">{meta.icon}</span>
                         </div>
-                        <p className="pl-  ">{c.category}</p>
+                        <p className="pl- capitalize  ">{c.category}</p>
                       </div>
                       
                       

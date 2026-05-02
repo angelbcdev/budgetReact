@@ -184,7 +184,8 @@ const AllTransactions = () => {
                       >
                         {/* ICON */}
                         <div
-                          className={`w-10 h-10 flex items-center justify-center rounded-full ${meta.bg}`}
+                        style={{backgroundColor:meta.bg + "30"}}
+                          className={`w-10 h-10 flex items-center justify-center rounded-full bg-d bg- [$}d]`}
                         >
                           <span className="text-lg">{meta.icon}</span>
                         </div>

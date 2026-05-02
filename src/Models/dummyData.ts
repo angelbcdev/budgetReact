@@ -8,6 +8,14 @@ export type TransactionType =
 
 export type SavingsMethod = "mortgage" | "savings" | "stocks" | "crypto";
 
+//TODO: Add this type 
+// export type TKEY_GOALS =
+//   | "savingsMortgage"
+//   | "savingsBank"
+//   | "savingsStocks"
+//   | "savingsCrypto";
+
+
 
 export type Category =
   | "food"
@@ -54,7 +62,7 @@ export type PaymentMethod =
   | "paycheck"
   | "mortgage";
 
-export type TallTypeCategory =  Category |TransactionType  |PaymentMethod | SavingsMethod
+export type TallTypeCategory =  Category |TransactionType  |PaymentMethod | SavingsMethod 
 interface TCategory_Meta {
   icon:string;
   bg:string
@@ -75,8 +83,8 @@ export const CATEGORY_META: Record<TallTypeCategory, TCategory_Meta> = {
   credit_card_red: createMeta("credit_card_red", "💳", "#ef4444"),
   credit_card_blue: createMeta("credit_card_blue", "💳", "#3b82f6"),
   paycheck: createMeta("paycheck", "💼", "#16a34a"),
- mortgage: createMeta("mortgage", "🏠", "#3b82f6"),
-  cards_payment:createMeta("cards_payment", "💳<", "#af06d1"),
+  mortgage: createMeta("mortgage", "🏠", "#3b82f6"),
+  cards_payment: createMeta("cards_payment", "💳<", "#af06d1"),
   food: createMeta("food", "🍔", "#f97316"),
   transport: createMeta("transport", "🚗", "#3b82f6"),
   drinks: createMeta("drinks", "🍹", "#ec4899"),
@@ -84,17 +92,16 @@ export const CATEGORY_META: Record<TallTypeCategory, TCategory_Meta> = {
   amazon: createMeta("amazon", "📦", "#ec4899"),
   savings: createMeta("savings", "💰", "#22c55e"),
   credit_card_payment: createMeta("credit_card_payment", "💳", "#a855f7"),
- 
+
   stocks: createMeta("stocks", "📉", "#22c55e"),
-  
+
   crypto: createMeta("crypto", "₿", "#22c55e"),
   house: createMeta("house", "🏠", "#3b82f6"),
   other: createMeta("other", "❓", "#9ca3af"),
   spending: createMeta("spending", "💸", "#f97316"),
-saving: createMeta("saving", "💰", "#22c55e"),
-income: createMeta("income", "💵", "#16a34a"),
-
-
+  saving: createMeta("saving", "💰", "#22c55e"),
+  income: createMeta("income", "💵", "#16a34a"),
+  
 };
 
 
@@ -103,7 +110,7 @@ export function getCategoryMeta(category: TallTypeCategory):TCategory_Meta {
   return CATEGORY_META[category];
 }else{
  return {icon:"?",
-  bg:"",
+  bg:"#1d2a9b",
   label:"no added"}
 }
 }
