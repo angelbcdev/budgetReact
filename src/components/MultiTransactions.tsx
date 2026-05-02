@@ -1,11 +1,15 @@
 import { Layout } from "../UI/Layout";
 import HeatherView from "../UI/HeatherView";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 
-import { fliterCategoryAvailable,   type Category,  type TransactionType } from "../Models/dummyData";
-import { allIcons } from "../UI/allIicons";
+import { fliterCategoryAvailable,   type Category,  type PaymentMethod,  type TransactionType } from "../Models/dummyData";
 import { Transaction } from "../Models/DataTransactions";
+import { allIcons } from "../UI/allIicons";
+import { useBudgetContext } from "../provide/budget";
+import { VALID_ROUTES } from "../Routes/routes";
+import { MultipleAcctionButtons } from "./addNewTransactions/Keyboard";
+
 
 interface IMultiTrnsaction {
   amount: string;
@@ -13,25 +17,33 @@ interface IMultiTrnsaction {
   type: TransactionType | "";
   title: string | null;
   description: string;
+  paymentMethod: PaymentMethod | "";
   isReaddy: boolean;
+  id?:string 
+  date?:string
+  subcategory?:Category[]
 }
 
 const emptyData: IMultiTrnsaction = {
   amount: "",
   title: "",
+  id:"",
   description: "",
   category: "",
   type: "",
-  isReaddy: false
+  isReaddy: false,
+  paymentMethod:""
 
 }
 
 const MultiTransactions = () => {
+  const { saveMultipleTransaction } = useBudgetContext()
   const minRow = 2
   const [numberTransactions, setNumberTransactions] = useState(minRow)
   const [allNewsTransactions, setAllNewTransactions] = useState<IMultiTrnsaction[]>(
     Array.from({ length: minRow }, () => ({ ...emptyData })));
   const maxRow = 10
+  const [dateForRow, setDateForRow] = useState(new Date().toISOString().split('T')[0])
 
 
   const handleRows = (action: "+" | "-") => {
@@ -55,12 +67,39 @@ const MultiTransactions = () => {
   };
 
 
+  const ressetAllRow = ()=>{
+    
+    setAllNewTransactions([])
+    setTimeout(()=>{
+      setAllNewTransactions(Array.from({ length: minRow }, () => ({ ...emptyData })))
+    },50)
+  }
+
+
   const createMultipleTransactions = () => {
     console.log(allNewsTransactions)
-    const dataTransactions:Transaction = allNewsTransactions.map(data =>{ 
-      const newData = {...data}
+
+
+    const dataTransactions = allNewsTransactions.map(data =>{ 
+      
+      const newData = {
+        id: crypto.randomUUID(),
+        date: new Date(dateForRow),
+        title: data.title || "",
+        description: data.description,
+        amount: Number(data.amount) ,
+        category: data.category as Category,
+        type: "spending"  as TransactionType,
+        paymentMethod: data.paymentMethod as PaymentMethod,
+        subcategory: []
+      }
+
+
+
       return new Transaction(newData)
     })
+    saveMultipleTransaction(dataTransactions , ressetAllRow)
+    console.log(dataTransactions)
   }
 
   const isReadyAllRow = allNewsTransactions.every(t => t.isReaddy)
@@ -69,9 +108,19 @@ const MultiTransactions = () => {
       <HeatherView title="Multi Transactions" />
       <section className="pt-4 relative max-w-94 flex flex-col gap-4 justify-center  mx-auto  ">
         <section className="flex   rounded-md px-4 py-2 gap-2 justify-between bg-white  ">
+          <span 
+          onClick={ressetAllRow}
+          className=" size-10 bg-red-400  flex justify-center items-center rounded-full"
+          >{allIcons.trashCan}</span>
           <p>{numberTransactions}/{maxRow} </p>
           <label className="border rounded px-1 shadow-sm bg-white">
-            <input type="date" />
+            <input 
+            onChange={(e)=>{
+                setDateForRow(e.target.value)
+
+            }}
+            defaultValue={dateForRow}
+            type="date" />
           </label>
           <div className="border w-20 flex p-px rounded-md text-gray-600 gap-px bg-gray-400">
             <button onClick={() => handleRows("+")} className="w-1/2 bg-gray-100 rounded-l-sm" >{"+"}</button>
@@ -100,13 +149,18 @@ const MultiTransactions = () => {
           </div>
 
         </section>
-        <button
-          // disabled={!isReadyToSubmit}
+        {/* <button
+          // disabled={!isReadyAllRow}
           onClick={createMultipleTransactions}
           className={`mt-2 absolute -bottom-4 left-18 mx-auto h-10 w-60 ${isReadyAllRow ? "bg-blue-400 active:bg-blue-600 active:scale-95 text-white" : "bg-gray-200 text-gray-500"}  rounded-lg text-base font-semibold  transition-all ease-in duration-100 `}
         >
           Add Transaction
-        </button>
+        </button> */}
+        <div className="absolute -bottom-1 left-3  gap-2 flex ">
+
+           <MultipleAcctionButtons bt1={{title:"<",path:VALID_ROUTES.Add}} bt2={{title:"Add Transactions",action:createMultipleTransactions ,validator:isReadyAllRow}} /> 
+
+        </div>
 
 
       </section>

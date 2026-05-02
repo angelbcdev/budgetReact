@@ -1,5 +1,7 @@
 import { useEffect } from "react";
 import type { ITransaction } from "../AddNewTransactions";
+import { useNavigate } from "react-router";
+import { VALID_ROUTES } from "../../Routes/routes";
 
 export const Keyboard = ({
   createTransaction,
@@ -12,6 +14,7 @@ export const Keyboard = ({
   dataTransaction: ITransaction;
   setDataTransaction: React.Dispatch<React.SetStateAction<ITransaction>>;
 }) => {
+  
   const keyBoard = ["1", "2", "3", "4", "5", "6", "7", "8", "9", ".", "0", "<"];
 
   const isReadyToSubmit =
@@ -114,7 +117,7 @@ export const Keyboard = ({
   };
 
   return (
-    <div className="flex flex-col bg-white gap-1 justify-center items-center pt-4 px-3">
+    <div className="flex flex-col bg-white gap-1 justify-center items-center p-4 px-3">
       {/* DISPLAY */}
       {/* <div className="text-sm font-semibold  text-red-500">
      // ${Number(dataTransaction.amount || 0).toFixed(2)}
@@ -134,15 +137,49 @@ export const Keyboard = ({
           </button>
         ))}
       </div>
-
       {/* ACTION */}
-      <button
-        disabled={!isReadyToSubmit}
-        onClick={handleSubmit}
-        className={`mt-2  h-10 w-60 ${isReadyToSubmit ? "bg-blue-400 active:bg-blue-600 active:scale-95 text-white" : "bg-gray-200 text-gray-500"}  rounded-lg text-base font-semibold  transition-all ease-in duration-100 `}
-      >
-        Add Transaction
-      </button>
+      <div className="flex w-88 gap-2 mx-auto">
+
+      {/*     */}
+
+      <MultipleAcctionButtons bt1={{title:"+ 1",path:VALID_ROUTES.multiTransactions}} bt2={{title:"Add Transaction",action:handleSubmit ,validator:isReadyToSubmit}} />
+      </div>
     </div>
   );
 };
+
+export interface IActionButtons  {
+    title: string;
+
+    action?: () => void;
+    validator?:boolean
+    path?:string
+}
+
+export const MultipleAcctionButtons = ({bt1 , bt2}:{bt1:IActionButtons , bt2:IActionButtons})=>{
+  const navigate = useNavigate(); 
+
+  return(
+    <>
+    <button
+        
+        onClick={()=>{
+          navigate(bt1.path || "/")
+        }}
+        className={`mt-2  h-10 w-28 bg-blue-400 active:bg-blue-600 active:scale-95 text-white  rounded-lg text-base font-semibold  transition-all ease-in duration-100 `}
+      >
+       { bt1.title}
+      </button>
+
+
+      <button
+        disabled={!bt2.validator}
+        onClick={bt2.action}
+        className={`mt-2  h-10 w-58 ${bt2.validator ? "bg-blue-400 active:bg-blue-600 active:scale-95 text-white" : "bg-gray-200 text-gray-500"}  rounded-lg text-base font-semibold  transition-all ease-in duration-100 `}
+      >
+         { bt2.title}
+      </button>
+    
+    </>
+  )
+}

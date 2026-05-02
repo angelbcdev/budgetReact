@@ -11,6 +11,7 @@ import ShowGrap from "../components/ShowGrap";
 import{ Layout }from "../UI/Layout";
 import TransationsDetailsView from "../components/TransationsDetailsView";
 import MultiTransactions from "../components/MultiTransactions"
+import { VALID_ROUTES } from "./routes";
 
 export const router = createBrowserRouter([
   {
@@ -48,7 +49,7 @@ export const router = createBrowserRouter([
         element: <TransationsDetailsView />,
       },
       {
-        path: "/test",
+        path: VALID_ROUTES.multiTransactions,
         element: <MultiTransactions />,
       },
       {

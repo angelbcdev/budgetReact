@@ -27,7 +27,7 @@ export interface IBudgetContext {
   currentMonthKey: string
   changeMountToShow: (action: "<" | ">") => void
   allMonthsData:string[]
-
+  saveMultipleTransaction:(data:Transaction[] ,action?:()=>void)=>void
   global: ISummaryHomeData
   curentDate:{
     year: string,
@@ -140,6 +140,28 @@ export const BudgetContextProvider = ({ children }: { children: ReactElement }) 
     }
    })
   }
+  const saveMultipleTransaction = (data:Transaction[] ,action?:()=>void) => {
+    setIsLoading(true)
+    let timeForSend = 0
+
+    for (let i = 0 ; i < data.length ; i++){
+         dataBase.sendSheetDataTransaction({
+      sheetName: KEY_SERVICES.TRANSACIONS,
+      transaction: data[i]
+      }).then(() => {
+        timeForSend++
+        if (timeForSend <= data.length){
+          const newTransactions = [...transactionsData, ...data]
+        setTransactionsData(newTransactions)
+          setIsLoading(false)
+        if (action) {
+          action()
+        }
+        }
+      
+    })
+    }
+  }
 
   const saveNewTransaction = (data:Transaction ,action?:()=>void) => {
     setIsLoading(true)
@@ -192,7 +214,7 @@ export const BudgetContextProvider = ({ children }: { children: ReactElement }) 
     lastMonth,
     allMonthsDataSort: monthly,
     acumulateMonth,
-    handleBackup
+    handleBackup,saveMultipleTransaction
 
   }
 

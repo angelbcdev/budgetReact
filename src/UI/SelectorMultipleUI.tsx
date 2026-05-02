@@ -33,7 +33,7 @@ const SelectorMultipleUI = ({
         )
           
         } else {
-          return <span className="px-2 capitalize  text-center py-1 w-flex text-sm rounded-md text-gray-500  ">{type }</span>
+          return <span key={type} className="px-2 capitalize  text-center py-1 w-flex text-sm rounded-md text-gray-500  ">{type }</span>
         }
         
 

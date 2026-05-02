@@ -9,6 +9,7 @@ export const VALID_ROUTES = {
   "Settings": "/settings",
   "Graph": "/graph",
   "Details": "/transactionsDetails",
+  "multiTransactions":"/multiTransactions"
 }
 
 export const routes = [
@@ -33,11 +34,11 @@ export const routes = [
     path: VALID_ROUTES.Settings,
     icon: allIcons.gear,
   },
-  {
-    name: "multi",
-    path: "/test",
-    icon: allIcons.wallet,
-  },
+  // {
+  //   name: "multi",
+  //   path: "/multiTransactions",
+  //   icon: allIcons.wallet,
+  // },
   //  {
   //   name: "transactions",
   //   path: VALID_ROUTES.Details,
