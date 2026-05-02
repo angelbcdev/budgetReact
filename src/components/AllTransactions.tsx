@@ -283,6 +283,7 @@ const paymentLabels: Record<PaymentMethod, string> = {
   paycheck: "Paycheck",
   checking: "Checking",
   mortgage: "Mortgage Account",
+  cards_payment: "Card payment"
 };
 
 function formatAmount(n: number) {

@@ -1,7 +1,7 @@
 import {Layout} from "../UI/Layout";
 import HeatherView from "../UI/HeatherView";
 import { useLocation, useNavigate } from "react-router";
-import { useBudgetContext } from "../provide/budget";
+
 import { TRANSACTION_TYPE_META } from "../Models/dummyData";
 import type { Transaction } from "../Models/DataTransactions";
 import { allIcons } from "../UI/allIicons";
@@ -12,23 +12,21 @@ const TransationsDetailsView = () => {
   const location = useLocation();
 const navigate = useNavigate(); 
   const dataReceived = location?.state?.transaction;
-    const { transactionsData } = useBudgetContext();
+  
 
   
   
   
-  const dataShow: Transaction = dataReceived ?? transactionsData[0];
-
+  const dataShow: Transaction = dataReceived 
 
   useEffect(() => {
   if (!dataShow) {
     navigate("/");
+    
   }
 }, []);
-  if (!dataShow) {
-    return null;
-  }
-
+  
+  
   return(
        <Layout>
       <HeatherView title="Details" />
@@ -72,26 +70,17 @@ const navigate = useNavigate();
        
             <div>
           {
-            Object.entries(dataShow).map((key) => {
+            Object.keys(dataShow).map((key) => {
               return (
-                <div key={key[0]}>
-                  {key[0]} {key[1]}
+                <div key={key}>
+                  {key}
+                 
                 </div>
               )
             })
           }
           </div>
-             <div>
-          {
-            Object.entries(dataShow).map((key) => {
-              return (
-                <div key={key[0]}>
-                  {key[0]} {key[1]}
-                </div>
-              )
-            })
-          }
-      </div>
+          
           
 
 

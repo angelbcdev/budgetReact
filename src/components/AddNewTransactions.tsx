@@ -67,6 +67,8 @@ const AddNewTransactions = () => {
     }, 150);
     return () => clearTimeout(t);
   };
+
+
   const adjustCreditCardTotalDeb = (newAmount: string) =>
     setDataTransaction((data) => ({ ...data, amount: newAmount }))
 
@@ -84,9 +86,9 @@ const AddNewTransactions = () => {
 
   const createTransaction = () => {
 
-
+ console.log({where:"1st",d: dataTransaction})
     //Validate Balance
-    if (validateEnoughBalance({ dataTransaction, validateBalance })
+    if (!validateEnoughBalance({ dataTransaction, validateBalance })
 
     ) {
       showNotification({
@@ -113,8 +115,6 @@ const AddNewTransactions = () => {
           bg: "#ffb3b3"
         }
       })
-
-
       return;
     }
 
@@ -136,11 +136,8 @@ const AddNewTransactions = () => {
     }
 
 
-    console.log({where:"1st", dataTransaction})
+   
     const dataForSave:Transaction = ajustDataForTransaction({dataTransaction})
-
-    console.log({where:"after", dataForSave})
-    return
 
     if (!dataForSave) return
 
@@ -279,8 +276,3 @@ const AddNewTransactions = () => {
 };
 
 export default AddNewTransactions;
-
-
-;
-
-

@@ -24,15 +24,44 @@ export const emptyNewTransactions = ({ defaultCategory, defaultTypeTransaction }
     subcategory: [],
   })
 
-export const validateEnoughBalance = ({ dataTransaction, validateBalance }:
-  {
-    dataTransaction: ITransaction,
-    validateBalance: (n: number) => boolean
-  }
-): boolean => ((dataTransaction.paymentMethod == "checking" || dataTransaction.paymentMethod == "credit_card_blue") &&
-  dataTransaction.category !== "checking" &&
+export const validateEnoughBalance = ({
+  dataTransaction,
+  validateBalance
+}: {
+  dataTransaction: ITransaction
+  validateBalance: (n: number) => boolean
+}): boolean => {
 
-  !validateBalance(Number(dataTransaction.amount)))
+  const { paymentMethod, type, category, amount } = dataTransaction
+  const numericAmount = Number(amount)
+
+  const isChecking = paymentMethod === "checking"
+  const isCard = paymentMethod === "credit_card_blue" || paymentMethod === "credit_card_red"
+
+  // Credit cards always allowed
+  if (isCard) return true
+
+  // Adding funds to checking
+  if (category === "checking" && type === "credit_card_payment") return true
+
+  // Actions that require balance validation
+  if (
+    isChecking &&
+    (type === "spending" || type === "credit_card_payment")
+  ) {
+    return validateBalance(numericAmount)
+  }
+
+  // No validation needed
+  if (
+    isChecking &&
+    (type === "saving" || category === "mortgage")
+  ) {
+    return true
+  }
+
+  return false
+}
 
 export const validateEnoughPayCreditCart = ({
   dataTransaction,
@@ -92,7 +121,7 @@ export const ajustDataForTransaction =({dataTransaction}:{dataTransaction: ITran
           return "paycheck";
         }
         if (validatePayCreditCard) {
-          return "paycheck";
+          return "cards_payment";
         }
         return dataTransaction.paymentMethod;
       };

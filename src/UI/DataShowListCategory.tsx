@@ -13,7 +13,7 @@ export const DataShowListCategory = ({ title, data, sizeScroll = 10, showSort = 
             <div className="flex flex-row justify-between mb-2">
         <p
           onClick={() => setShowDataWithCero(!showDataWithCero)}
-          className="text-xl text-gray-500  font-md pl-2  mb-1">{title}   </p>
+          className="text-xl text-gray-500  font-md pl-2  mb-1 bg-red-300 p-2">{title}   </p>
 {/* <span className="text-gray-300 text-lg">›</span> */}
         {showSort && <BiToogleButton
           

@@ -24,13 +24,17 @@ export const HeathersTransactions = ({
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
   ) => {
     const { value , name} = e.target;
-    console.log({ value , name})
-    const dataFormat = new Date(value).toISOString().split("T")[0];
+
+    // const dataFormat = new Date(value).toISOString().split("T")[0];
    
-    setDataTransaction((data) => ({
+    setDataTransaction((data) =>{ 
+      
+      return({
       ...data,
-      [name]: name === "date" ? dataFormat : value,
-    }));
+      [name]:  value,
+    })});
+
+
   };
   const canSelectMethod = defaultTypeTransaction === "spending";
   return (
@@ -39,15 +43,14 @@ export const HeathersTransactions = ({
         <label
           className={`px-2  ${!canSelectMethod ? "w-88 ml-3" : "w-54"} py-1 flex flex-row gap-2 items-center justify-center rounded-md bg-white text-gray-700    capitalize `}
         >
-          <input
-           
-            placeholder="Date"
-  
-            defaultValue={  lastDate }
-            type="date"
-            name="date"
-            onChange={addValue}
-          ></input>
+        
+        <input
+  placeholder="Date"
+  defaultValue={ lastDate || new Date().toISOString().split('T')[0]}
+  type="date"
+  name="date"
+  onChange={addValue}
+/>
         </label>
         {canSelectMethod ? (
           <label>

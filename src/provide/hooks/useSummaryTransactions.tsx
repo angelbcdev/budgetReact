@@ -121,7 +121,7 @@ export function useSummary(transactions: Transaction[]) {
     // PAY CREDIT dataCards
     if (
       t.type == "credit_card_payment" &&
-      t.paymentMethod == "paycheck" &&
+      t.paymentMethod == "cards_payment" &&
       (t.category == "credit_card_red" || t.category == "credit_card_blue")
     ) {
       if (t.category == "credit_card_blue") {

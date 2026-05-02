@@ -50,6 +50,7 @@ export type PaymentMethod =
   | "checking"
   | "credit_card_blue"
   | "credit_card_red"
+  | "cards_payment"
   | "paycheck"
   | "mortgage";
 
@@ -75,7 +76,7 @@ export const CATEGORY_META: Record<TallTypeCategory, TCategory_Meta> = {
   credit_card_blue: createMeta("credit_card_blue", "💳", "#3b82f6"),
   paycheck: createMeta("paycheck", "💼", "#16a34a"),
  mortgage: createMeta("mortgage", "🏠", "#3b82f6"),
-
+  cards_payment:createMeta("cards_payment", "💳<", "#af06d1"),
   food: createMeta("food", "🍔", "#f97316"),
   transport: createMeta("transport", "🚗", "#3b82f6"),
   drinks: createMeta("drinks", "🍹", "#ec4899"),
