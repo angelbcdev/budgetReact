@@ -5,12 +5,15 @@ export const settings = {
   url: import.meta.env.VITE_SHEET,
 };
 
-type TKEY_SERVICES = "transactions" | "CATEGORIES";
+type TKEY_SERVICES = "transactions" | "CATEGORIES" | "Date";
 
 export const KEY_SERVICES: { [key: string]: TKEY_SERVICES } = {
   TRANSACIONS: "transactions",
   CATEGORIES: "CATEGORIES",
+  DATE:"Date"
 };
+
+//TODO all routes has to be inside of eache services 
 
 export interface IServiciesDB {
   getSheetData(sheetName: TKEY_SERVICES): Promise<Transaction[]>;
@@ -30,23 +33,31 @@ export interface IServiciesDB {
   // }): Promise<void>;
 
   handleBackup(data?: Transaction[]): void;
-  handleUpdate(id: string): void;
+  handleUpdate(data?: Transaction): void;
   handleDelete({ sheetName }: { sheetName: TKEY_SERVICES }): Promise<boolean>;
 }
 
 export class ServiciesLocal implements IServiciesDB {
   constructor() {}
-  handleUpdate(_: string): void {
-    throw new Error("Method not implemented.");
+  handleUpdate(newTransaction: Transaction): void {
+    this.getSheetData(KEY_SERVICES.TRANSACIONS).then(oldData =>{
+      const old = oldData.filter(t => t.id != newTransaction.id)
+      const newData = [...old , newTransaction] 
+      localStorage.setItem(KEY_SERVICES.TRANSACIONS, JSON.stringify(newData));
+    })
+    
+      
+    
   }
   handleDelete({ sheetName }: { sheetName: TKEY_SERVICES }): Promise<boolean> {
+    return new Promise((resolve) => {resolve(true)})
     return new Promise((resolve) => {
       localStorage.removeItem(sheetName);
       resolve(true);
     });
   }
 
-  getSheetData(sheetName: TKEY_SERVICES): Promise<any> {
+  getSheetData(sheetName: TKEY_SERVICES): Promise<Transaction[]> {
     return new Promise((resolve) => {
       const data = JSON.parse(localStorage.getItem(sheetName) || "[]");
       resolve(data.map((f: any) => new Transaction(f)));
@@ -71,6 +82,11 @@ export class ServiciesLocal implements IServiciesDB {
   handleBackup(data?: Transaction[]): void {
     if (!data) return;
     const db = new GoogleSheetsServicies();
+   
+    if (!settings.url){
+      console.log("Can't save now")
+      return
+    }
     data.map((f) => {
       db.sendSheetDataTransaction({
         sheetName: KEY_SERVICES.TRANSACIONS,
@@ -83,7 +99,7 @@ export class ServiciesLocal implements IServiciesDB {
 export class GoogleSheetsServicies implements IServiciesDB {
   allData: Transaction[] = [];
   constructor() {}
-  handleUpdate(_: string): void {
+  handleUpdate(_: Transaction): void {
     throw new Error("Method not implemented.");
   }
   handleBackup(_: Transaction[]): void {

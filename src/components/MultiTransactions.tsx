@@ -1,6 +1,6 @@
 import { Layout } from "../UI/Layout";
 import HeatherView from "../UI/HeatherView";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 
 import { fliterCategoryAvailable,   getSubCategoryFor,   getSubCategoryMeta,   type Category,  type PaymentMethod,  type Subcategory,  type TransactionType } from "../Models/dummyData";

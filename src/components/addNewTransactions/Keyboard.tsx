@@ -164,7 +164,11 @@ export const MultipleAcctionButtons = ({bt1 , bt2}:{bt1:IActionButtons , bt2:IAc
     <button
         
         onClick={()=>{
-          navigate(bt1.path || "/")
+          if (bt1.path){
+          navigate(bt1.path)
+        }else{
+         if(bt1.action) bt1.action()
+        }
         }}
         className={`mt-2  h-10 w-28 bg-blue-400 active:bg-blue-600 active:scale-95 text-white  rounded-lg text-base font-semibold  transition-all ease-in duration-100 `}
       >
