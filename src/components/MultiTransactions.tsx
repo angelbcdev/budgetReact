@@ -9,6 +9,7 @@ import { allIcons } from "../UI/allIicons";
 import { useBudgetContext } from "../provide/budget";
 import { VALID_ROUTES } from "../Routes/routes";
 import { MultipleAcctionButtons } from "./addNewTransactions/Keyboard";
+import { SubCategoryCard } from "../UI/SubCategoryCard";
 
 
 interface IMultiTrnsaction {
@@ -249,21 +250,13 @@ const RowNewTransactions = ({ positionInList, setAllNewTransactions, dataRow }:
             if (!dataRow.subcategory.includes(subCategory)){
               return(
                 <span 
-              
-            className={`  bg-gray-200 border text-gray-500  px-4 rounded capitalize`} key={subCategory} >{meta.label}</span>
+              onClick={()=>updateSubCategories(subCategory)}
+            className={`  bg-gray-200 border border-gray-500 text-gray-500  opacity-60 px-4 rounded capitalize`} key={subCategory} >{meta.label}</span>
               )
             }
 
                return(
-            <span 
-              style={{
-                backgroundColor:meta.bg + 40,
-                color:meta.bg,
-                border:meta.bg,
-                borderStyle:"solid",
-                borderWidth:1
-              }}
-            className={`     px-4 rounded capitalize`} key={subCategory} >{meta.label}</span>
+                <SubCategoryCard subCategory={subCategory} key={subCategory} onClick={()=>updateSubCategories(subCategory)}/>
           )
             
            })

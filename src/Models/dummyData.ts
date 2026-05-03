@@ -63,7 +63,7 @@ export type PaymentMethod =
   | "mortgage";
 
 export type TallTypeCategory =  Category |TransactionType  |PaymentMethod | SavingsMethod 
-interface TCategory_Meta {
+export interface TCategory_Meta {
   icon:string;
   bg:string
   label:string

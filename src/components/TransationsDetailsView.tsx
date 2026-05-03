@@ -2,11 +2,12 @@ import {Layout} from "../UI/Layout";
 import HeatherView from "../UI/HeatherView";
 import { useLocation, useNavigate } from "react-router";
 
-import { TRANSACTION_TYPE_META } from "../Models/dummyData";
+import { getSubCategoryMeta, TRANSACTION_TYPE_META } from "../Models/dummyData";
 import type { Transaction } from "../Models/DataTransactions";
 import { allIcons } from "../UI/allIicons";
 import { useEffect, type JSX } from "react";
 import BlurContainer from "../UI/BlurContainer";
+import { SubCategoryCard } from "../UI/SubCategoryCard";
 
 const TransationsDetailsView = () => {
   const location = useLocation();
@@ -47,12 +48,10 @@ const navigate = useNavigate();
         <FrameDetail icon={allIcons.tag} title={dataShow.category}>
           <div className="flex flex-wrap gap-2 ">
             {
-              dataShow.subcategory.map((f, i) => {
+              dataShow.subcategory.map((subCategory) => {
+                
                 return(
-                  <p key={i} className="flex text-sm capitalize bg-gray-200 p-1 items-center justify-center text-center rounded-md">
-                    
-                    {f}
-                  </p>
+                  <SubCategoryCard key={subCategory} subCategory={subCategory} onClick={()=>{}}/>
                 )
               })
             }

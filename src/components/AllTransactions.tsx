@@ -1,7 +1,9 @@
 import {
   CATEGORY_META,
   fliterCategoryAvailable,
+  getSubCategoryMeta,
   type PaymentMethod,
+  type Subcategory,
 } from "../Models/dummyData";
 import { useState, useRef } from "react";
 import { Layout } from "../UI/Layout";
@@ -12,6 +14,7 @@ import SelectorContainer from "../UI/SelectorContainer";
 import { BiToogleButton } from "../UI/DataShowListCategory";
 import { VALID_ROUTES } from "../Routes/routes";
 import { useNavigate } from "react-router";
+import { SubCategoryCard } from "../UI/SubCategoryCard";
 
 const extraFilters = ["mortgage", "Spend", "Earn", "Saved"];
 const AllTransactions = () => {
@@ -200,28 +203,24 @@ const AllTransactions = () => {
                             {txn.description}
                           </p>
                           <div className="flex gap-1   p-px capitalize">
-                            {txn.subcategory.map((sub: string, i) => {
-                              if (sub != "" && i < 2) {
+                            {txn.subcategory.map((subCategory:string , i) => {
+                              if (subCategory != "" && i < 2) {
+                               
                                 return (
-                                  <span
-                                    key={sub}
-                                    className="inline-block  text-[11px] px-1 py-1 rounded-md bg-gray-100 text-gray-600"
-                                  >
-                                    {sub}
-                                  </span>
+                                  <SubCategoryCard key={subCategory} subCategory={subCategory as Subcategory} showIcon={false} onClick={()=>{}}/>
                                 );
                               }
-                              if (sub != "" && i == 2) {
+                              if (subCategory != "" && i == 2) {
                                 return (
                                   <span
-                                    key={sub}
+                                    key={subCategory}
                                     className="inline-block  text-[10px] px-2 py-0.5 rounded-md bg-gray-100 text-gray-600"
                                   >
                                     ...
                                   </span>
                                 );
                               }
-                              if (sub == "" || i >= 3) return null;
+                              if (subCategory == "" || i >= 3) return null;
                             })}
                           </div>
                         </div>
