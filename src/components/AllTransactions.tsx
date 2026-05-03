@@ -1,7 +1,6 @@
 import {
   CATEGORY_META,
   fliterCategoryAvailable,
-  getSubCategoryMeta,
   type PaymentMethod,
   type Subcategory,
 } from "../Models/dummyData";

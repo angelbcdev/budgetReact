@@ -9,7 +9,7 @@ import HeatherView from "../UI/HeatherView";
 const Settings = () => {
   const { changeMountToShow, curentDate, currentMonthGoals, handleDelete , handleBackup } =
     useBudgetContext();
-  const version = "Version 1.0.0";
+  const version = "Version 1.1.0";
 
   const data = Object.keys(currentMonthGoals).map((key) => {
     return {

@@ -2,7 +2,7 @@ import {Layout} from "../UI/Layout";
 import HeatherView from "../UI/HeatherView";
 import { useLocation, useNavigate } from "react-router";
 
-import { getSubCategoryMeta, TRANSACTION_TYPE_META } from "../Models/dummyData";
+import {  TRANSACTION_TYPE_META } from "../Models/dummyData";
 import type { Transaction } from "../Models/DataTransactions";
 import { allIcons } from "../UI/allIicons";
 import { useEffect, type JSX } from "react";
