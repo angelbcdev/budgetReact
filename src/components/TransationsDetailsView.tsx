@@ -2,7 +2,7 @@ import {Layout} from "../UI/Layout";
 import HeatherView from "../UI/HeatherView";
 import { useLocation, useNavigate } from "react-router";
 
-import { getSubCategoryMeta, TRANSACTION_TYPE_META } from "../Models/dummyData";
+import { getSubCategoryFor, getSubCategoryMeta, TRANSACTION_TYPE_META } from "../Models/dummyData";
 import type { Transaction } from "../Models/DataTransactions";
 import { allIcons } from "../UI/allIicons";
 import { useEffect, type JSX } from "react";
@@ -49,12 +49,26 @@ const navigate = useNavigate();
         <FrameDetail icon={allIcons.tag} title={dataShow.category}>
           <div className="flex flex-wrap gap-2 ">
             {
-              dataShow.subcategory.map((subCategory) => {
-                
-                return(
+               getSubCategoryFor(dataShow.category).map(subCategory =>{
+                const meta = getSubCategoryMeta(subCategory)
+                if (dataShow.subcategory.includes(subCategory)){
+                    return(
                   <SubCategoryCard key={subCategory} subCategory={subCategory} onClick={()=>{}}/>
                 )
+                }
+                return(
+                <span 
+              onClick={()=>{}}
+            className={`  bg-gray-200 border border-gray-500 text-gray-500  opacity-60 px-4 rounded capitalize`} key={subCategory} >{meta.label}</span>
+            
+               )
+              
+              
               })
+              // dataShow.subcategory.map((subCategory) => {
+                
+              //   
+              // })
             }
           </div>
          
