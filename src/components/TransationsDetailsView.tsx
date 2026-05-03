@@ -1,117 +1,280 @@
-import {Layout} from "../UI/Layout";
+import { Layout } from "../UI/Layout";
 import HeatherView from "../UI/HeatherView";
 import { useLocation, useNavigate } from "react-router";
 
-import {  TRANSACTION_TYPE_META } from "../Models/dummyData";
+import {
+  getSubCategoryFor,
+  getSubCategoryMeta,
+  TRANSACTION_TYPE_META,
+  type Subcategory,
+} from "../Models/dummyData";
 import type { Transaction } from "../Models/DataTransactions";
 import { allIcons } from "../UI/allIicons";
-import { useEffect, type JSX } from "react";
+import { useEffect, useState, type JSX } from "react";
 import BlurContainer from "../UI/BlurContainer";
 import { SubCategoryCard } from "../UI/SubCategoryCard";
 import { MultipleAcctionButtons } from "./addNewTransactions/Keyboard";
+import { useBudgetContext } from "../provide/budget";
 
 const TransationsDetailsView = () => {
   const location = useLocation();
-const navigate = useNavigate(); 
-  const dataReceived = location?.state?.transaction;
-  
+  const navigate = useNavigate();
 
-  
-  
-  
-  const dataShow: Transaction = dataReceived 
+  const dataReceived = location?.state?.transaction;
+
+  const dataShow: Transaction = dataReceived;
+
+  const [localDataToShow, setLocalDataToShow] = useState<any>({
+    ...dataReceived,
+  });
+
+  const originalData = dataReceived;
+
+  const { handleUpdate } = useBudgetContext();
+  const [canEdit, setCanEdit] = useState(false);
+
+  const [errors, setErrors] = useState({
+    title: "",
+    amount: "",
+  });
+
+  const { title, description, subcategory, date, amount, category } =
+    localDataToShow;
 
   useEffect(() => {
-  if (!dataShow) {
-    navigate("/");
-    
-  }
-}, []);
-  
-  
-  return(
-       <Layout>
+    if (!localDataToShow) {
+      navigate("/");
+    }
+  }, [localDataToShow, navigate]);
+
+  // ================= VALIDACIÓN =================
+  const validate = () => {
+    let newErrors = { title: "", amount: "" };
+
+    if (!title || title.trim() === "") {
+      newErrors.title = "Title is required";
+    }
+
+    if (!amount || amount <= 0) {
+      newErrors.amount = "Amount must be greater than 0";
+    }
+
+    setErrors(newErrors);
+
+    return !newErrors.title && !newErrors.amount;
+  };
+
+  const hasChanges =
+    JSON.stringify(originalData) !== JSON.stringify(localDataToShow);
+
+  const makeUpdate = () => {
+    if (!hasChanges) return;
+
+    const isValid = validate();
+    if (!isValid) return;
+
+    handleUpdate(localDataToShow);
+    navigate("/transactions");
+  };
+
+  // ================= SUBCATEGORÍAS =================
+  const updateSubCategories = (sc: Subcategory) => {
+    if (!canEdit) return;
+
+    setLocalDataToShow((prev:any) => {
+      let copy = { ...prev };
+
+      const current = copy;
+
+      const alreadyExists = current.subcategory.includes(sc);
+
+      const updatedSubcategories = alreadyExists
+        ? current.subcategory.filter((s:any) => s !== sc)
+        : [...current.subcategory, sc];
+
+      copy = {
+        ...current,
+        subcategory: updatedSubcategories,
+      };
+
+      return copy;
+    });
+  };
+
+  return (
+    <Layout>
       <HeatherView title="Details" />
-      <section className=" p-4 flex flex-col  relative bg-green-300 ">
+
+      <section className="p-4 flex flex-col px-8 relative ">
+        {/* HEADER */}
         <section
-          style={{background: `linear-gradient(120deg, ${TRANSACTION_TYPE_META[dataShow.type ].fill}90 0%, ${TRANSACTION_TYPE_META[dataShow.type ].fill} 50%, ${TRANSACTION_TYPE_META[dataShow.type ].fill}90 100%)`}}
-          className=" w-full h-40 rounded-2xl shadow-md gap-3 flex flex-col justify-center items-center text-white">
-          <p>{dataShow.title}</p>
-          <p className="text-3xl font-extralight" >$ {dataShow.amount.toFixed(2)}</p>
-          <p className="text-sm font-bold ">{TRANSACTION_TYPE_META[dataShow.type ].label}</p>
-        </section>
-        <section
-          className=" w-full  flex flex-col overflow-auto gap-4 h-120   text-gray-700"
+          style={{
+            background: `linear-gradient(120deg, ${
+              TRANSACTION_TYPE_META[dataShow.type].fill
+            }90 0%, ${
+              TRANSACTION_TYPE_META[dataShow.type].fill
+            } 50%, ${
+              TRANSACTION_TYPE_META[dataShow.type].fill
+            }90 100%)`,
+          }}
+          className="w-full h-40 rounded-2xl shadow-md gap-3 flex flex-col justify-center items-center text-white"
         >
+          {/* TITLE */}
+          {canEdit ? (
+            <>
+              <input
+                value={title}
+                onChange={(e) =>
+                  setLocalDataToShow((prev:any) => ({
+                    ...prev,
+                    title: e.target.value,
+                  }))
+                }
+                className="text-center bg-transparent border-b outline-none"
+              />
+              {errors.title && (
+                <p className="text-red-200 text-sm">{errors.title}</p>
+              )}
+            </>
+          ) : (
+            <p>{title}</p>
+          )}
+
+          {/* AMOUNT */}
+          {canEdit ? (
+            <>
+              <input
+                type="number"
+                value={amount}
+                onChange={(e) =>
+                  setLocalDataToShow((prev:any) => ({
+                    ...prev,
+                    amount: Number(e.target.value),
+                  }))
+                }
+                className="text-3xl text-center bg-transparent border-b outline-none"
+              />
+              {errors.amount && (
+                <p className="text-red-200 text-sm">{errors.amount}</p>
+              )}
+            </>
+          ) : (
+            <p className="text-3xl font-extralight">$ {amount.toFixed(2)}</p>
+          )}
+
+          <p className="text-sm font-bold">
+            {TRANSACTION_TYPE_META[dataShow.type].label}
+          </p>
+        </section>
+
+        {/* BODY */}
+        <section className="w-full flex flex-col overflow-auto gap-4 h-120 text-gray-700">
           <BlurContainer size={10} />
-          
-        
-        <FrameDetail icon={allIcons.tag} title={dataShow.category}>
-          <div className="flex flex-wrap gap-2 ">
-            {
-              dataShow.subcategory.map((subCategory) => {
-                
-                return(
-                  <SubCategoryCard key={subCategory} subCategory={subCategory} onClick={()=>{}}/>
-                )
-              })
-            }
-          </div>
-         
-            <span className="text-end text-[13px] text-gray-600  " >{String(dataShow.date).split("T")[0]}</span>
+
+          <FrameDetail icon={allIcons.tag} title={category}>
+            <div className="flex flex-wrap gap-2">
+              {getSubCategoryFor(category).map((subCategory) => {
+                const meta = getSubCategoryMeta(subCategory);
+
+                if (subcategory.includes(subCategory)) {
+                  return (
+                    <SubCategoryCard
+                      key={subCategory}
+                      subCategory={subCategory}
+                      onClick={() => updateSubCategories(subCategory)}
+                    />
+                  );
+                }
+
+                return (
+                  <span
+                    key={subCategory}
+                    onClick={() => updateSubCategories(subCategory)}
+                    className="bg-gray-200 border border-gray-500 text-gray-500 opacity-60 px-4 rounded capitalize"
+                  >
+                    {meta.label}
+                  </span>
+                );
+              })}
+            </div>
+
+            <span className="text-end text-[13px] text-gray-600">
+              {String(date).split("T")[0]}
+            </span>
           </FrameDetail>
-          
+
+          {/* DESCRIPTION */}
           <FrameDetail icon={allIcons.note} title="Note">
-            <div className=" border rounded-md p-1 min-h-6 border-gray-400 shadow-inner bg-gray-200 mt-1">
-              <p>{dataShow.description}</p>
+            <div className="border rounded-md p-1 min-h-6 border-gray-400 shadow-inner bg-gray-200 mt-1">
+              {canEdit ? (
+                <textarea
+                  value={description}
+                  onChange={(e) =>
+                    setLocalDataToShow((prev:any) => ({
+                      ...prev,
+                      description: e.target.value,
+                    }))
+                  }
+                  className="w-full bg-transparent outline-none"
+                />
+              ) : (
+                <p>{description}</p>
+              )}
             </div>
           </FrameDetail>
 
-       
-            <div>
-          {
-            Object.keys(dataShow).map((key) => {
-              return (
-                <div key={key}>
-                  {key}
-                 
-                </div>
-              )
-            })
-          }
+         
+
+          {/* BUTTONS */}
+          <div className="absolute bottom-25 left-10 gap-2 flex">
+            <MultipleAcctionButtons
+              bt1={{
+                title: canEdit ? "Undo" : "Edit Mode",
+                action: () => {
+                  if (canEdit) {
+                    setLocalDataToShow(originalData);
+                    setErrors({ title: "", amount: "" });
+                  }
+                  setCanEdit(!canEdit);
+                },
+              }}
+              bt2={{
+                title: "Update",
+                action: makeUpdate,
+                validator:
+                  canEdit &&
+                  hasChanges &&
+                  !errors.amount &&
+                  !errors.title,
+              }}
+            />
           </div>
-
-
-           <div className="absolute bottom-25 left-10  gap-2 flex ">
-          
-                     <MultipleAcctionButtons bt1={{title:"<",path:""}} bt2={{title:"Add Transactions",action:()=>{} ,validator:true}} /> 
-          
-                  </div>
-          
-          
-
-
-</section>
-
-
-          </section>
-     </Layout>
-    )
+        </section>
+      </section>
+    </Layout>
+  );
 };
 
-export default TransationsDetailsView; 
+export default TransationsDetailsView;
 
+/* ================= FRAME ================= */
 
-const FrameDetail = ({children , icon , title}: {children: React.ReactNode , icon: JSX.Element , title: string})  => {
+const FrameDetail = ({
+  children,
+  icon,
+  title,
+}: {
+  children: React.ReactNode;
+  icon: JSX.Element;
+  title: string;
+}) => {
   return (
-     <div
-      className=" w-full  gap-1 rounded-2xl shadow-md p-4  flex flex-col bg-white  text-gray-700">
-        <div 
-            className="flex gap-4">
-            {icon}
-            <span className="font-bold capitalize">{title}</span>
-          </div>
-      {children}
+    <div className="w-full gap-1 rounded-2xl shadow-md p-4 flex flex-col bg-white text-gray-700">
+      <div className="flex gap-4">
+        {icon}
+        <span className="font-bold capitalize">{title}</span>
       </div>
-  )
-}
+      {children}
+    </div>
+  );
+};

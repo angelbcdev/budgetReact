@@ -4,7 +4,7 @@ import type { Transaction } from "../Models/DataTransactions";
 
 export const settings = {
   id: import.meta?.env?.VITE_GOOGLE_ID ,
-  url: import.meta?.env?.VITE_SHEET,
+  url: import.meta?.env?.VITE_SHEET ,
   password: import.meta?.env?.VITE_PASSWORD ,
   email: import.meta?.env?.VITE_EMAIL ,
   isDev: import.meta?.env?.VITE_IS_DEV ,

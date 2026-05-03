@@ -28,6 +28,7 @@ export interface IBudgetContext {
   changeMountToShow: (action: "<" | ">") => void
   allMonthsData:string[]
   saveMultipleTransaction:(data:Transaction[] ,action?:()=>void)=>void
+  handleUpdate:(data:Transaction)=>void
   global: ISummaryHomeData
   curentDate:{
     year: string,
@@ -181,8 +182,16 @@ export const BudgetContextProvider = ({ children }: { children: ReactElement }) 
   }
 
   const handleBackup = () => {
-    
-    dataBase.handleBackup(transactionsData)
+   
+      dataBase.handleBackup(transactionsData)
+
+  }
+  const handleUpdate=(data:Transaction)=>{
+
+     const newTransactions = [...transactionsData.filter(t => t.id != data.id), data]
+        setTransactionsData(newTransactions)
+        dataBase.handleUpdate(data)
+
   }
 
 
@@ -214,7 +223,7 @@ export const BudgetContextProvider = ({ children }: { children: ReactElement }) 
     lastMonth,
     allMonthsDataSort: monthly,
     acumulateMonth,
-    handleBackup,saveMultipleTransaction
+    handleBackup,saveMultipleTransaction,handleUpdate
 
   }
 
@@ -222,3 +231,41 @@ export const BudgetContextProvider = ({ children }: { children: ReactElement }) 
      <BudgetContext.Provider value={values}> {children} </BudgetContext.Provider>
   ) 
 }
+
+
+
+// export function diferenciaDiasExactos(f1:Date, f2:Date) {
+//   const d1 = new Date(f1.getFullYear(), f1.getMonth(), f1.getDate());
+//   const d2 = new Date(f2.getFullYear(), f2.getMonth(), f2.getDate());
+
+//   const msPorDia = 1000 * 60 * 60 * 24;
+//    const parse = (str: Date) => {
+//                 const [month, day, year] = str.split(" ");
+//                 return new Date(`${month} ${day}, ${year}`).getTime();
+//               };
+//   return (parse(d2) - parse(d1)) / msPorDia;
+// }
+
+
+// export function diferenciaTiempo(f1:Date, f2:Date):boolean {
+//   // Normalizar fechas completas (no quitamos horas aquí)
+//   const fecha1 = new Date(f1);
+//   const fecha2 = new Date(f2);
+
+//   const diffMs = Number(fecha2) - Number(fecha1);
+
+//   // ---- MINUTOS ----
+//   const msPorMinuto = 1000 * 60;
+//   const minutos = diffMs / msPorMinuto;
+
+//   if (minutos >= 1) {
+//     return true; // ya pasaron 5 minutos
+//   }
+
+//   return false;
+
+//   // ---- DÍAS (por si lo necesitas después) ----
+//   // const msPorDia = 1000 * 60 * 60 * 24;
+//   // const dias = diffMs / msPorDia;
+//   // return dias;
+// }

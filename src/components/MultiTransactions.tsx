@@ -1,6 +1,6 @@
 import { Layout } from "../UI/Layout";
 import HeatherView from "../UI/HeatherView";
-import {  useState } from "react";
+import { useState } from "react";
 
 
 import { fliterCategoryAvailable,   getSubCategoryFor,   getSubCategoryMeta,   type Category,  type PaymentMethod,  type Subcategory,  type TransactionType } from "../Models/dummyData";
@@ -145,7 +145,7 @@ const MultiTransactions = () => {
 
         </section>
 
-        <div className="absolute -bottom-1 left-3  gap-2 flex ">
+        <div className="absolute -bottom-4 left-3  gap-2 flex ">
 
            <MultipleAcctionButtons bt1={{title:"<",path:VALID_ROUTES.Add}} bt2={{title:"Add Transactions",action:createMultipleTransactions ,validator:isReadyAllRow}} /> 
 

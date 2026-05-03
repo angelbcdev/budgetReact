@@ -225,9 +225,9 @@ export function getSubCategoryFor(cat:Category){
   }
 }
 
+
 export type Subcategory =
   | "payment_card"
-
   // general
   | "books"
   | "clothes"
@@ -360,3 +360,4 @@ export function getSubCategoryMeta(subcate: Subcategory):TCategory_Meta {
   label:"no added"}
 }
 }
+
