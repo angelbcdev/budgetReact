@@ -17,7 +17,7 @@ const navigate = useNavigate();
   const dataShow: Transaction = dataReceived
   const [localDataToShow, setLocalDataToShow] =useState<Transaction>({...dataReceived})
   
-
+const { title, description ,subcategory ,date ,amount ,category } = localDataToShow
   
   
   
@@ -32,26 +32,26 @@ const navigate = useNavigate();
 
 
 
-//  const updateSubCategories = (sc: Subcategory) => {
-//   setAllNewTransactions((prev) => {
-//     const copy = [...prev];
+ const updateSubCategories = (sc: Subcategory) => {
+  setLocalDataToShow((prev) => {
+    let copy = {...prev};
 
-//     const current = copy[positionInList];
+    const current = copy
 
-//     const alreadyExists = current.subcategory.includes(sc);
+    const alreadyExists = current.subcategory.includes(sc);
 
-//     const updatedSubcategories = alreadyExists
-//       ? current.subcategory.filter((s) => s !== sc) // remove
-//       : [...current.subcategory, sc]; // add
+    const updatedSubcategories = alreadyExists
+      ? current.subcategory.filter((s) => s !== sc) // remove
+      : [...current.subcategory, sc]; // add
 
-//     copy[positionInList] = {
-//       ...current,
-//       subcategory: updatedSubcategories,
-//     };
+    copy = {
+      ...current,
+      subcategory: updatedSubcategories,
+    };
 
-//     return copy;
-//   });
-// };
+    return copy;
+  });
+};
   
   
   return(
@@ -61,8 +61,8 @@ const navigate = useNavigate();
         <section
           style={{background: `linear-gradient(120deg, ${TRANSACTION_TYPE_META[dataShow.type ].fill}90 0%, ${TRANSACTION_TYPE_META[dataShow.type ].fill} 50%, ${TRANSACTION_TYPE_META[dataShow.type ].fill}90 100%)`}}
           className=" w-full h-40 rounded-2xl shadow-md gap-3 flex flex-col justify-center items-center text-white">
-          <p>{localDataToShow.title}</p>
-          <p className="text-3xl font-extralight" >$ {dataShow.amount.toFixed(2)}</p>
+          <p>{title}</p>
+          <p className="text-3xl font-extralight" >$ {amount.toFixed(2)}</p>
           <p className="text-sm font-bold ">{TRANSACTION_TYPE_META[dataShow.type ].label}</p>
         </section>
         <section
@@ -71,31 +71,31 @@ const navigate = useNavigate();
           <BlurContainer size={10} />
           
         
-        <FrameDetail icon={allIcons.tag} title={dataShow.category}>
+        <FrameDetail icon={allIcons.tag} title={category}>
           <div className="flex flex-wrap gap-2 ">
             {
-               getSubCategoryFor(dataShow.category).map(subCategory =>{
+               getSubCategoryFor(category).map(subCategory =>{
                 const meta = getSubCategoryMeta(subCategory)
-                if (dataShow.subcategory.includes(subCategory)){
+                if (subcategory.includes(subCategory)){
                     return(
-                  <SubCategoryCard key={subCategory} subCategory={subCategory} onClick={()=>{}}/>
+                  <SubCategoryCard key={subCategory} subCategory={subCategory} onClick={()=>{updateSubCategories(subCategory)}}/>
                 )
                 }
                 return(
                 <span 
-              onClick={()=>{}}
+              onClick={()=>{updateSubCategories(subCategory)}}
             className={`  bg-gray-200 border border-gray-500 text-gray-500  opacity-60 px-4 rounded capitalize`} key={subCategory} >{meta.label}
             </span>)})
 
             }
           </div>
          
-            <span className="text-end text-[13px] text-gray-600  " >{String(dataShow.date).split("T")[0]}</span>
+            <span className="text-end text-[13px] text-gray-600  " >{String(date).split("T")[0]}</span>
           </FrameDetail>
           
           <FrameDetail icon={allIcons.note} title="Note">
             <div className=" border rounded-md p-1 min-h-6 border-gray-400 shadow-inner bg-gray-200 mt-1">
-              <p>{dataShow.description}</p>
+              <p>{description}</p>
             </div>
           </FrameDetail>
 
