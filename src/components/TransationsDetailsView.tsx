@@ -8,6 +8,7 @@ import { allIcons } from "../UI/allIicons";
 import { useEffect, type JSX } from "react";
 import BlurContainer from "../UI/BlurContainer";
 import { SubCategoryCard } from "../UI/SubCategoryCard";
+import { MultipleAcctionButtons } from "./addNewTransactions/Keyboard";
 
 const TransationsDetailsView = () => {
   const location = useLocation();
@@ -31,7 +32,7 @@ const navigate = useNavigate();
   return(
        <Layout>
       <HeatherView title="Details" />
-      <section className=" p-4 flex flex-col  ">
+      <section className=" p-4 flex flex-col  relative bg-green-300 ">
         <section
           style={{background: `linear-gradient(120deg, ${TRANSACTION_TYPE_META[dataShow.type ].fill}90 0%, ${TRANSACTION_TYPE_META[dataShow.type ].fill} 50%, ${TRANSACTION_TYPE_META[dataShow.type ].fill}90 100%)`}}
           className=" w-full h-40 rounded-2xl shadow-md gap-3 flex flex-col justify-center items-center text-white">
@@ -79,6 +80,13 @@ const navigate = useNavigate();
             })
           }
           </div>
+
+
+           <div className="absolute bottom-25 left-10  gap-2 flex ">
+          
+                     <MultipleAcctionButtons bt1={{title:"<",path:""}} bt2={{title:"Add Transactions",action:()=>{} ,validator:true}} /> 
+          
+                  </div>
           
           
 
