@@ -194,6 +194,16 @@ export const BudgetContextProvider = ({ children }: { children: ReactElement }) 
 
   }
 
+  // handleDeleteOne
+
+  const handleDeleteOne=(data:Transaction)=>{
+
+     const newTransactions = [...transactionsData.filter(t => t.id != data.id), data]
+        setTransactionsData(newTransactions)
+        dataBase.handleUpdate(data)
+
+  }
+
 
      const [year, month] = currentMonthKey.split("-").map(Number);
   

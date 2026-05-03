@@ -24,27 +24,36 @@ export interface IServiciesDB {
     sheetName: TKEY_SERVICES;
     transaction: Transaction;
   }): Promise<boolean>;
-  // sendSheetDataCategories({
-  //   mainCategorie,
-  //   newSubCategorie,
-  // }: {
-  //   mainCategorie: TKEY_SERVICES;
-  //   newSubCategorie: string;
-  // }): Promise<void>;
 
   handleBackup(data?: Transaction[]): void;
   handleUpdate(data?: Transaction): void;
+  handleDeleteOne(data?: Transaction): void;
   handleDelete({ sheetName }: { sheetName: TKEY_SERVICES }): Promise<boolean>;
 }
 
 export class ServiciesLocal implements IServiciesDB {
   constructor() {}
+
+
   handleUpdate(newTransaction: Transaction): void {
     this.getSheetData(KEY_SERVICES.TRANSACIONS).then(oldData =>{
       const old = oldData.filter(t => t.id != newTransaction.id)
       const newData = [...old , newTransaction] 
       localStorage.setItem(KEY_SERVICES.TRANSACIONS, JSON.stringify(newData));
     })
+    
+    
+      
+    
+  }
+
+    handleDeleteOne(newTransaction: Transaction): void {
+    this.getSheetData(KEY_SERVICES.TRANSACIONS).then(oldData =>{
+      const old = oldData.filter(t => t.id != newTransaction.id)
+      const newData = [...old] 
+      localStorage.setItem(KEY_SERVICES.TRANSACIONS, JSON.stringify(newData));
+    })
+    
     
       
     
@@ -110,6 +119,9 @@ export class GoogleSheetsServicies implements IServiciesDB {
     return new Promise((resolve) => {
       resolve(false);
     });
+  }
+  handleDeleteOne(_: Transaction): void {
+    throw new Error("Method not implemented.");
   }
 
   async getSheetData(sheetName: string) {
