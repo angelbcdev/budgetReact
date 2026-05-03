@@ -2,10 +2,10 @@ import {Layout} from "../UI/Layout";
 import HeatherView from "../UI/HeatherView";
 import { useLocation, useNavigate } from "react-router";
 
-import { getSubCategoryFor, getSubCategoryMeta, TRANSACTION_TYPE_META } from "../Models/dummyData";
+import { getSubCategoryFor, getSubCategoryMeta, TRANSACTION_TYPE_META, type Subcategory } from "../Models/dummyData";
 import type { Transaction } from "../Models/DataTransactions";
 import { allIcons } from "../UI/allIicons";
-import { useEffect, type JSX } from "react";
+import { useEffect, useState, type JSX } from "react";
 import BlurContainer from "../UI/BlurContainer";
 import { SubCategoryCard } from "../UI/SubCategoryCard";
 import { MultipleAcctionButtons } from "./addNewTransactions/Keyboard";
@@ -14,19 +14,44 @@ const TransationsDetailsView = () => {
   const location = useLocation();
 const navigate = useNavigate(); 
   const dataReceived = location?.state?.transaction;
+  const dataShow: Transaction = dataReceived
+  const [localDataToShow, setLocalDataToShow] =useState<Transaction>({...dataReceived})
   
 
   
   
   
-  const dataShow: Transaction = dataReceived 
+   
 
   useEffect(() => {
-  if (!dataShow) {
+  if (!localDataToShow) {
     navigate("/");
     
   }
 }, []);
+
+
+
+//  const updateSubCategories = (sc: Subcategory) => {
+//   setAllNewTransactions((prev) => {
+//     const copy = [...prev];
+
+//     const current = copy[positionInList];
+
+//     const alreadyExists = current.subcategory.includes(sc);
+
+//     const updatedSubcategories = alreadyExists
+//       ? current.subcategory.filter((s) => s !== sc) // remove
+//       : [...current.subcategory, sc]; // add
+
+//     copy[positionInList] = {
+//       ...current,
+//       subcategory: updatedSubcategories,
+//     };
+
+//     return copy;
+//   });
+// };
   
   
   return(
@@ -36,7 +61,7 @@ const navigate = useNavigate();
         <section
           style={{background: `linear-gradient(120deg, ${TRANSACTION_TYPE_META[dataShow.type ].fill}90 0%, ${TRANSACTION_TYPE_META[dataShow.type ].fill} 50%, ${TRANSACTION_TYPE_META[dataShow.type ].fill}90 100%)`}}
           className=" w-full h-40 rounded-2xl shadow-md gap-3 flex flex-col justify-center items-center text-white">
-          <p>{dataShow.title}</p>
+          <p>{localDataToShow.title}</p>
           <p className="text-3xl font-extralight" >$ {dataShow.amount.toFixed(2)}</p>
           <p className="text-sm font-bold ">{TRANSACTION_TYPE_META[dataShow.type ].label}</p>
         </section>
@@ -59,16 +84,9 @@ const navigate = useNavigate();
                 return(
                 <span 
               onClick={()=>{}}
-            className={`  bg-gray-200 border border-gray-500 text-gray-500  opacity-60 px-4 rounded capitalize`} key={subCategory} >{meta.label}</span>
-            
-               )
-              
-              
-              })
-              // dataShow.subcategory.map((subCategory) => {
-                
-              //   
-              // })
+            className={`  bg-gray-200 border border-gray-500 text-gray-500  opacity-60 px-4 rounded capitalize`} key={subCategory} >{meta.label}
+            </span>)})
+
             }
           </div>
          
