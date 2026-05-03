@@ -3,7 +3,7 @@ import HeatherView from "../UI/HeatherView";
 import { useEffect, useState } from "react";
 
 
-import { fliterCategoryAvailable,   type Category,  type PaymentMethod,  type TransactionType } from "../Models/dummyData";
+import { fliterCategoryAvailable,   getSubCategoryFor,   getSubCategoryMeta,   type Category,  type PaymentMethod,  type Subcategory,  type TransactionType } from "../Models/dummyData";
 import { Transaction } from "../Models/DataTransactions";
 import { allIcons } from "../UI/allIicons";
 import { useBudgetContext } from "../provide/budget";
@@ -18,10 +18,10 @@ interface IMultiTrnsaction {
   title: string | null;
   description: string;
   paymentMethod: PaymentMethod | "";
+  subcategory:Subcategory[]
   isReaddy: boolean;
   id?:string 
   date?:string
-  subcategory?:Category[]
 }
 
 const emptyData: IMultiTrnsaction = {
@@ -32,7 +32,8 @@ const emptyData: IMultiTrnsaction = {
   category: "",
   type: "",
   isReaddy: false,
-  paymentMethod:""
+  paymentMethod:"",
+  subcategory:[]
 
 }
 
@@ -77,7 +78,7 @@ const MultiTransactions = () => {
 
 
   const createMultipleTransactions = () => {
-    console.log(allNewsTransactions)
+
 
 
     const dataTransactions = allNewsTransactions.map(data =>{ 
@@ -91,7 +92,7 @@ const MultiTransactions = () => {
         category: data.category as Category,
         type: "spending"  as TransactionType,
         paymentMethod: data.paymentMethod as PaymentMethod,
-        subcategory: []
+        subcategory: data.subcategory
       }
 
 
@@ -99,7 +100,7 @@ const MultiTransactions = () => {
       return new Transaction(newData)
     })
     saveMultipleTransaction(dataTransactions , ressetAllRow)
-    console.log(dataTransactions)
+
   }
 
   const isReadyAllRow = allNewsTransactions.every(t => t.isReaddy)
@@ -108,11 +109,8 @@ const MultiTransactions = () => {
       <HeatherView title="Multi Transactions" />
       <section className="pt-4 relative max-w-94 flex flex-col gap-4 justify-center  mx-auto  ">
         <section className="flex   rounded-md px-4 py-2 gap-2 justify-between bg-white  ">
-          <span 
-          onClick={ressetAllRow}
-          className=" size-10 bg-red-400  flex justify-center items-center rounded-full"
-          >{allIcons.trashCan}</span>
-          <p>{numberTransactions}/{maxRow} </p>
+         
+          <p className="font-semibold text-xl">{numberTransactions}/{maxRow} </p>
           <label className="border rounded px-1 shadow-sm bg-white">
             <input 
             onChange={(e)=>{
@@ -122,16 +120,12 @@ const MultiTransactions = () => {
             defaultValue={dateForRow}
             type="date" />
           </label>
-          <div className="border w-20 flex p-px rounded-md text-gray-600 gap-px bg-gray-400">
+          <div className="border w-34 flex p-px rounded-md text-gray-600 gap-px bg-gray-400">
             <button onClick={() => handleRows("+")} className="w-1/2 bg-gray-100 rounded-l-sm" >{"+"}</button>
+            <button onClick={ressetAllRow} className="w-1/2 bg-gray-100 text-gray-500 flex justify-center mx-px" >{allIcons.trashCan}</button>
             <button onClick={() => handleRows("-")} className="w-1/2 bg-gray-100 rounded-r-sm" >{"-"}</button>
           </div>
-
         </section>
-
-   
- 
-
         <section className="flex  flex-col   pb-10 gap-2 overflow-y-auto rounded-xl h-120  ">
           <div className="bg-white rounded-md px-4">
             {
@@ -149,13 +143,7 @@ const MultiTransactions = () => {
           </div>
 
         </section>
-        {/* <button
-          // disabled={!isReadyAllRow}
-          onClick={createMultipleTransactions}
-          className={`mt-2 absolute -bottom-4 left-18 mx-auto h-10 w-60 ${isReadyAllRow ? "bg-blue-400 active:bg-blue-600 active:scale-95 text-white" : "bg-gray-200 text-gray-500"}  rounded-lg text-base font-semibold  transition-all ease-in duration-100 `}
-        >
-          Add Transaction
-        </button> */}
+
         <div className="absolute -bottom-1 left-3  gap-2 flex ">
 
            <MultipleAcctionButtons bt1={{title:"<",path:VALID_ROUTES.Add}} bt2={{title:"Add Transactions",action:createMultipleTransactions ,validator:isReadyAllRow}} /> 
@@ -196,8 +184,8 @@ const RowNewTransactions = ({ positionInList, setAllNewTransactions, dataRow }:
       const isReady =
         updatedRow.amount !== "" &&
         updatedRow.title !== "" &&
-        updatedRow.category !== ""
-      //  && updatedRow.paymentMethod !== "";
+        updatedRow.category !== "" &&
+      updatedRow.paymentMethod !== "";
 
       // ✅ store result
       copy[positionInList] = {
@@ -211,12 +199,33 @@ const RowNewTransactions = ({ positionInList, setAllNewTransactions, dataRow }:
     });
   };
 
+  const updateSubCategories = (sc: Subcategory) => {
+  setAllNewTransactions((prev) => {
+    const copy = [...prev];
+
+    const current = copy[positionInList];
+
+    const alreadyExists = current.subcategory.includes(sc);
+
+    const updatedSubcategories = alreadyExists
+      ? current.subcategory.filter((s) => s !== sc) // remove
+      : [...current.subcategory, sc]; // add
+
+    copy[positionInList] = {
+      ...current,
+      subcategory: updatedSubcategories,
+    };
+
+    return copy;
+  });
+};
+
 
 
  const payCardas= ["credit_card_red",
   "credit_card_blue"]
   return (
-    <div className="border-b border-black/10 h-35 gap-3 w-82 flex flex-col py-2 relative">
+    <div className="border-b border-black/10 h- gap-3 w-82 flex flex-col py-2 relative">
 
       <span className="absolute right-10 top-0" >{dataRow.isReaddy ? "OK" : "x"}</span>
       
@@ -230,7 +239,35 @@ const RowNewTransactions = ({ positionInList, setAllNewTransactions, dataRow }:
         <MySelector onChange={onChange} data={payCardas} title={"pay "} name="paymentMethod" />
         <MySelector onChange={onChange} data={fliterCategoryAvailable} title="category" name="category" />
         <MyInputAmount onChange={onChange} />
+      </div>
+      <div className="flex flex-wrap   gap-2 text-[12px]">
+        {
+          getSubCategoryFor(dataRow.category as Category).map(subCategory =>{
+            if (subCategory == "mortgage") return
+            const meta = getSubCategoryMeta(subCategory)
 
+            if (!dataRow.subcategory.includes(subCategory)){
+              return(
+                <span 
+              
+            className={`  bg-gray-200 border text-gray-500  px-4 rounded capitalize`} key={subCategory} >{meta.label}</span>
+              )
+            }
+
+               return(
+            <span 
+              style={{
+                backgroundColor:meta.bg + 40,
+                color:meta.bg,
+                border:meta.bg,
+                borderStyle:"solid",
+                borderWidth:1
+              }}
+            className={`     px-4 rounded capitalize`} key={subCategory} >{meta.label}</span>
+          )
+            
+           })
+        }
       </div>
     </div>
 
@@ -241,22 +278,17 @@ const RowNewTransactions = ({ positionInList, setAllNewTransactions, dataRow }:
 }
 
 const MyInputAmount = ({onChange}:{onChange: (e: any) => void})=>{
-  // validateBalance()
   return(
        <section className="flex flex-col gap-1  relative group">
           <span className=" 2 text-sm transition-all duration-200  
           pointer-events-none text-gray-500
-          
           group-focus-within:-top-px text-xs group-focus-within:text-blue-500 group-focus-within:bg-white">
             Amount
           </span>
-
-
-
-          <input
+         <input
             name="amount"
             onChange={onChange}
-            className="border border-gray-400 w-27 px-2" placeholder="$10,000.00" type="number" />
+            className="border border-gray-400 w-27 px-2 rounded  " placeholder="$10,000.00" type="number" />
       </section>
   )
 }
@@ -282,7 +314,7 @@ const MySelector = ({ title, name, data, onChange }: { title: string, name: stri
           onChange(e)
           setValue(e.target.value);
         }}
-        className="border border-gray-300 w-26 px-1"
+        className="border border-gray-300 w-26 px-1 rounded"
       >
 
         <option></option>

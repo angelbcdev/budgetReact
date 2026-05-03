@@ -150,7 +150,7 @@ export const BudgetContextProvider = ({ children }: { children: ReactElement }) 
       transaction: data[i]
       }).then(() => {
         timeForSend++
-        if (timeForSend <= data.length){
+        if (timeForSend >= data.length){
           const newTransactions = [...transactionsData, ...data]
         setTransactionsData(newTransactions)
           setIsLoading(false)

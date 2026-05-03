@@ -71,7 +71,7 @@ interface TCategory_Meta {
 const formatLabel = (key: string) =>
   key.replaceAll("_", " ").replace(/\b\w/g, c => c.toUpperCase());
 
-const createMeta = (key: TallTypeCategory, icon: string, bg: string): TCategory_Meta => ({
+const createMeta = (key: TallTypeCategory | Subcategory, icon: string, bg: string): TCategory_Meta => ({
   icon,
   bg,
   label: formatLabel(key),
@@ -217,6 +217,14 @@ export const subCateriesAvailable: Record<Category, Subcategory[]> = {
   ],
 };
 
+export function getSubCategoryFor(cat:Category){
+  if(subCateriesAvailable[cat]){
+    return subCateriesAvailable[cat]
+  }else{
+    return []
+  }
+}
+
 export type Subcategory =
   | "payment_card"
 
@@ -279,4 +287,76 @@ export type Subcategory =
   | "walmart"
   | "other";
 
-  
+  export const SUBCATEGORY_META: Record<Subcategory, TCategory_Meta> = {
+  payment_card: createMeta("payment_card", "💳", "#3b82f6"),
+
+  // general
+  books: createMeta("books", "📚", "#a855f7"),
+  clothes: createMeta("clothes", "👕", "#ec4899"),
+  games: createMeta("games", "🎮", "#f59e0b"),
+  car_insurance: createMeta("car_insurance", "🚗", "#22c55e"),
+
+  // food
+  restaurant: createMeta("restaurant", "🍽️", "#ef4444"),
+  delivery: createMeta("delivery", "🛵", "#f97316"),
+  homemade: createMeta("homemade", "🏠", "#84cc16"),
+
+  // transport
+  gas: createMeta("gas", "⛽", "#eab308"),
+  car_repair: createMeta("car_repair", "🔧", "#6b7280"),
+  uber: createMeta("uber", "🚕", "#000000"),
+
+  // drinks
+  beer: createMeta("beer", "🍺", "#fbbf24"),
+  rum: createMeta("rum", "🥃", "#92400e"),
+  whiskey: createMeta("whiskey", "🥃", "#78350f"),
+
+  // bills
+  mortgage: createMeta("mortgage", "🏡", "#14b8a6"),
+  electricity: createMeta("electricity", "⚡", "#facc15"),
+  internet: createMeta("internet", "🌐", "#3b82f6"),
+
+  // amazon
+  electronics: createMeta("electronics", "📱", "#6366f1"),
+  household: createMeta("household", "🧼", "#10b981"),
+  clothing: createMeta("clothing", "🧥", "#ec4899"),
+  other_amazon: createMeta("other_amazon", "📦", "#6b7280"),
+
+  // savings
+  mortgage_savings: createMeta("mortgage_savings", "🏦", "#0ea5e9"),
+  stocks: createMeta("stocks", "📈", "#22c55e"),
+
+  // credit card payment
+  blue_payment: createMeta("blue_payment", "💙", "#3b82f6"),
+  red_payment: createMeta("red_payment", "❤️", "#ef4444"),
+
+  // other
+  trash_tickets: createMeta("trash_tickets", "🎟️", "#f43f5e"),
+  decoration: createMeta("decoration", "🖼️", "#a855f7"),
+  furniture: createMeta("furniture", "🪑", "#8b5cf6"),
+  utilities: createMeta("utilities", "🧾", "#64748b"),
+  bitcoin: createMeta("bitcoin", "₿", "#f7931a"),
+  ethereum: createMeta("ethereum", "Ξ", "#627eea"),
+
+  // house
+  garbage: createMeta("garbage", "🗑️", "#6b7280"),
+  paint: createMeta("paint", "🎨", "#f472b6"),
+  water: createMeta("water", "🚰", "#38bdf8"),
+  house_gas: createMeta("house_gas", "🔥", "#f97316"),
+  send_money: createMeta("send_money", "💸", "#22c55e"),
+  sams_club: createMeta("sams_club", "🏬", "#2563eb"),
+  bravo_market: createMeta("bravo_market", "🛒", "#16a34a"),
+  walmart: createMeta("walmart", "🏪", "#1d4ed8"),
+  other: createMeta("other", "📌", "#9ca3af"),
+};
+
+
+export function getSubCategoryMeta(subcate: Subcategory):TCategory_Meta {
+  if (SUBCATEGORY_META[subcate]){
+  return SUBCATEGORY_META[subcate];
+}else{
+ return {icon:"?",
+  bg:"#1d2a9b",
+  label:"no added"}
+}
+}
