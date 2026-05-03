@@ -29,6 +29,7 @@ export interface IBudgetContext {
   allMonthsData:string[]
   saveMultipleTransaction:(data:Transaction[] ,action?:()=>void)=>void
   handleUpdate:(data:Transaction)=>void
+  handleDeleteOne:(data:Transaction)=>void
   global: ISummaryHomeData
   curentDate:{
     year: string,
@@ -131,6 +132,7 @@ export const BudgetContextProvider = ({ children }: { children: ReactElement }) 
   }
 
   const handleDelete = () => {
+    return;
    dataBase.handleDelete({
     sheetName: KEY_SERVICES.TRANSACIONS
    }).then((data) => {
@@ -198,9 +200,9 @@ export const BudgetContextProvider = ({ children }: { children: ReactElement }) 
 
   const handleDeleteOne=(data:Transaction)=>{
 
-     const newTransactions = [...transactionsData.filter(t => t.id != data.id), data]
+     const newTransactions = [...transactionsData.filter(t => t.id != data.id)]
         setTransactionsData(newTransactions)
-        dataBase.handleUpdate(data)
+        dataBase.handleDeleteOne(data)
 
   }
 
@@ -233,7 +235,7 @@ export const BudgetContextProvider = ({ children }: { children: ReactElement }) 
     lastMonth,
     allMonthsDataSort: monthly,
     acumulateMonth,
-    handleBackup,saveMultipleTransaction,handleUpdate
+    handleBackup,saveMultipleTransaction,handleUpdate , handleDeleteOne
 
   }
 

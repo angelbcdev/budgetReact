@@ -30,7 +30,7 @@ const TransationsDetailsView = () => {
 
   const originalData = dataReceived;
 
-  const { handleUpdate } = useBudgetContext();
+  const { handleUpdate , handleDeleteOne } = useBudgetContext();
   const [canEdit, setCanEdit] = useState(false);
 
   const [errors, setErrors] = useState({
@@ -101,11 +101,19 @@ const TransationsDetailsView = () => {
     });
   };
 
+  const deleteTransaction = ()=>{
+    handleDeleteOne(localDataToShow)
+    navigate("/transactions");
+  }
+
   return (
     <Layout>
       <HeatherView title="Details" />
 
+
+
       <section className="p-4 flex flex-col px-8 relative ">
+      <span className="absolute -top-11  right-8 bg-red-400 text-white font-semibold px-4 rounded-xl "  onClick={deleteTransaction}>Delete</span>
         {/* HEADER */}
         <section
           style={{

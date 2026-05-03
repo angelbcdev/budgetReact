@@ -27,6 +27,7 @@ export type Category =
   | "credit_card_payment"
   | "other"
   | "mortgage"
+  | "mortgage_Payment"
   | "savings"
   | "stocks"
   | "crypto"
@@ -83,7 +84,7 @@ export const CATEGORY_META: Record<TallTypeCategory, TCategory_Meta> = {
   credit_card_red: createMeta("credit_card_red", "💳", "#ef4444"),
   credit_card_blue: createMeta("credit_card_blue", "💳", "#3b82f6"),
   paycheck: createMeta("paycheck", "💼", "#16a34a"),
-  mortgage: createMeta("mortgage", "🏠", "#3b82f6"),
+  mortgage: createMeta("mortgage", "🏠", "#0004ff"),
   cards_payment: createMeta("cards_payment", "💳<", "#af06d1"),
   food: createMeta("food", "🍔", "#f97316"),
   transport: createMeta("transport", "🚗", "#3b82f6"),
@@ -92,11 +93,11 @@ export const CATEGORY_META: Record<TallTypeCategory, TCategory_Meta> = {
   amazon: createMeta("amazon", "📦", "#ec4899"),
   savings: createMeta("savings", "💰", "#22c55e"),
   credit_card_payment: createMeta("credit_card_payment", "💳", "#a855f7"),
-
+  mortgage_Payment:createMeta("mortgage_Payment", "🏠", "#ff0055"),
   stocks: createMeta("stocks", "📉", "#22c55e"),
 
   crypto: createMeta("crypto", "₿", "#22c55e"),
-  house: createMeta("house", "🏠", "#3b82f6"),
+  house: createMeta("house", "🏠", "#1fa304"),
   other: createMeta("other", "❓", "#9ca3af"),
   spending: createMeta("spending", "💸", "#f97316"),
   saving: createMeta("saving", "💰", "#22c55e"),
@@ -193,6 +194,7 @@ export const subCateriesAvailable: Record<Category, Subcategory[]> = {
     "mortgage",
     "electricity",
     "internet",
+    "cel_tmobil",
     "car_insurance",
     "gas",
     "water",
@@ -215,6 +217,7 @@ export const subCateriesAvailable: Record<Category, Subcategory[]> = {
     "utilities",
     "mortgage",
   ],
+  mortgage_Payment:[]
 };
 
 export function getSubCategoryFor(cat:Category){
@@ -253,6 +256,7 @@ export type Subcategory =
   | "mortgage"
   | "electricity"
   | "internet"
+  | "cel_tmobil"
 
   // amazon
   | "electronics"
@@ -315,6 +319,7 @@ export type Subcategory =
   mortgage: createMeta("mortgage", "🏡", "#14b8a6"),
   electricity: createMeta("electricity", "⚡", "#facc15"),
   internet: createMeta("internet", "🌐", "#3b82f6"),
+  cel_tmobil:createMeta("internet", "🌐", "#cc16cc"),
 
   // amazon
   electronics: createMeta("electronics", "📱", "#6366f1"),

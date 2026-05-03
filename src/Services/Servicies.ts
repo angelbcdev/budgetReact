@@ -59,7 +59,7 @@ export class ServiciesLocal implements IServiciesDB {
     
   }
   handleDelete({ sheetName }: { sheetName: TKEY_SERVICES }): Promise<boolean> {
-    // return new Promise((resolve) => {resolve(true)})
+    return new Promise((resolve) => {resolve(true)})
     return new Promise((resolve) => {
       localStorage.removeItem(sheetName);
       resolve(true);

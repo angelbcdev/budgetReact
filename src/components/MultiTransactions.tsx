@@ -5,12 +5,12 @@ import { useState } from "react";
 
 import { fliterCategoryAvailable,   getSubCategoryFor,   getSubCategoryMeta,   type Category,  type PaymentMethod,  type Subcategory,  type TransactionType } from "../Models/dummyData";
 import { Transaction } from "../Models/DataTransactions";
-import { allIcons } from "../UI/allIicons";
 import { useBudgetContext } from "../provide/budget";
 import { VALID_ROUTES } from "../Routes/routes";
 import { MultipleAcctionButtons } from "./addNewTransactions/Keyboard";
 import { SubCategoryCard } from "../UI/SubCategoryCard";
 
+//TODO change name for  home' gas 
 
 interface IMultiTrnsaction {
   amount: string;
@@ -77,6 +77,29 @@ const MultiTransactions = () => {
     },50)
   }
 
+  const setAllBillatInce = ()=>{
+    setAllNewTransactions([])
+    const data = getSubCategoryFor("bills")
+    //
+    
+    const billsData = data.map(element =>{
+      if (element != "mortgage"){
+        return {
+          amount: "",
+          title: `${element}'s pay  `,
+          id:"",
+          description: `Bill ${dateForRow}`,
+          category: "bills",
+          type: "",
+          isReaddy: false,
+          paymentMethod: "credit_card_blue",
+          subcategory:[element]
+        }
+      }
+    }).filter(Boolean);
+    setAllNewTransactions(billsData as IMultiTrnsaction[])
+  }
+
 
   const createMultipleTransactions = () => {
 
@@ -109,11 +132,13 @@ const MultiTransactions = () => {
     <Layout>
       <HeatherView title="Multi Transactions" />
       <section className="pt-4 relative max-w-94 flex flex-col gap-4 justify-center  mx-auto  ">
-        <section className="flex   rounded-md px-4 py-2 gap-2 justify-between bg-white  ">
+        <section className="flex   rounded-md px-4 py-2 gap-2 h-20 justify-between bg-white relative  ">
          
+        
           <p className="font-semibold text-xl">{numberTransactions}/{maxRow} </p>
-          <label className="border rounded px-1 shadow-sm bg-white">
+          <label className="border rounded px-1 shadow-sm bg-white h-8 flex ">
             <input 
+            
             onChange={(e)=>{
                 setDateForRow(e.target.value)
 
@@ -121,10 +146,17 @@ const MultiTransactions = () => {
             defaultValue={dateForRow}
             type="date" />
           </label>
-          <div className="border w-34 flex p-px rounded-md text-gray-600 gap-px bg-gray-400">
+          <div className="flex flex-col gap-2">
+            <div className="border w-34 flex p-px rounded-md text-gray-600 gap-px bg-gray-400">
             <button onClick={() => handleRows("+")} className="w-1/2 bg-gray-100 rounded-l-sm" >{"+"}</button>
-            <button onClick={ressetAllRow} className="w-1/2 bg-gray-100 text-gray-500 flex justify-center mx-px" >{allIcons.trashCan}</button>
+           
             <button onClick={() => handleRows("-")} className="w-1/2 bg-gray-100 rounded-r-sm" >{"-"}</button>
+          </div>
+           <div className="border w-34  flex p-px rounded-md text-gray-600 gap-px bg-gray-400 ">
+            <button onClick={setAllBillatInce} className="w-1/2 bg-gray-100 rounded-l-sm" >Bills</button>
+            <button onClick={ressetAllRow} className="w-1/2 bg-gray-100 rounded-r-sm" >Reset</button>
+
+          </div>
           </div>
         </section>
         <section className="flex  flex-col   pb-10 gap-2 overflow-y-auto rounded-xl h-120  ">
@@ -232,13 +264,13 @@ const RowNewTransactions = ({ positionInList, setAllNewTransactions, dataRow }:
       
       <div className="flex  gap-2">
         <p className=" w-12 text-3xl font-bold text-center pt-3">{positionInList + 1}</p>
-        <MyInputText onChange={onChange} name="title" />
-        <MyInputText onChange={onChange} name="description" />
+        <MyInputText onChange={onChange} name="title" defaulvalue={dataRow.title ?? ""} />
+        <MyInputText onChange={onChange} name="description" defaulvalue={dataRow.description ?? ""} />
       </div>
       <div className="flex  gap-2">
         {/* <MySelector onChange={onChange} data={typeTransactionAvailable} title="Type" name="type"/>  */}
-        <MySelector onChange={onChange} data={payCardas} title={"pay "} name="paymentMethod" />
-        <MySelector onChange={onChange} data={fliterCategoryAvailable} title="category" name="category" />
+        <MySelector onChange={onChange} data={dataRow.category == "bills" ? [dataRow.paymentMethod] : payCardas} title={"pay "} name="paymentMethod" />
+        <MySelector onChange={onChange} data={ dataRow.category == "bills" ? ["bills"] : fliterCategoryAvailable} title="category" name="category" />
         <MyInputAmount onChange={onChange} />
       </div>
       <div className="flex flex-wrap   gap-2 text-[12px]">
@@ -302,6 +334,7 @@ const MySelector = ({ title, name, data, onChange }: { title: string, name: stri
 
       <select
         name={name}
+        defaultValue={"hello"}
         value={value}
         onChange={(e) => {
           onChange(e)
@@ -310,8 +343,8 @@ const MySelector = ({ title, name, data, onChange }: { title: string, name: stri
         className="border border-gray-300 w-26 px-1 rounded"
       >
 
-        <option></option>
-        {data.map((selectOption) => {
+        
+        {data.map((selectOption  ) => {
           let title = selectOption
 
             if (title == "credit_card_red"){
@@ -320,10 +353,12 @@ const MySelector = ({ title, name, data, onChange }: { title: string, name: stri
             if (title == "credit_card_blue"){
               title = "Blue Card"
             }
-          return(
+          return(<>
+            {data.length > 1 && <option key={selectOption+ 1}></option>}
           <option key={crypto.randomUUID()} value={selectOption}>
             {title}
           </option>
+          </>
         )})}
       </select>
     </section>
@@ -331,7 +366,7 @@ const MySelector = ({ title, name, data, onChange }: { title: string, name: stri
 };
 
 
-const MyInputText = ({ name, onChange }: { name: string, onChange: (e: any) => void }) => {
+const MyInputText = ({ name, onChange , defaulvalue}: { name: string, onChange: (e: any) => void ,defaulvalue:string }) => {
 
   return (
     <label className="flex flex-col gap-1  relative group">
@@ -342,6 +377,7 @@ const MyInputText = ({ name, onChange }: { name: string, onChange: (e: any) => v
         {name}
       </span>
       <input
+        defaultValue={defaulvalue}
         name={name}
         onChange={(e) => onChange(e)}
         className="border-gray-300 border rounded-sm h-6 w-34 bg-transparent px-2 py-1 outline-none focus:border-blue-500"

@@ -57,7 +57,7 @@ export const validateEnoughBalance = ({
     isChecking &&
     (type === "saving" || category === "mortgage")
   ) {
-    return true
+    return validateBalance(numericAmount)
   }
 
   return false
@@ -141,6 +141,13 @@ export const ajustDataForTransaction =({dataTransaction}:{dataTransaction: ITran
         }
         return dataTransaction.subcategory;
       };
+
+      const checkValidationsCategory = (): Category => {
+        if (validatePayMortgage) {
+          return "mortgage_Payment";
+        }
+        return dataTransaction.category;
+      }
   
       return new Transaction({
         id: crypto.randomUUID(),
@@ -149,7 +156,7 @@ export const ajustDataForTransaction =({dataTransaction}:{dataTransaction: ITran
         amount: Number(dataTransaction.amount),
         date: dataTransaction.date,
         type: dataTransaction.type,
-        category: dataTransaction.category,
+        category: checkValidationsCategory(),
         subcategory: validateSubcategory(),
         paymentMethod: checkValidationsPayment(),
       });

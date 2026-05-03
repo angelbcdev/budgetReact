@@ -74,6 +74,7 @@ export function useSummary(transactions: Transaction[]) {
       credit_card_blue: 0,
       credit_card_red: 0,
       house: 0,
+      mortgage_Payment: 0
     },
   });
 
@@ -107,6 +108,10 @@ export function useSummary(transactions: Transaction[]) {
   const applyTransaction = (acc: ISummaryHomeData, t: Transaction) => {
     const amount = Math.abs(t.amount);
 
+     if (acc.databyCatefory[t.category]) {
+      acc.databyCatefory[t.category] = 0
+    }
+
     // PAYCHECK
     if (
       t.type === "credit_card_payment" &&
@@ -136,12 +141,11 @@ export function useSummary(transactions: Transaction[]) {
 
     //PAY Mortgage
     if (t.type === "credit_card_payment" && t.paymentMethod === "mortgage") {
+       acc.databyCatefory["mortgage_Payment"] += amount;
       acc.savingsMortgage -= amount;
       return;
     }
-    if (acc.databyCatefory[t.category]) {
-      acc.databyCatefory[t.category] = 0
-    }
+   
 
     // SAVINGS
     if (t.type === "saving") {
@@ -165,12 +169,13 @@ export function useSummary(transactions: Transaction[]) {
       return;
     }
 
-    // SPENDING
+    // SPENDING mortgage_Payment
     if (t.type === "spending") {
       acc.totalExpenses += amount;
       acc.databyCatefory[t.category] += amount;
 
       switch (t.paymentMethod) {
+       
         case "credit_card_blue":
           acc.totalCardBlue += amount;
           break;

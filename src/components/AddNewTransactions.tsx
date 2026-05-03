@@ -80,13 +80,13 @@ const AddNewTransactions = () => {
     });
     setTimeout(() => {
       setBalanceNotification({ ...emptyNotification });
-    }, 1200);
+    }, 500);
   }
 
 
   const createTransaction = () => {
 
- console.log({where:"1st",d: dataTransaction})
+
     //Validate Balance
     if (!validateEnoughBalance({ dataTransaction, validateBalance })
 
@@ -227,7 +227,7 @@ const AddNewTransactions = () => {
         <h3 className="text-xl font-bold ">New Transaction</h3>
         <div className="flex flex-row gap-4 items-center justify-center transition-all ease-in duration-300 ">
           <p
-            className={`  transition-all text-5xl font-light text-gray-600  ${animate ? "scale-101 opacity-90 pr-px rotate-1" : "scale-100 opacity-100"
+            className={`  transition-all text-5xl font-light text-gray-600  ${animate ? "scale-103 opacity-70 pr-px " : "scale-100 opacity-100"
               }`}
           >
             $ {Number(dataTransaction.amount || 0).toFixed(2)}
