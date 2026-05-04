@@ -7,7 +7,7 @@ import HeatherView from "../UI/HeatherView";
 
 
 const Settings = () => {
-  const { changeMountToShow, curentDate, currentMonthGoals, handleDelete , handleBackup } =
+  const { changeMountToShow, curentDate, currentMonthGoals } =
     useBudgetContext();
   const version = "Version 1.1.0";
 
@@ -47,24 +47,33 @@ const Settings = () => {
       title: "Goals for this month",
       data: data
     },
-    {
-      title: "Storage",
-      data: [
-        {
-          name: "Delete all data",
-          value: 0,
-          action: () => {
-            handleDelete()
-          },
-        },{
-          name: "Save Backup",
-          value: 0,
-          action: () => {
-            handleBackup()
-          },
-        },
-      ]
-    }
+    // {
+    //   title: "Storage",
+    //   data: [ //udateLocalDataBase
+    //     {
+    //       name: "Delete all data",
+    //       value: 0,
+    //       action: () => {
+    //         handleDelete()
+    //       },
+    //     },{
+    //       name: "Check for updates",
+    //       value: 0,
+    //       action: () => {
+    //         udateLocalDataBase()
+    //       },
+    //     }
+        
+        
+    //     , {
+    //       name: "Save Backup",
+    //       value: 0,
+    //       action: () => {
+    //         handleBackup()
+    //       },
+    //     },
+    //   ]
+    // }
   ]
 
   return (

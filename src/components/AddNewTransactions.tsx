@@ -42,7 +42,7 @@ export interface IBalanceNotification {
 }
 
 const AddNewTransactions = () => {
-  const { saveNewTransaction, validateBalance, validatePaymentCard, validateMortgageFound } =
+  const { saveNewTransaction, validateBalance, validatePaymentCard, validateMortgageFound , validateSavingsAccountBalance } =
     useBudgetContext();
   const [defaultTypeTransaction, setDefaultTypeTransaction] =
     useState<TransactionType>("spending");
@@ -88,7 +88,7 @@ const AddNewTransactions = () => {
 
 
     //Validate Balance
-    if (!validateEnoughBalance({ dataTransaction, validateBalance })
+    if (!validateEnoughBalance({ dataTransaction, validateBalance , validateSavingsAccountBalance})
 
     ) {
       showNotification({
@@ -184,7 +184,7 @@ const AddNewTransactions = () => {
         break;
 
       case "credit_card_payment":
-        setCategoryToShow(paymentMethodAvailable);
+        setCategoryToShow(paymentMethodAvailable.filter((method) => method !== "savings_account"));
         setDefaultCategory("credit_card_red");
         setDataTransaction((data) => ({
           ...data,
@@ -252,12 +252,13 @@ const AddNewTransactions = () => {
       </div>
       <section className=" justify-center flex flex-col items-center">
         <SelectorContainer
-          options={categoryToShow.map((category) => category)}
+          options={categoryToShow}
           selecteOption={defaultCategory}
           changeOtion={(option) => selectCurrentCategory(option as Category)}
         />
 
         <HeathersTransactions
+          
           defaultTypeTransaction={defaultTypeTransaction}
           setShowModal={setShowModal}
           dataTransaction={dataTransaction}

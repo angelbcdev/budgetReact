@@ -32,6 +32,7 @@ const TransationsDetailsView = () => {
 
   const { handleUpdate , handleDeleteOne } = useBudgetContext();
   const [canEdit, setCanEdit] = useState(false);
+  const [canDelete, setCanDelete] = useState(false);
 
   const [errors, setErrors] = useState({
     title: "",
@@ -49,7 +50,7 @@ const TransationsDetailsView = () => {
 
   // ================= VALIDACIÓN =================
   const validate = () => {
-    let newErrors = { title: "", amount: "" };
+    const newErrors = { title: "", amount: "" };
 
     if (!title || title.trim() === "") {
       newErrors.title = "Title is required";
@@ -106,14 +107,18 @@ const TransationsDetailsView = () => {
     navigate("/transactions");
   }
 
+  console.log(dataShow)
+
   return (
     <Layout>
-      <HeatherView title="Details" />
+      <div onClick={() => setCanDelete(!canDelete)}>
+        <HeatherView title="Details" />
+      </div>
 
 
 
       <section className="p-4 flex flex-col px-8 relative ">
-      <span className="absolute -top-11  right-8 bg-red-400 text-white font-semibold px-4 rounded-xl "  onClick={deleteTransaction}>Delete</span>
+      {canDelete &&<span className="absolute -top-11  right-8 bg-red-400 text-white font-semibold px-4 rounded-xl "  onClick={deleteTransaction}>Delete</span>}
         {/* HEADER */}
         <section
           style={{

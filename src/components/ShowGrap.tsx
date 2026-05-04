@@ -4,17 +4,23 @@ import { Layout } from "../UI/Layout";
 // import { useLocation } from "react-router";
 import SelectorMultipleUI from "../UI/SelectorMultipleUI";
 import { useState } from "react";
-import type { ISummaryHomeData } from "../provide/hooks/useSummaryTransactions";
+import type { ISummaryHomeData, } from "../provide/hooks/useSummaryTransactions";
+
+import { validateSavingDataToShow, type TKEY_SUMMARY } from "../provide/hooks/useSummaryTransactions";
+import { DataShowListCategory } from "../UI/DataShowListCategory";
 
 
 const ShowGrap = () => {
   // const location = useLocation();
-  const { curentDate, allMonthsData , lastMonth , acumulateMonth  } = useBudgetContext();
+  const { curentDate, allMonthsData , lastMonth , acumulateMonth  ,global} = useBudgetContext();
   const [monthToShowString, setMonthToShowString] = useState<string>(lastMonth);
- 
-
 
  
+
+  const globalData = Object.entries(global).map(([category, cuantity]) => ({ category, cuantity })
+  ).filter(e => validateSavingDataToShow.includes(e.category as TKEY_SUMMARY))
+ 
+  console.log(globalData)
 
 const searchDataMonth = (search: "Current" | "Last") => {
   const isCurrentMonth = search === "Current";
@@ -50,9 +56,11 @@ const searchDataMonth = (search: "Current" | "Last") => {
 
   const dataCurrentMonth = searchDataMonth( "Current")
 
-  const dataOldMonth = searchDataMonth( "Last")
+  const dataOldMonth = searchDataMonth("Last")
+  
+  const dataToShow = [{category: 'Balance', cuantity: global.totalBalance},...globalData]
 
-
+  const totalAvailable = dataToShow.reduce((acc, item) => acc + item.cuantity, 0);
   return(
     <Layout>
       <div className="sticky top-0  bg-white p-4 ">
@@ -61,7 +69,7 @@ const searchDataMonth = (search: "Current" | "Last") => {
           <h6 className="text-3xl font-light text-gray-600 "> </h6>
         </div> 
       </div>
-      <section className="flex flex-col w-full max-w-94 mb-4 h-170 pt-4  gap-4  mx-auto    bg-gsray-800 ">
+      <section className="flex flex-col overflow-scroll w-93 mb-4 h-170 pt-4  gap-4  mx-auto    bg-gsray-800 ">
         <SelectorMultipleUI
           data={allMonthsData}
           year={curentDate.year}
@@ -69,10 +77,12 @@ const searchDataMonth = (search: "Current" | "Last") => {
           defaultTypeTransaction={monthToShowString} />
 
         <CardMonthData title={"Current Month"} data={dataCurrentMonth} />
-        <CardMonthData title={"Last Month"}  data={dataOldMonth}/>
+        <CardMonthData title={"Last Month"} data={dataOldMonth} />
 
       
 
+        <p className="text-xl font-bold pl-20 ">Total Available: {totalAvailable}</p>
+        <DataShowListCategory title="Globals Savings" sizeScroll={100} data={dataToShow} valueSort={true} setSortToggle={() => { }} />
       </section>
 
     </Layout>
@@ -87,7 +97,7 @@ const CardMonthData = ({title ,data}: {title: string ,data: any}) => {
 
 
   return (
-      <section className="w-full min-h-30 bg-white rounded-2xl shadow-md p-3  ">
+      <section className="w-full h-60 bg-white rounded-2xl shadow-md p-3  mb-2 ">
       <h2 className="text-lg font-bold mb-1  " >{title}</h2>
       {
         Object.keys(data).map((f, i) => (
@@ -105,7 +115,7 @@ const CardMonthData = ({title ,data}: {title: string ,data: any}) => {
 
 const RowDataShow = ({title ,data}: {title: string , data: {name: string, value: string}[]}) => {
   return(
-    <div className="mb-1 ">
+    <div className="mb-1  ">
       <p className="text-md font-semibold  border-b border-gray-400 uppercase " >{title}</p>
       <div className="grid grid-cols-2 ">
         {

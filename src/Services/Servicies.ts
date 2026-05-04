@@ -1,132 +1,120 @@
+import { settings } from "../api";
 import { Transaction } from "../Models/DataTransactions";
-
-export const settings = {
-  id: import.meta.env.VITE_GOOGLE_ID,
-  url: import.meta.env.VITE_SHEET,
-};
 
 type TKEY_SERVICES = "transactions" | "CATEGORIES" | "Date";
 
-export const KEY_SERVICES: { [key: string]: TKEY_SERVICES } = {
+const KEY_SERVICES: { [key: string]: TKEY_SERVICES } = {
   TRANSACIONS: "transactions",
   CATEGORIES: "CATEGORIES",
-  DATE:"Date"
+  DATE: "Date",
 };
 
-//TODO all routes has to be inside of eache services 
-
 export interface IServiciesDB {
-  getSheetData(sheetName: TKEY_SERVICES): Promise<Transaction[]>;
+  getSheetData(): Promise<Transaction[]>;
   sendSheetDataTransaction({
-    sheetName,
     transaction,
   }: {
-    sheetName: TKEY_SERVICES;
     transaction: Transaction;
   }): Promise<boolean>;
 
-  handleBackup(data?: Transaction[]): void;
-  handleUpdate(data?: Transaction): void;
-  handleDeleteOne(data?: Transaction): void;
-  handleDelete({ sheetName }: { sheetName: TKEY_SERVICES }): Promise<boolean>;
+  handleBackup(data: Transaction[]): void;
+  handleUpdate(data: Transaction[]): void;
+  handleDeleteOne(data: Transaction[]): void;
+  handleDelete(): Promise<boolean>;
 }
 
 export class ServiciesLocal implements IServiciesDB {
   constructor() {}
 
-
-  handleUpdate(newTransaction: Transaction): void {
-    this.getSheetData(KEY_SERVICES.TRANSACIONS).then(oldData =>{
-      const old = oldData.filter(t => t.id != newTransaction.id)
-      const newData = [...old , newTransaction] 
-      localStorage.setItem(KEY_SERVICES.TRANSACIONS, JSON.stringify(newData));
-    })
-    
-    
-      
-    
+  handleUpdate(data: Transaction[]): void {
+    localStorage.setItem(KEY_SERVICES.TRANSACIONS, JSON.stringify(data));
   }
 
-    handleDeleteOne(newTransaction: Transaction): void {
-    this.getSheetData(KEY_SERVICES.TRANSACIONS).then(oldData =>{
-      const old = oldData.filter(t => t.id != newTransaction.id)
-      const newData = [...old] 
-      localStorage.setItem(KEY_SERVICES.TRANSACIONS, JSON.stringify(newData));
-    })
-    
-    
-      
-    
+  handleDeleteOne(data: Transaction[]): void {
+    localStorage.setItem(KEY_SERVICES.TRANSACIONS, JSON.stringify(data));
   }
-  handleDelete({ sheetName }: { sheetName: TKEY_SERVICES }): Promise<boolean> {
-    return new Promise((resolve) => {resolve(true)})
+  handleDelete(): Promise<boolean> {
     return new Promise((resolve) => {
-      localStorage.removeItem(sheetName);
+      resolve(true);
+    });
+    return new Promise((resolve) => {
+      localStorage.removeItem(KEY_SERVICES.TRANSACIONS);
       resolve(true);
     });
   }
 
-  getSheetData(sheetName: TKEY_SERVICES): Promise<Transaction[]> {
+  getSheetData(): Promise<Transaction[]> {
     return new Promise((resolve) => {
-      const data = JSON.parse(localStorage.getItem(sheetName) || "[]");
+      const data = JSON.parse(
+        localStorage.getItem(KEY_SERVICES.TRANSACIONS) || "[]",
+      );
       resolve(data.map((f: any) => new Transaction(f)));
     });
   }
   async sendSheetDataTransaction({
-    sheetName,
     transaction,
   }: {
-    sheetName: TKEY_SERVICES;
     transaction: Transaction;
   }): Promise<boolean> {
-    const prevData = await this.getSheetData(sheetName);
+    const prevData = await this.getSheetData();
     const newData = [...prevData, transaction];
 
     return new Promise((resolve) => {
-      localStorage.setItem(sheetName, JSON.stringify(newData));
+      localStorage.setItem(KEY_SERVICES.TRANSACIONS, JSON.stringify(newData));
       resolve(true);
     });
   }
 
-  handleBackup(data?: Transaction[]): void {
-    if (!data) return;
+  handleBackup(data: Transaction[]): void {
+    localStorage.setItem(KEY_SERVICES.TRANSACIONS, JSON.stringify(data));
     const db = new GoogleSheetsServicies();
-   
-    if (!settings.url){
-      console.log("Can't save now")
-      return
-    }
-    data.map((f) => {
-      db.sendSheetDataTransaction({
-        sheetName: KEY_SERVICES.TRANSACIONS,
-        transaction: f,
-      });
-    });
+    db.handleBackup(data);
   }
 }
 
 export class GoogleSheetsServicies implements IServiciesDB {
   allData: Transaction[] = [];
   constructor() {}
-  handleUpdate(_: Transaction): void {
-    throw new Error("Method not implemented.");
+  handleUpdate(data: Transaction[]): void {
+    this.handleBackup(data);
   }
-  handleBackup(_: Transaction[]): void {
-    return;
-    throw new Error("Method not implemented.");
+  async handleBackup(data?: Transaction[]): Promise<void> {
+    console.log(data);
+    if (!data) return;
+    const payload = {
+      sheetName: KEY_SERVICES.TRANSACIONS,
+      data: data.map((t) => t.toSheetRow()), // 👈 clave aquí
+    };
+
+    const response = await fetch(settings.url, {
+      method: "POST",
+
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      console.error("Failed to sync transactions");
+    }
+
+    const result = await response.json();
+    return new Promise((resolve) => {
+      resolve(result);
+    });
   }
-  handleDelete(_: { sheetName: TKEY_SERVICES }): Promise<boolean> {
+  handleDelete(): Promise<boolean> {
     return new Promise((resolve) => {
       resolve(false);
     });
   }
-  handleDeleteOne(_: Transaction): void {
-    throw new Error("Method not implemented.");
+  handleDeleteOne(data: Transaction[]): void {
+    this.handleBackup(data);
   }
 
-  async getSheetData(sheetName: string) {
+  async getSheetData() {
     try {
-      const url = `${settings.url}?sheetName=${encodeURIComponent(sheetName)}`;
+      const url = `${settings.url}?sheetName=${encodeURIComponent(
+        KEY_SERVICES.TRANSACIONS,
+      )}`;
       const response = await fetch(url);
 
       if (!response.ok) throw new Error("Network response was not ok");
@@ -139,44 +127,7 @@ export class GoogleSheetsServicies implements IServiciesDB {
       console.error("Fetch error:", error);
     }
   }
-  async sendSheetDataTransaction({
-    sheetName,
-    transaction,
-  }: {
-    sheetName: string;
-    transaction: Transaction;
-  }) {
-    console.log(transaction);
-    const payload = {
-      sheetName,
-      ...transaction.toSheetRow(), // ← this might be the problem
-    };
-
-    const data = await fetch(settings.url, {
-      method: "POST",
-
-      body: JSON.stringify(payload),
-    });
-    if (!data.ok) return false;
+  async sendSheetDataTransaction(_: { transaction: Transaction }) {
     return true;
   }
-  // async sendSheetDataCategories({
-  //   mainCategorie,
-  //   newSubCategorie,
-  // }: {
-  //   mainCategorie: string;
-  //   newSubCategorie: string;
-  // }) {
-  //   const payload = {
-  //     sheetName: "subCategories",
-  //     category: mainCategorie,
-  //     subcategory: newSubCategorie, // ← this might be the problem
-  //   };
-
-  //   fetch(settings.url, {
-  //     method: "POST",
-
-  //     body: JSON.stringify(payload),
-  //   });
-  // }
 }

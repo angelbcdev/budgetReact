@@ -4,18 +4,13 @@ export type TransactionType =
   | "credit_card_payment"
   | "income";
 
-;
-
 export type SavingsMethod = "mortgage" | "savings" | "stocks" | "crypto";
 
-//TODO: Add this type 
-// export type TKEY_GOALS =
-//   | "savingsMortgage"
-//   | "savingsBank"
-//   | "savingsStocks"
-//   | "savingsCrypto";
-
-
+type TKEY_GOALS =
+  | "savingsMortgage"
+  | "savingsBank"
+  | "savingsStocks"
+  | "savingsCrypto";
 
 export type Category =
   | "food"
@@ -36,48 +31,54 @@ export type Category =
   | "credit_card_red"
   | "house";
 
-  export const allCategoryAvailable: Category[] = [
-  "food"
-  , "transport"
-  , "drinks"
-  , "bills"
-  , "amazon"
-  , "savings"
-  , "credit_card_payment"
-  , "other"
-  , "mortgage"
-  , "savings"
-  , "stocks"
-  , "crypto"
-  , "checking"
-  , "credit_card_blue"
-  , "credit_card_red"
-  , "house"
+export const allCategoryAvailable: Category[] = [
+  "food",
+  "transport",
+  "drinks",
+  "bills",
+  "amazon",
+  "savings",
+  "credit_card_payment",
+  "other",
+  "mortgage",
+  "savings",
+  "stocks",
+  "crypto",
+  "checking",
+  "credit_card_blue",
+  "credit_card_red",
+  "house",
 ];
 
 export type PaymentMethod =
   | "checking"
+  | "savings_account"
   | "credit_card_blue"
   | "credit_card_red"
   | "cards_payment"
   | "paycheck"
   | "mortgage";
 
-export type TallTypeCategory =  Category |TransactionType  |PaymentMethod | SavingsMethod 
+export type TallTypeCategory =
+  | Category
+  | TransactionType
+  | PaymentMethod
+  | SavingsMethod
+  | TKEY_GOALS
+  | "Balance";
 export interface TCategory_Meta {
-  icon:string;
-  bg:string
-  label:string
+  icon: string;
+  bg: string;
+  label: string;
 }
 const formatLabel = (key: string) =>
-  key.replaceAll("_", " ").replace(/\b\w/g, c => c.toUpperCase());
+  key.replaceAll("_", " ").replace(/\b\w/g, (c) => c.toUpperCase());
 
-const createMeta = (key: TallTypeCategory | Subcategory, icon: string, bg: string): TCategory_Meta => ({
+const createMeta = (key: string, icon: string, bg: string): TCategory_Meta => ({
   icon,
   bg,
   label: formatLabel(key),
 });
-
 
 export const CATEGORY_META: Record<TallTypeCategory, TCategory_Meta> = {
   checking: createMeta("checking", "💵", "#22c55e"),
@@ -93,7 +94,7 @@ export const CATEGORY_META: Record<TallTypeCategory, TCategory_Meta> = {
   amazon: createMeta("amazon", "📦", "#ec4899"),
   savings: createMeta("savings", "💰", "#22c55e"),
   credit_card_payment: createMeta("credit_card_payment", "💳", "#a855f7"),
-  mortgage_Payment:createMeta("mortgage_Payment", "🏠", "#ff0055"),
+  mortgage_Payment: createMeta("mortgage_Payment", "🏠", "#ff0055"),
   stocks: createMeta("stocks", "📉", "#22c55e"),
 
   crypto: createMeta("crypto", "₿", "#22c55e"),
@@ -102,29 +103,27 @@ export const CATEGORY_META: Record<TallTypeCategory, TCategory_Meta> = {
   spending: createMeta("spending", "💸", "#f97316"),
   saving: createMeta("saving", "💰", "#22c55e"),
   income: createMeta("income", "💵", "#16a34a"),
-  
+  savingsMortgage: createMeta("For Mortgage", "🏠", "#ffa34a"),
+  savingsBank: createMeta("For Bank", "$", "#16304a"),
+  savingsStocks: createMeta("For Stocks", "📉", "#fff003"),
+  savingsCrypto: createMeta("For Crypto", "₿", "#1fa3fa"),
+  savings_account: createMeta("Savings", "💰", "#1ffffa"),
+  Balance: createMeta("Balance", "💰", "#1faffa"),
 };
 
-
-export function getCategoryMeta(category: TallTypeCategory):TCategory_Meta {
-  if (CATEGORY_META[category]){
-  return CATEGORY_META[category];
-}else{
- return {icon:"?",
-  bg:"#1d2a9b",
-  label:"no added"}
+export function getCategoryMeta(category: TallTypeCategory): TCategory_Meta {
+  if (CATEGORY_META[category]) {
+    return CATEGORY_META[category];
+  } else {
+    return { icon: "?", bg: "#1d2a9b", label: "no added" };
+  }
 }
-}
-
-
 
 export const typeTransactionAvailable: TransactionType[] = [
   "spending",
   "saving",
   "credit_card_payment",
 ];
-
-
 
 export const fliterCategoryAvailable: Category[] = [
   "food",
@@ -142,18 +141,12 @@ export const savingsMethodAvailable: SavingsMethod[] = [
   "crypto",
 ];
 
-
-
-
-
-
-
-
 export const paymentMethodAvailable: PaymentMethod[] = [
   "mortgage",
   "credit_card_red",
   "credit_card_blue",
   "checking",
+  "savings_account",
 ];
 
 export const TRANSACTION_TYPE_META: Record<
@@ -164,7 +157,7 @@ export const TRANSACTION_TYPE_META: Record<
   credit_card_payment: { label: "CC Payment", fill: "#a855f7" },
   saving: { label: "Saving", fill: "#3b82f6" },
   income: { label: "Income", fill: "#22c55e" },
-}
+};
 
 export const TYPE_META = {
   spending: { label: "Spending", fill: "#ef4444" },
@@ -217,17 +210,16 @@ export const subCateriesAvailable: Record<Category, Subcategory[]> = {
     "utilities",
     "mortgage",
   ],
-  mortgage_Payment:[]
+  mortgage_Payment: [],
 };
 
-export function getSubCategoryFor(cat:Category){
-  if(subCateriesAvailable[cat]){
-    return subCateriesAvailable[cat]
-  }else{
-    return []
+export function getSubCategoryFor(cat: Category) {
+  if (subCateriesAvailable[cat]) {
+    return subCateriesAvailable[cat];
+  } else {
+    return [];
   }
 }
-
 
 export type Subcategory =
   | "payment_card"
@@ -291,7 +283,7 @@ export type Subcategory =
   | "walmart"
   | "other";
 
-  export const SUBCATEGORY_META: Record<Subcategory, TCategory_Meta> = {
+export const SUBCATEGORY_META: Record<Subcategory, TCategory_Meta> = {
   payment_card: createMeta("payment_card", "💳", "#3b82f6"),
 
   // general
@@ -319,7 +311,7 @@ export type Subcategory =
   mortgage: createMeta("mortgage", "🏡", "#14b8a6"),
   electricity: createMeta("electricity", "⚡", "#facc15"),
   internet: createMeta("internet", "🌐", "#3b82f6"),
-  cel_tmobil:createMeta("internet", "🌐", "#cc16cc"),
+  cel_tmobil: createMeta("internet", "🌐", "#cc16cc"),
 
   // amazon
   electronics: createMeta("electronics", "📱", "#6366f1"),
@@ -355,14 +347,10 @@ export type Subcategory =
   other: createMeta("other", "📌", "#9ca3af"),
 };
 
-
-export function getSubCategoryMeta(subcate: Subcategory):TCategory_Meta {
-  if (SUBCATEGORY_META[subcate]){
-  return SUBCATEGORY_META[subcate];
-}else{
- return {icon:"?",
-  bg:"#1d2a9b",
-  label:"no added"}
+export function getSubCategoryMeta(subcate: Subcategory): TCategory_Meta {
+  if (SUBCATEGORY_META[subcate]) {
+    return SUBCATEGORY_META[subcate];
+  } else {
+    return { icon: "?", bg: "#1d2a9b", label: "no added" };
+  }
 }
-}
-

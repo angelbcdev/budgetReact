@@ -213,7 +213,7 @@ const AllTransactions = () => {
                                 return (
                                   <span
                                     key={subCategory}
-                                    className="inline-block  text-[10px] px-2 py-0.5 rounded-md bg-gray-100 text-gray-600"
+                                    className="inline-block h-4 text-[10px] px-2 py-0.5 rounded-md bg-gray-100 text-gray-600"
                                   >
                                     ...
                                   </span>
@@ -282,7 +282,8 @@ const paymentLabels: Record<PaymentMethod, string> = {
   paycheck: "Paycheck",
   checking: "Checking",
   mortgage: "Mortgage Account",
-  cards_payment: "Card payment"
+  cards_payment: "Card payment",
+  savings_account: "Savings DCU"
 };
 
 function formatAmount(n: number) {

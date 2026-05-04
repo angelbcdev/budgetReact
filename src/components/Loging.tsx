@@ -19,7 +19,7 @@ const Loging = () => {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-
+    
     // 🔐 fake validation (replace with API later)
     if (email === settings.email && password === settings.password) {
       // save session

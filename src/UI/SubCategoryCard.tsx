@@ -12,5 +12,5 @@ export const SubCategoryCard = ({subCategory,onClick ,showIcon = true}:{subCateg
                 borderWidth:1
               }}
               onClick={onClick}
-            className={`   ${showIcon ? "px-4" : " text-[10px] px-2"}   rounded capitalize`}  >{showIcon ? meta.icon : ""} {meta.label}</span>
+            className={`   ${showIcon ? "px-4" : " text-[9px] h-4 px-2 text-nowrap "}   rounded capitalize`}  >{showIcon ? meta.icon : ""} {meta.label}</span>
 )}

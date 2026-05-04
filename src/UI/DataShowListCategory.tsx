@@ -9,7 +9,7 @@ export const DataShowListCategory = ({ title, data, sizeScroll = 10, showSort = 
     return null;
   }
   return (
-    <section>
+    <section className= "">
             <div className="flex flex-row justify-between items-center mb-2">
         <p
           onClick={() => setShowDataWithCero(!showDataWithCero)}
@@ -21,7 +21,7 @@ export const DataShowListCategory = ({ title, data, sizeScroll = 10, showSort = 
           data={[true, false]} valueSort={valueSort} setSortToggle={setSortToggle} />}
             </div>
             
-            <div className="flex flex-col  justify-center  rounded-2xl overflow-hidden  w-97 border mx-auto border-gray-200 ">
+            <div className="flex flex-col  justify-center  rounded-2xl overflow-hidden  w-93 border mx-auto border-gray-200 ">
               {
 
                 data.sort((a, b) => {
@@ -45,11 +45,11 @@ export const DataShowListCategory = ({ title, data, sizeScroll = 10, showSort = 
                       <div className="flex flex-row items-center gap-2 ">
                         <div
                         style={{backgroundColor:meta.bg + "30"}}
-                    className={`w-10 h-10 flex items-center justify-center rounded-full ${meta.bg}`}
+                    className={`w-10 h-10 flex items-center justify-center rounded-full `}
                   >
                     <span className="text-lg">{meta.icon}</span>
                         </div>
-                        <p className="pl- capitalize  ">{c.category}</p>
+                        <p className="pl- capitalize  ">{meta.label}</p>
                       </div>
                       
                       

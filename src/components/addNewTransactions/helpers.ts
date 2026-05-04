@@ -1,6 +1,11 @@
-import { Transaction } from "../../Models/DataTransactions"
-import type { Category, PaymentMethod, Subcategory, TransactionType } from "../../Models/dummyData"
-import type { ITransaction } from "../AddNewTransactions"
+import { Transaction } from "../../Models/DataTransactions";
+import type {
+  Category,
+  PaymentMethod,
+  Subcategory,
+  TransactionType,
+} from "../../Models/dummyData";
+import type { ITransaction } from "../AddNewTransactions";
 
 export const emptyNotification = {
   show: false,
@@ -8,160 +13,163 @@ export const emptyNotification = {
   color: {
     text: "",
     bg: "",
-  }
+  },
+};
 
-}
-
-export const emptyNewTransactions = ({ defaultCategory, defaultTypeTransaction }
-  : { defaultCategory: Category, defaultTypeTransaction: TransactionType }): ITransaction => ({
-    title: defaultCategory,
-    description: "",
-    date: new Date(),
-    amount: "0",
-    category: defaultCategory,
-    type: defaultTypeTransaction,
-    paymentMethod: "credit_card_blue",
-    subcategory: [],
-  })
+export const emptyNewTransactions = ({
+  defaultCategory,
+  defaultTypeTransaction,
+}: {
+  defaultCategory: Category;
+  defaultTypeTransaction: TransactionType;
+}): ITransaction => ({
+  title: defaultCategory,
+  description: "",
+  date: new Date(),
+  amount: "0",
+  category: defaultCategory,
+  type: defaultTypeTransaction,
+  paymentMethod: "credit_card_blue",
+  subcategory: [],
+});
 
 export const validateEnoughBalance = ({
   dataTransaction,
-  validateBalance
+  validateBalance,
+  validateSavingsAccountBalance,
 }: {
-  dataTransaction: ITransaction
-  validateBalance: (n: number) => boolean
+  dataTransaction: ITransaction;
+  validateBalance: (n: number) => boolean;
+  validateSavingsAccountBalance: (n: number) => boolean;
 }): boolean => {
+  const { paymentMethod, type, category, amount } = dataTransaction;
 
-  const { paymentMethod, type, category, amount } = dataTransaction
-  const numericAmount = Number(amount)
+  const numericAmount = Number(amount);
 
-  const isChecking = paymentMethod === "checking"
-  const isCard = paymentMethod === "credit_card_blue" || paymentMethod === "credit_card_red"
+  const isChecking = paymentMethod === "checking";
+  const isCard =
+    paymentMethod === "credit_card_blue" || paymentMethod === "credit_card_red";
 
   // Credit cards always allowed
-  if (isCard) return true
+  if (isCard) return true;
+  //using savings account
+  if (paymentMethod === "savings_account" && type === "spending") {
+    return validateSavingsAccountBalance(numericAmount);
+  }
 
   // Adding funds to checking
-  if (category === "checking" && type === "credit_card_payment") return true
+  if (category === "checking" && type === "credit_card_payment") return true;
 
   // Actions that require balance validation
-  if (
-    isChecking &&
-    (type === "spending" || type === "credit_card_payment")
-  ) {
-    return validateBalance(numericAmount)
+  if (isChecking && (type === "spending" || type === "credit_card_payment")) {
+    return validateBalance(numericAmount);
   }
 
-  // No validation needed
-  if (
-    isChecking &&
-    (type === "saving" || category === "mortgage")
-  ) {
-    return validateBalance(numericAmount)
+  //  validation needed
+  if (isChecking && (type === "saving" || category === "mortgage")) {
+    return validateBalance(numericAmount);
   }
 
-  return false
-}
+  return false;
+};
 
 export const validateEnoughPayCreditCart = ({
   dataTransaction,
   validatePaymentCard,
-  adjustCreditCardTotalDeb
+  adjustCreditCardTotalDeb,
 }: {
-  dataTransaction: ITransaction,
-  adjustCreditCardTotalDeb: (n: string) => void,
-  validatePaymentCard: (card: string, cuantity: number, acction: (newAmount: string) => void) => boolean
-}): boolean => (
+  dataTransaction: ITransaction;
+  adjustCreditCardTotalDeb: (n: string) => void;
+  validatePaymentCard: (
+    card: string,
+    cuantity: number,
+    acction: (newAmount: string) => void,
+  ) => boolean;
+}): boolean =>
   dataTransaction.paymentMethod == "checking" &&
   dataTransaction.type == "credit_card_payment" &&
   (dataTransaction.category == "credit_card_blue" ||
     dataTransaction.category == "credit_card_red") &&
   !validatePaymentCard(
     dataTransaction.category,
-    Number(dataTransaction.amount), adjustCreditCardTotalDeb
-  )
-)
+    Number(dataTransaction.amount),
+    adjustCreditCardTotalDeb,
+  );
 
-
-export const validateEnoughPayMortgage=({
-  dataTransaction,validateMortgageFound
-}:{
-  dataTransaction: ITransaction,
-  validateMortgageFound: (amount?: number | undefined) => boolean
-}):boolean =>(
+export const validateEnoughPayMortgage = ({
+  dataTransaction,
+  validateMortgageFound,
+}: {
+  dataTransaction: ITransaction;
+  validateMortgageFound: (amount?: number | undefined) => boolean;
+}): boolean =>
   dataTransaction.category == "mortgage" &&
-      dataTransaction.type == "credit_card_payment" &&
-      !validateMortgageFound(Number(dataTransaction.amount))
-)
+  dataTransaction.type == "credit_card_payment" &&
+  !validateMortgageFound(Number(dataTransaction.amount));
 
-
-
-export const ajustDataForTransaction =({dataTransaction}:{dataTransaction: ITransaction}):Transaction=>{
-  console.log({where:"before", dataTransaction})
+export const ajustDataForTransaction = ({
+  dataTransaction,
+}: {
+  dataTransaction: ITransaction;
+}): Transaction => {
+  console.log({ where: "before", dataTransaction });
   const validatePayMortgage =
-        dataTransaction.type ==
-        "credit_card_payment" &&
-        dataTransaction.category == "mortgage";
-  
-      const validateIsPayCheck =
-        dataTransaction.category == "checking" &&
-        dataTransaction.type == "credit_card_payment";
-      const validatePayCreditCard =
-        dataTransaction.type == "credit_card_payment" &&
-        (dataTransaction.category == "credit_card_blue" ||
-          dataTransaction.category == "credit_card_red");
-  
-  
-  
-      const checkValidationsPayment = (): PaymentMethod => {
-        if (validatePayMortgage) {
-          return "mortgage";
-        }
-        if (validateIsPayCheck) {
-          return "paycheck";
-        }
-        if (validatePayCreditCard) {
-          return "cards_payment";
-        }
-        return dataTransaction.paymentMethod;
-      };
-  
-      const checkValidationTitle = (): string => {
-        if (validatePayCreditCard) {
-          return dataTransaction.category == "credit_card_blue"
-            ? "Payment Blue Card "
-            : "Payment Red Card ";
-        }
-        return dataTransaction.title || dataTransaction.category;
-      };
-  
-      const validateSubcategory = (): Subcategory[] => {
-        if (validatePayCreditCard) {
-          return ["payment_card"];
-        }
-        return dataTransaction.subcategory;
-      };
+    dataTransaction.type == "credit_card_payment" &&
+    dataTransaction.category == "mortgage";
 
-      const checkValidationsCategory = (): Category => {
-        if (validatePayMortgage) {
-          return "mortgage_Payment";
-        }
-        return dataTransaction.category;
-      }
-  
-      return new Transaction({
-        id: crypto.randomUUID(),
-        title: checkValidationTitle(),
-        description: dataTransaction.description,
-        amount: Number(dataTransaction.amount),
-        date: dataTransaction.date,
-        type: dataTransaction.type,
-        category: checkValidationsCategory(),
-        subcategory: validateSubcategory(),
-        paymentMethod: checkValidationsPayment(),
-      });
-  
+  const validateIsPayCheck =
+    dataTransaction.category == "checking" &&
+    dataTransaction.type == "credit_card_payment";
+  const validatePayCreditCard =
+    dataTransaction.type == "credit_card_payment" &&
+    (dataTransaction.category == "credit_card_blue" ||
+      dataTransaction.category == "credit_card_red");
 
+  const checkValidationsPayment = (): PaymentMethod => {
+    if (validatePayMortgage) {
+      return "mortgage";
+    }
+    if (validateIsPayCheck) {
+      return "paycheck";
+    }
+    if (validatePayCreditCard) {
+      return "cards_payment";
+    }
+    return dataTransaction.paymentMethod;
+  };
 
+  const checkValidationTitle = (): string => {
+    if (validatePayCreditCard) {
+      return dataTransaction.category == "credit_card_blue"
+        ? "Payment Blue Card "
+        : "Payment Red Card ";
+    }
+    return dataTransaction.title || dataTransaction.category;
+  };
 
-}
+  const validateSubcategory = (): Subcategory[] => {
+    if (validatePayCreditCard) {
+      return ["payment_card"];
+    }
+    return dataTransaction.subcategory;
+  };
+
+  const checkValidationsCategory = (): Category => {
+    if (validatePayMortgage) {
+      return "mortgage_Payment";
+    }
+    return dataTransaction.category;
+  };
+
+  return new Transaction({
+    id: crypto.randomUUID(),
+    title: checkValidationTitle(),
+    description: dataTransaction.description,
+    amount: Number(dataTransaction.amount),
+    date: dataTransaction.date,
+    type: dataTransaction.type,
+    category: checkValidationsCategory(),
+    subcategory: validateSubcategory(),
+    paymentMethod: checkValidationsPayment(),
+  });
+};

@@ -145,6 +145,12 @@ export function useSummary(transactions: Transaction[]) {
       acc.savingsMortgage -= amount;
       return;
     }
+     //PAY with savings
+    if (t.type === "spending" && t.paymentMethod === "savings_account") {
+      acc.databyCatefory[t.category] += amount;
+      acc.savingsBank -= amount;
+      return;
+    }
    
 
     // SAVINGS

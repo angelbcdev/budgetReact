@@ -7,7 +7,7 @@ import {
   type ReactElement,
 } from "react";
 import { BudgetContext } from "./data";
-import {  KEY_SERVICES,        ServiciesLocal,        type IServiciesDB } from "../../Services/Servicies";
+import {        GoogleSheetsServicies   } from "../../Services/Servicies";
 import { Transaction } from "../../Models/DataTransactions";
 
 import { useSummary, type ISummaryHomeData } from "../hooks/useSummaryTransactions";
@@ -17,7 +17,6 @@ import { goalsDataDefault, type TKEY_GOALS, type TKEY_MONTHS } from "../interfac
 
 export interface IBudgetContext {
   title: string;
-  dataBase: IServiciesDB
   isLoading: boolean
   transactionsData: Transaction[]
   saveNewTransaction: (data: Transaction, action?: () => void) => void
@@ -29,7 +28,9 @@ export interface IBudgetContext {
   allMonthsData:string[]
   saveMultipleTransaction:(data:Transaction[] ,action?:()=>void)=>void
   handleUpdate:(data:Transaction)=>void
-  handleDeleteOne:(data:Transaction)=>void
+  handleDeleteOne: (data: Transaction) => void
+  udateLocalDataBase: () => void
+  validateSavingsAccountBalance: (cuantity?: number) => boolean
   global: ISummaryHomeData
   curentDate:{
     year: string,
@@ -49,24 +50,13 @@ export interface IBudgetContext {
 
   
 const goalsMonthly: TKEY_MONTHS = {
-  // "2026-04": {
-  //    savingsMortgage:1400,
-  //   savingsBank: 250,
-  //   savingsStocks: 250,
-  //   savingsCrypto: 100
-  // },
-  // "2026-03": {
-  //    savingsMortgage:900,
-  //   savingsBank: 900,
-  //   savingsStocks: 950,
-  //   savingsCrypto: 900
-  //  }
+
     
  }
 
 
 export const BudgetContextProvider = ({ children }: { children: ReactElement }) => {
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(false )
   const [transactionsData, setTransactionsData] = useState<Transaction[]>([])
   
   const { global, monthly, lastMonth, allMonthsData ,    acumulateMonth,
@@ -84,7 +74,10 @@ export const BudgetContextProvider = ({ children }: { children: ReactElement }) 
 
 
   const validateBalance = (cuantity: number = 0) => {
-    return global?.totalBalance >= cuantity
+    return global?.totalBalance > cuantity
+  }
+   const validateSavingsAccountBalance = (cuantity: number = 0) => {
+    return global?.savingsBank > cuantity
   }
   const validateMortgageFound = (cuantity: number = 0) => {
 
@@ -103,26 +96,7 @@ export const BudgetContextProvider = ({ children }: { children: ReactElement }) 
    
   }
 
-  
-  const dataBase =  new ServiciesLocal() // :  new GoogleSheetsServicies() 
-
-  useEffect(() => {
-    dataBase.getSheetData(KEY_SERVICES.TRANSACIONS).then((data) => {
-      
-       setIsLoading(false)
-       setTransactionsData(data)
-      // if (!data.length ) {
-      //   return
-      // }
-      
-        
-    })
-    
-    
-   
-  }, [])
-
-  const changeMountToShow = (action: "<" | ">") => {
+   const changeMountToShow = (action: "<" | ">") => {
     if (action === "<") {
       setCurrentMountIndex((prev) => prev - 1 < 0 ? 0 : prev - 1)
     } else {
@@ -131,11 +105,37 @@ export const BudgetContextProvider = ({ children }: { children: ReactElement }) 
     
   }
 
+  
+  const dataBase = new GoogleSheetsServicies() //  new GoogleSheetsServicies()  // new ServiciesLocal()
+  // const onlineData = new GoogleSheetsServicies()
+  useEffect(() => {
+    setIsLoading(true)
+    dataBase.getSheetData().then((data) => {
+      
+       setIsLoading(false)
+       setTransactionsData(data)
+      if (!data.length ) {
+        return
+      }
+      
+        
+    })
+   
+   
+  }, [])
+
+  const udateLocalDataBase = () => {
+    setIsLoading(true)
+    new GoogleSheetsServicies().getSheetData().then((data) => {
+      setIsLoading(false)
+      console.log(transactionsData)
+      console.log(data)
+    })
+ }
+
   const handleDelete = () => {
     return;
-   dataBase.handleDelete({
-    sheetName: KEY_SERVICES.TRANSACIONS
-   }).then((data) => {
+   dataBase.handleDelete().then((data) => {
    
      if (data) {
        window.location.reload()
@@ -143,41 +143,30 @@ export const BudgetContextProvider = ({ children }: { children: ReactElement }) 
     }
    })
   }
-  const saveMultipleTransaction = (data:Transaction[] ,action?:()=>void) => {
+  const saveMultipleTransaction = (data: Transaction[], action?: () => void) => {
     setIsLoading(true)
-    let timeForSend = 0
-
-    for (let i = 0 ; i < data.length ; i++){
-         dataBase.sendSheetDataTransaction({
-      sheetName: KEY_SERVICES.TRANSACIONS,
-      transaction: data[i]
-      }).then(() => {
-        timeForSend++
-        if (timeForSend >= data.length){
-          const newTransactions = [...transactionsData, ...data]
-        setTransactionsData(newTransactions)
-          setIsLoading(false)
-        if (action) {
-          action()
-        }
-        }
-      
+    const newTransactions = [...transactionsData, ...data]
+    setTransactionsData(newTransactions)
+ 
+    dataBase.handleBackup(newTransactions).then(() => {
+       setIsLoading(false)
+      if (action) {
+        action()
+      }
     })
-    }
+    
   }
 
   const saveNewTransaction = (data:Transaction ,action?:()=>void) => {
     setIsLoading(true)
-      dataBase.sendSheetDataTransaction({
-      sheetName: KEY_SERVICES.TRANSACIONS,
-      transaction: data
-      }).then(() => {
-        const newTransactions = [...transactionsData, data]
-        setTransactionsData(newTransactions)
-          setIsLoading(false)
-        if (action) {
-          action()
-        }
+    const newTransactions = [...transactionsData, new Transaction(data)]
+    setTransactionsData(newTransactions)
+    setIsLoading(false)
+    if (action) {
+        action()
+      }
+
+    dataBase.handleBackup(newTransactions).then(() => {
       
     })
     return false
@@ -185,24 +174,27 @@ export const BudgetContextProvider = ({ children }: { children: ReactElement }) 
 
   const handleBackup = () => {
    
-      dataBase.handleBackup(transactionsData)
+    dataBase.handleBackup(transactionsData)
+  
 
   }
   const handleUpdate=(data:Transaction)=>{
 
-     const newTransactions = [...transactionsData.filter(t => t.id != data.id), data]
-        setTransactionsData(newTransactions)
-        dataBase.handleUpdate(data)
+     const newTransactions = [...transactionsData.filter(t => t.id != data.id), new Transaction(data)]
+    setTransactionsData(newTransactions)
+    console.log(newTransactions)
+        dataBase.handleUpdate(newTransactions)
 
   }
 
-  // handleDeleteOne
 
-  const handleDeleteOne=(data:Transaction)=>{
+
+  const handleDeleteOne = (data: Transaction) => {
+  
 
      const newTransactions = [...transactionsData.filter(t => t.id != data.id)]
         setTransactionsData(newTransactions)
-        dataBase.handleDeleteOne(data)
+        dataBase.handleDeleteOne(newTransactions)
 
   }
 
@@ -219,7 +211,7 @@ export const BudgetContextProvider = ({ children }: { children: ReactElement }) 
   }
   const values = {
     title: "this is a test",
-    dataBase,
+
     isLoading,
     transactionsData,
     saveNewTransaction,
@@ -235,7 +227,9 @@ export const BudgetContextProvider = ({ children }: { children: ReactElement }) 
     lastMonth,
     allMonthsDataSort: monthly,
     acumulateMonth,
-    handleBackup,saveMultipleTransaction,handleUpdate , handleDeleteOne
+    handleBackup, saveMultipleTransaction, handleUpdate, handleDeleteOne,
+    udateLocalDataBase,
+    validateSavingsAccountBalance
 
   }
 

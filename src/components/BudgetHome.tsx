@@ -5,7 +5,7 @@ import {  useState } from "react";
 import { useBudgetContext } from "../provide/budget";
 import { allIcons } from "../UI/allIicons";
 import { Layout } from "../UI/Layout";
-import { validateSavingDataToShow, type TKEY_SUMMARY } from "../provide/hooks/useSummaryTransactions";
+
 import { DataShowListCategory } from "../UI/DataShowListCategory";
 import {  useNavigate } from "react-router";
 import { VALID_ROUTES } from "../Routes/routes";
@@ -89,8 +89,7 @@ const BudgetHome = () => {
   const dataByCategory =  Object.entries(summaryHomeData?.databyCatefory ?? {}).map(([category, cuantity]) => ({ category, cuantity })) 
     
    
-  const globalData = Object.entries(global).map(([category, cuantity]) => ({ category, cuantity })
-  ).filter(e => validateSavingDataToShow.includes(e.category as TKEY_SUMMARY))
+
   
 
   const manualNavigation = () => {
@@ -116,7 +115,7 @@ const BudgetHome = () => {
           {allIcons.wallet}
           <span className="text-mediumd font-bold ">Total Balance</span>
         </div>
-        <p className="text-4xl font-bold ">${global?.totalBalance ?? 0}</p>
+        <p className="text-4xl font-bold ">${global?.totalBalance.toFixed(2) ?? 0}</p>
         <div className="bg-white h-px w-[90%] rounded mx-auto"></div>
         <div className="flex flex-row  gap-20">
         
@@ -187,8 +186,8 @@ const BudgetHome = () => {
         </section>
               {/* Categories speends */}
          
-          <DataShowListCategory  title="By Categories"  showSort data={dataByCategory} valueSort={sortAsc} setSortToggle={setSortAsc} />
-          <DataShowListCategory  title="Globals Savings"  sizeScroll={150} data={globalData} valueSort={true} setSortToggle={() => {}} />
+          <DataShowListCategory  title="By Categories" sizeScroll={150} showSort data={dataByCategory} valueSort={sortAsc} setSortToggle={setSortAsc} />
+          
                 {/* Globals Savings */}
 
 
