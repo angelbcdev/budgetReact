@@ -107,7 +107,7 @@ const TransationsDetailsView = () => {
     navigate("/transactions");
   }
 
-  console.log(dataShow)
+  
 
   return (
     <Layout>

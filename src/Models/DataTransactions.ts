@@ -62,7 +62,7 @@ export class Transaction implements ITransaction {
       title: this.title,
       description: this.description,
       amount: this.amount,
-      date: String(this.date),
+      date: new Date(this.date).toISOString().split("T")[0],
       type: this.type,
       category: this.category,
       subcategory: this.subcategory.join(", "),

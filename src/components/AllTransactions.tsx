@@ -181,7 +181,7 @@ const AllTransactions = () => {
                         className="flex items-center gap-3 py-1 px-4"
                         onClick={() => {
                           manualNavigation(txn)
-                          console.log(txn);
+                    
                         }}
                       >
                         {/* ICON */}
