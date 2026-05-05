@@ -164,9 +164,10 @@ export const BudgetContextProvider = ({ children }: { children: ReactElement }) 
     setIsLoading(false)
     if (action) {
         action()
-      }
+    }
+    
 
-    dataBase.handleBackup(newTransactions).then(() => {
+    dataBase.sendSheetDataTransaction(newTransactions).then(() => {
       
     })
     return false

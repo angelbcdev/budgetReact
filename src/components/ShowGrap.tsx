@@ -20,7 +20,7 @@ const ShowGrap = () => {
   const globalData = Object.entries(global).map(([category, cuantity]) => ({ category, cuantity })
   ).filter(e => validateSavingDataToShow.includes(e.category as TKEY_SUMMARY))
  
-  console.log(globalData)
+
 
 const searchDataMonth = (search: "Current" | "Last") => {
   const isCurrentMonth = search === "Current";

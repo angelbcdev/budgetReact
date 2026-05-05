@@ -112,7 +112,6 @@ export const ajustDataForTransaction = ({
 }: {
   dataTransaction: ITransaction;
 }): Transaction => {
-  console.log({ where: "before", dataTransaction });
   const validatePayMortgage =
     dataTransaction.type == "credit_card_payment" &&
     dataTransaction.category == "mortgage";

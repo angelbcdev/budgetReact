@@ -11,11 +11,7 @@ const KEY_SERVICES: { [key: string]: TKEY_SERVICES } = {
 
 export interface IServiciesDB {
   getSheetData(): Promise<Transaction[]>;
-  sendSheetDataTransaction({
-    transaction,
-  }: {
-    transaction: Transaction;
-  }): Promise<boolean>;
+  sendSheetDataTransaction(data: Transaction[]): Promise<boolean>;
 
   handleBackup(data: Transaction[]): void;
   handleUpdate(data: Transaction[]): void;
@@ -51,16 +47,9 @@ export class ServiciesLocal implements IServiciesDB {
       resolve(data.map((f: any) => new Transaction(f)));
     });
   }
-  async sendSheetDataTransaction({
-    transaction,
-  }: {
-    transaction: Transaction;
-  }): Promise<boolean> {
-    const prevData = await this.getSheetData();
-    const newData = [...prevData, transaction];
-
+  async sendSheetDataTransaction(data: Transaction[]): Promise<boolean> {
     return new Promise((resolve) => {
-      localStorage.setItem(KEY_SERVICES.TRANSACIONS, JSON.stringify(newData));
+      localStorage.setItem(KEY_SERVICES.TRANSACIONS, JSON.stringify(data));
       resolve(true);
     });
   }
@@ -73,13 +62,11 @@ export class ServiciesLocal implements IServiciesDB {
 }
 
 export class GoogleSheetsServicies implements IServiciesDB {
-  allData: Transaction[] = [];
   constructor() {}
   handleUpdate(data: Transaction[]): void {
     this.handleBackup(data);
   }
   async handleBackup(data?: Transaction[]): Promise<void> {
-    console.log(data);
     if (!data) return;
     const payload = {
       sheetName: KEY_SERVICES.TRANSACIONS,
@@ -117,7 +104,7 @@ export class GoogleSheetsServicies implements IServiciesDB {
       )}`;
       const response = await fetch(url);
 
-      if (!response.ok) throw new Error("Network response was not ok");
+      // if (!response.ok) throw new Error("Network response was not ok");
 
       const data = await response.json();
       const dataToReturn = data.map((item: any) => new Transaction(item));
@@ -127,7 +114,8 @@ export class GoogleSheetsServicies implements IServiciesDB {
       console.error("Fetch error:", error);
     }
   }
-  async sendSheetDataTransaction(_: { transaction: Transaction }) {
+  async sendSheetDataTransaction(data: Transaction[]) {
+    this.handleBackup(data);
     return true;
   }
 }

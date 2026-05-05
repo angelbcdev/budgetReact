@@ -25,7 +25,6 @@ export const HeathersTransactions = ({
   ) => {
     const { value , name} = e.target;
 
-    // const dataFormat = new Date(value).toISOString().split("T")[0];
    
     setDataTransaction((data) =>{ 
       
