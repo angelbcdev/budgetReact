@@ -75,10 +75,11 @@ const AllTransactions = () => {
     currentMonth,
     filterByMonth,
   );
+  
 
   const resetSearch = () => {
     setSearch("");
-    // setActiveFilter("All");
+  
     if (inputRer.current) {
       inputRer.current.value = "";
     }
@@ -150,15 +151,7 @@ const AllTransactions = () => {
         <div className="h-110 w-88   overflow-scroll rounded-b-2xl    mx-auto ">
           {/* LIST */}
           {Object.entries(groups)
-            .sort((a, b) => {
-              const parse = (str: string) => {
-                const [month, day, year] = str.split(" ");
-                return new Date(`${month} ${day}, ${year}`).getTime();
-              };
-
-              return parse(b[0]) - parse(a[0]); // 🔥 DESC (más reciente primero)
-            })
-            .map(([date, items]) => (
+            .sort((a, b) => b[0].localeCompare(a[0])).map(([date, items]) => (
               <div key={date} className="mt-1 w-87  ">
                 <h2 className="px-5 text-xs h-8  font-semibold text-gray-400 uppercase sticky top-0 bg-[#f2f2f7]/00 backdrop-blur-sm flex items-center  ">
                   {date}

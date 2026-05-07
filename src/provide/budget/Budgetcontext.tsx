@@ -152,7 +152,7 @@ export const BudgetContextProvider = ({ children }: { children: ReactElement }) 
 
   const saveNewTransaction = (data: Transaction, action?: () => void) => {
     const newData = new Transaction(data)
-    console.log(newData.toSheetRow())
+
     setIsLoading(true)
     const newTransactions = [...transactionsData, newData]
     setTransactionsData(newTransactions)

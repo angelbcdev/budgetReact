@@ -29,7 +29,7 @@ export const emptyNewTransactions = ({
   amount: "0",
   category: defaultCategory,
   type: defaultTypeTransaction,
-  paymentMethod: "credit_card_blue",
+  paymentMethod: "credit_card_red",
   subcategory: [],
 });
 

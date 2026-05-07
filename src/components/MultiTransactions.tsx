@@ -16,7 +16,8 @@ import { useBudgetContext } from "../provide/budget";
 import { VALID_ROUTES } from "../Routes/routes";
 import { MultipleAcctionButtons } from "./addNewTransactions/Keyboard";
 import { SubCategoryCard } from "../UI/SubCategoryCard";
-import { SelectDateGlobal } from "./addNewTransactions/HeatherTransactions";
+import { SelectDateGlobal } from "../UI/SelectDateGlobal";
+
 
 
 
@@ -140,7 +141,7 @@ const MultiTransactions = () => {
           <label className="border rounded px-1 shadow-sm bg-white h-8 flex ">
             <SelectDateGlobal
               lastDate={dateForRow}
-              addValue={(e) => setDateForRow(e.target.value)}
+              addValue={(e:any) => setDateForRow(e.target.value)}
               className="text-gray-600"
             />
           </label>

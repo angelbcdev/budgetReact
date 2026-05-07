@@ -166,7 +166,7 @@ const AddNewTransactions = () => {
         setDataTransaction((data) => ({
           ...data,
           title: null,
-          paymentMethod: "credit_card_blue",
+          paymentMethod: "credit_card_red",
           type: "spending",
         }));
         break;

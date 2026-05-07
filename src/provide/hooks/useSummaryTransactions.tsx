@@ -96,7 +96,7 @@ export function useSummary(transactions: Transaction[]) {
       totalCardRed:         a.totalCardRed          + b.totalCardRed,
       totalCardBlue:        a.totalCardBlue         + b.totalCardBlue,
       totalCheckingAccount: a.totalCheckingAccount  + b.totalCheckingAccount,
-      savingsMortgage:       a.savingsMortgage        + b.savingsMortgage,
+      savingsMortgage:      a.savingsMortgage       + b.savingsMortgage,
       savingsBank:          a.savingsBank           + b.savingsBank,
       savingsStocks:        a.savingsStocks         + b.savingsStocks,
       savingsCrypto:        a.savingsCrypto         + b.savingsCrypto,

@@ -3,6 +3,7 @@ import { paymentMethodAvailable } from "../../Models/dummyData";
 import { allIcons } from "../../UI/allIicons";
 import type { ITransaction } from "../AddNewTransactions";
 import { useBudgetContext } from "../../provide/budget";
+import { SelectDateGlobal } from "../../UI/SelectDateGlobal";
 
 export const HeathersTransactions = ({
   setShowModal,
@@ -105,29 +106,3 @@ export const HeathersTransactions = ({
   );
 };
 
-export const SelectDateGlobal = ({ className, addValue, lastDate }: { className: string, addValue: (e: React.ChangeEvent<HTMLInputElement>) => void, lastDate: string }) => {
-  
-  const today = new Date();
-const oneMonthAgo = new Date();
-  oneMonthAgo.setMonth(today.getMonth() - 0);
-
-  const nextMonth = new Date();
-  nextMonth.setMonth(today.getMonth() + 1);
-
-
-  
-  return(  <label
-          className={className }
-        >
-        
-        <input
-  placeholder="Date"
-  defaultValue={ lastDate || new Date().toISOString().split('T')[0]}
-  type="date"
-  name="date"
-      onChange={addValue}
-      min={oneMonthAgo.toISOString().split("T")[0]}
-      max={nextMonth.toISOString().split("T")[0]}
-/>
-        </label>)
-}
