@@ -98,7 +98,7 @@ const BudgetHome = () => {
  
   return(
     <Layout>
-      <main className="flex flex-col    w-98 mx-auto">
+      <main className="flex flex-col    w-98 sm:w-160 mx-auto">
         <div className="flex flex-row justify-between items-end mb-4 ">
 
       <div className="flex flex-row gap-4 pl-2 pt-4  relative w-44 items-center ">
@@ -117,7 +117,7 @@ const BudgetHome = () => {
         </div>
         <p className="text-4xl font-bold ">${global?.totalBalance.toFixed(2) ?? 0}</p>
         <div className="bg-white h-px w-[90%] rounded mx-auto"></div>
-        <div className="flex flex-row  gap-20">
+        <div className="flex flex-row  gap-20 justify-between sm:pr-40 pr-10 ">
         
           <SubCuantity icon={allIcons.tredingUp} title="Income" cuantity={summaryHomeData?.totalIncome ?? 0} />
       

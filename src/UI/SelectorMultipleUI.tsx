@@ -13,7 +13,7 @@ const SelectorMultipleUI = ({
   
  
   return (
-    <div className=" grid grid-cols-6  bg-gray-400 rounded-md shadow-inner-md p-px">
+    <div className=" grid grid-cols-6  w-93 sm:w-160 mx-auto bg-gray-400 rounded-md shadow-inner-md p-px">
       {monthSoported.map((type) => {
 
        const ajustDate = `${year}-${type}`

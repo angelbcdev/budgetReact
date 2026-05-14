@@ -101,13 +101,13 @@ const AllTransactions = () => {
             </h6>
           </div>
 
-          <div className="flex gap-2 mt-2  flex-row items-center justify-between w-90 mx-auto">
+          <div className="flex gap-2 mt-2  flex-row items-center justify-between w-90 sm:w-160 mx-auto">
             <input
               ref={inputRer}
               onChange={(e) => setSearch(e.target.value)}
               type="text"
               placeholder="Search"
-              className="bg-gray-50 border border-gray-300 text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-80 p-2.5"
+              className="bg-gray-50 border border-gray-300 text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-80 sm:w-140 p-2.5"
             />
             <button
               onClick={resetSearch}
@@ -119,7 +119,7 @@ const AllTransactions = () => {
         </div>
 
         {/* HEADER */}
-        <div className="sticky w-92 mx-auto top-0  backdrop-blur-xl border-b border-black/10 px-2 pt-2 pb-4">
+        <div className="sticky w-92 sm:w-160 mx-auto top-0  backdrop-blur-xl border-b border-black/10 px-2 pt-2 pb-4">
           <div className="flex justify-between items-end">
             <h1 className="text-xl font-semibold text-gray-900">Categories</h1>
 
@@ -148,15 +148,15 @@ const AllTransactions = () => {
           {/* FILTER */}
         </div>
 
-        <div className="h-110 w-88   overflow-scroll rounded-b-2xl    mx-auto ">
+        <div className="h-110 w-88 sm:w-160   overflow-scroll rounded-b-2xl    mx-auto ">
           {/* LIST */}
           {Object.entries(groups)
             .sort((a, b) => b[0].localeCompare(a[0])).map(([date, items]) => (
-              <div key={date} className="mt-1 w-87  ">
-                <h2 className="px-5 text-xs h-8  font-semibold text-gray-400 uppercase sticky top-0 bg-[#f2f2f7]/00 backdrop-blur-sm flex items-center  ">
+              <div key={date} className="mt-1  w-88 ">
+                <h2 className="px-5 text-xs h-8 w-86  sm:w-160  font-semibold text-gray-400 uppercase sticky top-0 bg-[#f2f2f7]/00 backdrop-blur-sm flex items-center  ">
                   {date}
                 </h2>
-                <section className="bg-white px-2 rounded-xl">
+                <section className="bg-white px-2 rounded-xl sm:w-160">
                   
                 <div className="   overflow-hidden divide-y divide-gray-200 ">
                   {items.sort((a, b) => Date.parse(String(b.date)) - Date.parse(String(a.date))).map((txn) => {

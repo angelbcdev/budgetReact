@@ -69,21 +69,28 @@ const searchDataMonth = (search: "Current" | "Last") => {
           <h6 className="text-3xl font-light text-gray-600 "> </h6>
         </div> 
       </div>
-      <section className="flex flex-col overflow-scroll w-93 mb-4 h-170 pt-4  gap-4  mx-auto    bg-gsray-800 ">
+      <section className="flex flex-col overflow-scroll w-93 sm:w-180   mb-4 h-170 pt-4  gap-4  mx-auto    bg-gsray-800 ">
         <SelectorMultipleUI
           data={allMonthsData}
           year={curentDate.year}
           selectCurrentType={setMonthToShowString}
           defaultTypeTransaction={monthToShowString} />
 
+        <div className="flex flex-col sm:w-180 sm:flex-row-reverse sm:px-4 gap-4">
         <CardMonthData title={"Current Month"} data={dataCurrentMonth} />
         <CardMonthData title={"Last Month"} data={dataOldMonth} />
 
+        </div>
+        
+        <div className="flex flex-col w-93  mx-auto">
+          <p className="text-xl font-bold pl-20 ">Total Available: {totalAvailable.toFixed(2)}</p>
+        <DataShowListCategory title="Globals Savings" sizeScroll={100} data={dataToShow} valueSort={true} setSortToggle={() => { }} />
+      
+        </div>
+
       
 
-        <p className="text-xl font-bold pl-20 ">Total Available: {totalAvailable.toFixed(2)}</p>
-        <DataShowListCategory title="Globals Savings" sizeScroll={100} data={dataToShow} valueSort={true} setSortToggle={() => { }} />
-      </section>
+        </section>
 
     </Layout>
     )
