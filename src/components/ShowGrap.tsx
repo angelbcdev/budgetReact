@@ -81,7 +81,7 @@ const searchDataMonth = (search: "Current" | "Last") => {
 
       
 
-        <p className="text-xl font-bold pl-20 ">Total Available: {totalAvailable}</p>
+        <p className="text-xl font-bold pl-20 ">Total Available: {totalAvailable.toFixed(2)}</p>
         <DataShowListCategory title="Globals Savings" sizeScroll={100} data={dataToShow} valueSort={true} setSortToggle={() => { }} />
       </section>
 

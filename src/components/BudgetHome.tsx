@@ -23,7 +23,7 @@ const SubCuantity = ({icon, title, cuantity}: {icon: any, title: string, cuantit
              {icon}
               {title}
             </div>
-            <span className="text-2xl font-medium ">${cuantity}</span>
+            <span className="text-2xl font-medium ">${Number(cuantity).toFixed(2)}</span>
         </div>
   )
 }

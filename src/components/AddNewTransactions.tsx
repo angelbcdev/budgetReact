@@ -223,7 +223,12 @@ const AddNewTransactions = () => {
       />
 
 
-      <div className="flex flex-col gap-4  bg-white relative  items-center   py-4 ">
+      <div className="flex flex-col gap-1  bg-white relative  items-center   py-7 ">
+       {( dataTransaction.subcategory.length > 0 || dataTransaction.description.length > 3) &&  <div className="text-[13px] flex flex-row gap-1  text-gray-500 justify-between   w-full absolute top-2 left-0 px-7 ">
+          <p className=" w-30 text-nowrap overflow-hidden text-ellipsis" >{dataTransaction.title}</p>
+          <p className=" w-40 text-nowrap overflow-hidden text-ellipsis" >Description: {dataTransaction.description}</p>
+          <p >Subcategory:{dataTransaction.subcategory.length }</p>
+        </div>}
         <h3 className="text-xl font-bold ">New Transaction</h3>
         <div className="flex flex-row gap-4 items-center justify-center transition-all ease-in duration-300 ">
           <p

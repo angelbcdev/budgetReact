@@ -97,7 +97,10 @@ export const HeathersTransactions = ({
       </div>
       <button
         onClick={() => setShowModal(true)}
-        className="px-2 py-1 w-full flex flex-row gap-2 items-center justify-center rounded-md bg-white text-gray-700    transition-all ease-in duration-300 capitalize "
+        className={`
+          ${!( dataTransaction.subcategory.length > 0 || dataTransaction.description.length > 3) ? "bg-blue-400 text-white": "bg-white text-gray-700"}
+          
+          px-2 py-1 w-full flex flex-row gap-2 items-center justify-center rounded-md     transition-all ease-in duration-300 capitalize `}
       >
         <span>{allIcons.note}</span>
         Title and Description
