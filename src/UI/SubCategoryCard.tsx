@@ -1,4 +1,4 @@
-import { getSubCategoryMeta, type Subcategory} from "../Models/dummyData";
+import { getSubCategoryMeta, type Subcategory} from "../Models/subCateriesAvailable";
 
 export const SubCategoryCard = ({subCategory,onClick ,showIcon = true}:{subCategory:Subcategory ,onClick:()=>void , showIcon?:boolean})=>{
      const meta = getSubCategoryMeta(subCategory)

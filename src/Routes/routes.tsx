@@ -3,42 +3,43 @@ import { allIcons } from "../UI/allIicons";
 
 
 export const VALID_ROUTES = {
-  "Add": "/",
-  "Home": "/home",
-  "History": "/transactions",
-  "Settings": "/settings",
-  "Graph": "/graph",
-  "Details": "/transactionsDetails",
-  "multiTransactions":"/multiTransactions"
+  "add": "/",
+  "home": "/home",
+  "history": "/transactions",
+  "settings": "/settings",
+  "graph": "/graph",
+  "details": "/transactionsDetails",
+  "multiTransactions": "/multiTransactions",
+  "subcategory":"/subcategory"
 }
 
 export const routes = [
   {
     name: "Add",
-    path: VALID_ROUTES.Add,
+    path: VALID_ROUTES.add,
     icon: allIcons.plus,
   },
   {
     name: "Home",
-    path: VALID_ROUTES.Home,
+    path: VALID_ROUTES.home,
     icon: allIcons.home,
   },
   
   {
     name: "History",
-    path: VALID_ROUTES.History,
+    path: VALID_ROUTES.history,
     icon: allIcons.history,
   },
   {
     name: "Settings",
-    path: VALID_ROUTES.Settings,
+    path: VALID_ROUTES.settings,
     icon: allIcons.gear,
   },
-  // {
-  //   name: "multi",
-  //   path: "/multiTransactions",
-  //   icon: allIcons.wallet,
-  // },
+  {
+    name: "multi",
+    path: VALID_ROUTES.subcategory,
+    icon: allIcons.wallet,
+  },
   //  {
   //   name: "transactions",
   //   path: VALID_ROUTES.Details,

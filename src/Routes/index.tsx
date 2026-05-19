@@ -12,6 +12,7 @@ import{ Layout }from "../UI/Layout";
 import TransationsDetailsView from "../components/TransationsDetailsView";
 import MultiTransactions from "../components/MultiTransactions"
 import { VALID_ROUTES } from "./routes";
+import SubCategoryEddit from "../components/SubCategoryEddit";
 
 export const router = createBrowserRouter([
   {
@@ -19,12 +20,12 @@ export const router = createBrowserRouter([
     element: <Loging />,
   },
   {
-    path: "/",
+    path: VALID_ROUTES.add,
     loader: authLoader, // 🔐 protected
     element: <MainLayout />,
     children: [
       {
-        path: "home",
+        path: VALID_ROUTES.home,
         element: <BudgetHome />,
       },
       {
@@ -33,25 +34,31 @@ export const router = createBrowserRouter([
         element: <AddNewTransactions />,
       },
       {
-        path: "transactions",
+        path: VALID_ROUTES.history,
         element: <AllTransactions />,
       },
       {
-        path: "settings",
+        path: VALID_ROUTES.settings,
         element: <Settings />,
       },
       {
-        path: "graph",
+        path: VALID_ROUTES.graph,
         element: <ShowGrap />,
       },
       {
-        path: "transactionsDetails",
+        path: VALID_ROUTES.details,
         element: <TransationsDetailsView />,
       },
       {
         path: VALID_ROUTES.multiTransactions,
         element: <MultiTransactions />,
       },
+      
+      {
+        path: VALID_ROUTES.subcategory,
+        element: <SubCategoryEddit />,
+      },
+      // SubCategoryEddit
       {
         path: "*",
         element: <Layout>404</Layout>,

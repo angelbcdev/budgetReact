@@ -5,9 +5,8 @@ import { useLocation, useNavigate } from "react-router";
 import {
   getSubCategoryFor,
   getSubCategoryMeta,
-  TRANSACTION_TYPE_META,
   type Subcategory,
-} from "../Models/dummyData";
+} from "../Models/subCateriesAvailable";
 import type { Transaction } from "../Models/DataTransactions";
 import { allIcons } from "../UI/allIicons";
 import { useEffect, useState, type JSX } from "react";
@@ -15,6 +14,7 @@ import BlurContainer from "../UI/BlurContainer";
 import { SubCategoryCard } from "../UI/SubCategoryCard";
 import { MultipleAcctionButtons } from "./addNewTransactions/Keyboard";
 import { useBudgetContext } from "../provide/budget";
+import { TRANSACTION_TYPE_META } from "../Models/dummyData";
 
 const TransationsDetailsView = () => {
   const location = useLocation();

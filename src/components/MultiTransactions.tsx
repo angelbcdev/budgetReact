@@ -3,12 +3,21 @@ import HeatherView from "../UI/HeatherView";
 import { useState } from "react";
 
 import {
-  fliterCategoryAvailable,
+
   getSubCategoryFor,
   getSubCategoryMeta,
+
+
+  type Subcategory,
+
+} from "../Models/subCateriesAvailable";
+
+import {
+  fliterCategoryAvailable,
+
   type Category,
   type PaymentMethod,
-  type Subcategory,
+
   type TransactionType,
 } from "../Models/dummyData";
 import { Transaction } from "../Models/DataTransactions";

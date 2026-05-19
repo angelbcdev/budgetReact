@@ -1,7 +1,8 @@
 import { useEffect, useRef } from "react";
-import { subCateriesAvailable, type Category, type Subcategory } from "../../Models/dummyData";
+import { subCateriesAvailable, type Subcategory } from "../../Models/subCateriesAvailable";
 import { allIcons } from "../../UI/allIicons";
 import type { ITransaction } from "../AddNewTransactions";
+import type { Category } from "../../Models/dummyData";
 
 export  const ModalAddTitle = ({
   setShowModal,
