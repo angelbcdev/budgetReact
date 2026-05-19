@@ -1,9 +1,5 @@
-import type {
-  Category,
-  Subcategory,
-  TransactionType,
-  PaymentMethod,
-} from "./dummyData";
+import type { Category, TransactionType, PaymentMethod } from "./dummyData";
+import type { Subcategory } from "./subCateriesAvailable";
 
 interface ITransaction {
   id: string;

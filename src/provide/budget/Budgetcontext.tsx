@@ -7,11 +7,13 @@ import {
   type ReactElement,
 } from "react";
 import { BudgetContext } from "./data";
-import {        GoogleSheetsServicies   } from "../../Services/Servicies";
+import {        GoogleSheetsServiciesTransactions, ServiciesLocalTransactions   } from "../../Services/Servicies";
 import { Transaction } from "../../Models/DataTransactions";
 
 import { useSummary, type ISummaryHomeData } from "../hooks/useSummaryTransactions";
 import { goalsDataDefault, type TKEY_GOALS, type TKEY_MONTHS } from "../interfaces";
+import { GoogleSheetsServiciesSubCategories, ServiciesLocalSubCategories, type IServiciesDBSubCategories } from "../../Services/ServiciesSubCategory";
+import type { SubCategory } from "../../components/SubCategoryEddit";
 // import { settings } from "../../api";
 
 
@@ -19,6 +21,8 @@ export interface IBudgetContext {
   title: string;
   isLoading: boolean
   transactionsData: Transaction[]
+  subcategoriesData: SubCategory[]
+  saveSubCategories: (data: SubCategory[]) => void 
   saveNewTransaction: (data: Transaction, action?: () => void) => void
   handleDelete: () => void
   handleBackup: () => void
@@ -58,6 +62,8 @@ const goalsMonthly: TKEY_MONTHS = {
 export const BudgetContextProvider = ({ children }: { children: ReactElement }) => {
   const [isLoading, setIsLoading] = useState(false )
   const [transactionsData, setTransactionsData] = useState<Transaction[]>([])
+  const [subcategoriesData, setSubcategoriesData] = useState<SubCategory[]>([])
+
   
   const { global, monthly, lastMonth, allMonthsData ,    acumulateMonth,
  } = useSummary(transactionsData);
@@ -106,7 +112,8 @@ export const BudgetContextProvider = ({ children }: { children: ReactElement }) 
   }
 
   
-  const dataBase = new GoogleSheetsServicies() 
+  const dataBase = new GoogleSheetsServiciesTransactions() //ServiciesLocalTransactions() 
+  const dataBaseSubCategories:IServiciesDBSubCategories = new GoogleSheetsServiciesSubCategories() //ServiciesLocalSubCategories()
 
   useEffect(() => {
     setIsLoading(true)
@@ -117,12 +124,27 @@ export const BudgetContextProvider = ({ children }: { children: ReactElement }) 
       
     
     })
+    dataBaseSubCategories.getSheetData().then((data) => {
+      setSubcategoriesData(data)
+    })
    
    
   }, [])
 
+  const saveSubCategories = (data: SubCategory[]) => {
+    setIsLoading(true)
+    dataBaseSubCategories.handleUpdate(data).then(() => {
+      setSubcategoriesData(data)
+      setIsLoading(false)
+    })
+  }
+
   const udateLocalDataBase = () => {
     setIsLoading(true)
+    dataBaseSubCategories.handleBackup(subcategoriesData).then(() => {
+       setIsLoading(false)
+    })
+      
     
  }
 
@@ -225,7 +247,8 @@ export const BudgetContextProvider = ({ children }: { children: ReactElement }) 
     acumulateMonth,
     handleBackup, saveMultipleTransaction, handleUpdate, handleDeleteOne,
     udateLocalDataBase,
-    validateSavingsAccountBalance
+    validateSavingsAccountBalance,
+    subcategoriesData,saveSubCategories
 
   }
 

@@ -114,48 +114,39 @@ export type Subcategory =
 export const SUBCATEGORY_META: Record<Subcategory, TCategory_Meta> = {
   payment_card: createMeta("payment_card", "💳", "#3b82f6"),
 
-  // general
   books: createMeta("books", "📚", "#a855f7"),
   clothes: createMeta("clothes", "👕", "#ec4899"),
   games: createMeta("games", "🎮", "#f59e0b"),
   car_insurance: createMeta("car_insurance", "🚗", "#22c55e"),
 
-  // food
   restaurant: createMeta("restaurant", "🍽️", "#ef4444"),
   delivery: createMeta("delivery", "🛵", "#f97316"),
   homemade: createMeta("homemade", "🏠", "#84cc16"),
 
-  // transport
   gas: createMeta("gas", "⛽", "#eab308"),
   car_repair: createMeta("car_repair", "🔧", "#6b7280"),
   uber: createMeta("uber", "🚕", "#000000"),
 
-  // drinks
   beer: createMeta("beer", "🍺", "#fbbf24"),
   rum: createMeta("rum", "🥃", "#92400e"),
   whiskey: createMeta("whiskey", "🥃", "#78350f"),
 
-  // bills
   mortgage: createMeta("mortgage", "🏡", "#14b8a6"),
   electricity: createMeta("electricity", "⚡", "#facc15"),
   internet: createMeta("internet", "🌐", "#3b82f6"),
   cel_tmobil: createMeta("internet", "🌐", "#cc16cc"),
 
-  // amazon
   electronics: createMeta("electronics", "📱", "#6366f1"),
   household: createMeta("household", "🧼", "#10b981"),
   clothing: createMeta("clothing", "🧥", "#ec4899"),
   other_amazon: createMeta("other_amazon", "📦", "#6b7280"),
 
-  // savings
   mortgage_savings: createMeta("mortgage_savings", "🏦", "#0ea5e9"),
   stocks: createMeta("stocks", "📈", "#22c55e"),
 
-  // credit card payment
   blue_payment: createMeta("blue_payment", "💙", "#3b82f6"),
   red_payment: createMeta("red_payment", "❤️", "#ef4444"),
 
-  // other
   trash_tickets: createMeta("trash_tickets", "🎟️", "#f43f5e"),
   decoration: createMeta("decoration", "🖼️", "#a855f7"),
   furniture: createMeta("furniture", "🪑", "#8b5cf6"),
@@ -163,7 +154,6 @@ export const SUBCATEGORY_META: Record<Subcategory, TCategory_Meta> = {
   bitcoin: createMeta("bitcoin", "₿", "#f7931a"),
   ethereum: createMeta("ethereum", "Ξ", "#627eea"),
 
-  // house
   garbage: createMeta("garbage", "🗑️", "#6b7280"),
   paint: createMeta("paint", "🎨", "#f472b6"),
   water: createMeta("water", "🚰", "#38bdf8"),
@@ -182,3 +172,192 @@ export function getSubCategoryMeta(subcate: Subcategory): TCategory_Meta {
     return { icon: "?", bg: "#1d2a9b", label: "no added" };
   }
 }
+
+export const dummyData = [
+  {
+    title: "restaurant",
+    icon: "🍽️",
+    color: "#ef4444",
+    category: ["food"],
+  },
+  {
+    title: "delivery",
+    icon: "🛵",
+    color: "#f97316",
+    category: ["food"],
+  },
+  {
+    title: "homemade",
+    icon: "🏠",
+    color: "#84cc16",
+    category: ["food"],
+  },
+  {
+    title: "sams club",
+    icon: "🏬",
+    color: "#2563eb",
+    category: ["food", "house", "other"],
+  },
+  {
+    title: "bravo market",
+    icon: "🛒",
+    color: "#16a34a",
+    category: ["food"],
+  },
+  {
+    title: "walmart",
+    icon: "🏪",
+    color: "#1d4ed8",
+    category: ["food", "house", "other"],
+  },
+  {
+    title: "gas",
+    icon: "⛽",
+    color: "#eab308",
+    category: ["transport"],
+  },
+  {
+    title: "car repair",
+    icon: "🔧",
+    color: "#6b7280",
+    category: ["transport"],
+  },
+  {
+    title: "uber",
+    icon: "🚕",
+    color: "#000000",
+    category: ["transport"],
+  },
+  {
+    title: "beer",
+    icon: "🍺",
+    color: "#fbbf24",
+    category: ["drinks"],
+  },
+  {
+    title: "rum",
+    icon: "🥃",
+    color: "#92400e",
+    category: ["drinks"],
+  },
+  {
+    title: "whiskey",
+    icon: "🥃",
+    color: "#78350f",
+    category: ["drinks"],
+  },
+  {
+    title: "mortgage",
+    icon: "🏡",
+    color: "#14b8a6",
+    category: ["house"],
+  },
+  {
+    title: "electricity",
+    icon: "⚡",
+    color: "#ffc00a",
+    category: ["bills"],
+  },
+  {
+    title: "internet",
+    icon: "🌐",
+    color: "#3b82f6",
+    category: ["bills"],
+  },
+  {
+    title: "cel tmobil",
+    icon: "🌐",
+    color: "#cc16cc",
+    category: ["bills"],
+  },
+  {
+    title: "car insurance",
+    icon: "🚗",
+    color: "#22c55e",
+    category: ["bills"],
+  },
+  {
+    title: "water",
+    icon: "🚰",
+    color: "#38bdf8",
+    category: ["bills"],
+  },
+  {
+    title: "electronics",
+    icon: "📱",
+    color: "#6366f1",
+    category: ["amazon", "other"],
+  },
+  {
+    title: "house repairs",
+    icon: "🧼",
+    color: "#10b981",
+    category: ["amazon", "house"],
+  },
+  {
+    title: "clothing",
+    icon: "🧥",
+    color: "#ec4899",
+    category: ["clothes", "amazon"],
+  },
+  {
+    title: "books",
+    icon: "📚",
+    color: "#a855f7",
+    category: ["amazon", "other"],
+  },
+  {
+    title: "clothes",
+    icon: "👕",
+    color: "#ec4899",
+    category: ["clothes", "amazon"],
+  },
+  {
+    title: "games",
+    icon: "🎮",
+    color: "#f59e0b",
+    category: ["amazon", "other"],
+  },
+  {
+    title: "send money",
+    icon: "💸",
+    color: "#f43f5e",
+    category: ["other"],
+  },
+  {
+    title: "bitcoin",
+    icon: "₿",
+    color: "#f7931a",
+    category: ["crypto"],
+  },
+  {
+    title: "ethereum",
+    icon: "Ξ",
+    color: "#627eea",
+    category: ["crypto"],
+  },
+  {
+    title: "trash tickets",
+    icon: "🎟️",
+    color: "#22c55e ",
+    category: ["house"],
+  },
+  {
+    title: "decoration",
+    icon: "🖼️",
+    color: "#a855f7",
+    category: ["house"],
+  },
+  {
+    title: "furniture",
+    icon: "🪑",
+    color: "#8b5cf6",
+    category: ["house", "amazon"],
+  },
+  {
+    title: "utils ",
+    icon: "📌",
+    color: "#9ca3af",
+    category: ["house", "amazon"],
+  },
+];

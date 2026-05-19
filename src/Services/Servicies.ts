@@ -1,11 +1,13 @@
 import { settings } from "../api";
+
 import { Transaction } from "../Models/DataTransactions";
 
-type TKEY_SERVICES = "transactions" | "CATEGORIES" | "Date";
+type TKEY_SERVICES = "transactions" | "CATEGORIES" | "Date" | "SUBCATEGORIES";
 
-const KEY_SERVICES: { [key: string]: TKEY_SERVICES } = {
+export const KEY_SERVICES: { [key: string]: TKEY_SERVICES } = {
   TRANSACIONS: "transactions",
   CATEGORIES: "CATEGORIES",
+  SUBCATEGORIES: "SUBCATEGORIES",
   DATE: "Date",
 };
 
@@ -19,7 +21,7 @@ export interface IServiciesDB {
   handleDelete(): Promise<boolean>;
 }
 
-export class ServiciesLocal implements IServiciesDB {
+export class ServiciesLocalTransactions implements IServiciesDB {
   constructor() {}
 
   handleUpdate(data: Transaction[]): void {
@@ -56,12 +58,12 @@ export class ServiciesLocal implements IServiciesDB {
 
   handleBackup(data: Transaction[]): void {
     localStorage.setItem(KEY_SERVICES.TRANSACIONS, JSON.stringify(data));
-    const db = new GoogleSheetsServicies();
+    const db = new GoogleSheetsServiciesTransactions();
     db.handleBackup(data);
   }
 }
 
-export class GoogleSheetsServicies implements IServiciesDB {
+export class GoogleSheetsServiciesTransactions implements IServiciesDB {
   constructor() {}
   handleUpdate(data: Transaction[]): void {
     this.handleBackup(data);
