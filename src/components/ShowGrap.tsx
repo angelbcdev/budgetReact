@@ -12,7 +12,7 @@ import { DataShowListCategory } from "../UI/DataShowListCategory";
 
 const ShowGrap = () => {
   // const location = useLocation();
-  const { curentDate, allMonthsData , lastMonth , acumulateMonth  ,global} = useBudgetContext();
+  const { curentDate, allMonthsData , lastMonth , acumulateMonth  ,global, stocksProfit} = useBudgetContext();
   const [monthToShowString, setMonthToShowString] = useState<string>(lastMonth);
 
  
@@ -57,8 +57,8 @@ const searchDataMonth = (search: "Current" | "Last") => {
   const dataCurrentMonth = searchDataMonth( "Current")
 
   const dataOldMonth = searchDataMonth("Last")
-  
-  const dataToShow = [{category: 'Balance', cuantity: global.totalBalance},...globalData]
+  const moreData = [{category: 'ForStocksProfit', cuantity: stocksProfit} ,{category: 'Balance', cuantity: global.totalBalance}]
+  const dataToShow = [...moreData,...globalData]
 
   const totalAvailable = dataToShow.reduce((acc, item) => acc + item.cuantity, 0);
   return(

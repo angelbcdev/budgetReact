@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import {  type TSubcategory } from "../../Models/subCateriesAvailable";
+
 import { allIcons } from "../../UI/allIicons";
 import type { ITransaction } from "../AddNewTransactions";
 import type { Category } from "../../Models/dummyData";
@@ -42,7 +42,7 @@ export  const ModalAddTitle = ({
       setDataTransaction((data) => ({
         ...data,
         subcategory: data.subcategory.filter(
-          (sub: TSubcategory) => sub !==  newSubcategory.title,
+          (sub: string) => sub !==  newSubcategory.title,
         ),
       }));
     } else {

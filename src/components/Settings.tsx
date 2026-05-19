@@ -4,12 +4,18 @@ import type { TKEY_GOALS } from "../provide/interfaces";
 
 import { Layout } from "../UI/Layout";
 import HeatherView from "../UI/HeatherView";
+import { VALID_ROUTES } from "../Routes/routes";
+import { useNavigate } from "react-router";
+import { MyInputText } from "./MultiTransactions";
 
 
 const Settings = () => {
-  const { changeMountToShow, curentDate, currentMonthGoals } =
+  const { changeMountToShow, curentDate, currentMonthGoals,stocksProfit ,saveStocksProfit } =
     useBudgetContext();
-  const version = "Version 1.1.0";
+  const navigate = useNavigate();
+  const [showModal, setShowModal] = useState(false);
+  const [amount, setAmount] = useState(0);
+  const version = "Version 1.2.0";
 
   const data = Object.keys(currentMonthGoals).map((key) => {
     return {
@@ -22,6 +28,17 @@ const Settings = () => {
   });
 
   const settinsButtos = [
+    {
+      title: "Stocks",
+      
+    data: [{
+      name: "Profit",
+      value: stocksProfit,
+      action: () => {
+        setShowModal(true)
+      }}
+    ]
+  },
   
     {
       title: "Change month",
@@ -47,6 +64,16 @@ const Settings = () => {
       title: "Goals for this month",
       data: data
     },
+    {
+      title: "Sub Categories",
+      data: [
+        {
+          name: "View All",
+          value: 0,
+          action: () => {navigate(VALID_ROUTES.subcategory )},
+        },
+      ]
+    }
     // {
     //   title: "Storage",
     //   data: [ //udateLocalDataBase
@@ -76,10 +103,38 @@ const Settings = () => {
     // }
   ]
 
+  const closeModal = () => {
+    setShowModal(false)
+    setAmount(0)
+  }
+
+  const saveProfit = () => {
+    saveStocksProfit(amount)
+   
+    closeModal()
+  }
+
   return (
     <Layout>
      <HeatherView title="Settings" />
-      <div className="flex flex-col overflow-auto h-175 ">
+      <div className="flex flex-col overflow-auto h-175  relative">
+        {showModal && <div
+          onClick={closeModal}
+          className="fixed top-0 w-full h-full  z-30  bg-black/50   ">
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className=" w-80 h-28  bg-white px-4 relative top-24 left-15 flex flex-row gap-4 justify-between items-center rounded-sm ">
+            <MyInputText
+              name="New Amount"
+              onChange={(e) => { setAmount(Number(e.target.value))}}
+              defaulvalue=""
+              type="number"
+            />
+            <button
+            className="w-24 border rounded-sm  h-10 bg-blue-500 text-white "
+              onClick={saveProfit} >Save</button>
+          </div>
+        </div>}
          <section className="flex flex-row w-full max-w-94 mx-auto justify-between  items-end mb-2 ">
         <div className="flex flex-row gap-4  pt-4  relative w-44  items-center ">
           <h3 className="text-2xl font-bold ">{curentDate.month}</h3>

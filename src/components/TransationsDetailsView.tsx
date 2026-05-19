@@ -2,11 +2,7 @@ import { Layout } from "../UI/Layout";
 import HeatherView from "../UI/HeatherView";
 import { useLocation, useNavigate } from "react-router";
 
-import {
-  getSubCategoryFor,
-  getSubCategoryMeta,
 
-} from "../Models/subCateriesAvailable";
 import type { Transaction } from "../Models/DataTransactions";
 import { allIcons } from "../UI/allIicons";
 import { useEffect, useState, type JSX } from "react";
@@ -15,7 +11,9 @@ import BlurContainer from "../UI/BlurContainer";
 import { MultipleAcctionButtons } from "./addNewTransactions/Keyboard";
 import { useBudgetContext } from "../provide/budget";
 import { TRANSACTION_TYPE_META } from "../Models/dummyData";
-import { SubCategoryCard } from "../UI/SubCategoryCard";
+
+import { SubCategortCardForList, SubCategory } from "./SubCategoryEddit";
+import { VALID_ROUTES } from "../Routes/routes";
 
 const TransationsDetailsView = () => {
   const location = useLocation();
@@ -28,10 +26,11 @@ const TransationsDetailsView = () => {
   const [localDataToShow, setLocalDataToShow] = useState<any>({
     ...dataReceived,
   });
+ 
 
   const originalData = dataReceived;
 
-  const { handleUpdate , handleDeleteOne } = useBudgetContext();
+  const { handleUpdate , handleDeleteOne , getSubCategoryFor , subcategoriesData } = useBudgetContext();
   const [canEdit, setCanEdit] = useState(false);
   const [canDelete, setCanDelete] = useState(false);
 
@@ -107,6 +106,10 @@ const TransationsDetailsView = () => {
     handleDeleteOne(localDataToShow)
     navigate("/transactions");
   }
+
+
+    
+    
 
   
 
@@ -186,30 +189,18 @@ const TransationsDetailsView = () => {
           <BlurContainer size={10} />
 
           <FrameDetail icon={allIcons.tag} title={category}>
+           
+            <button onClick={() => {navigate(VALID_ROUTES.subcategory , {state: {subCategory: category} });}}
+            className={`"bg-gray-100 text-stone-500 font-semibold text-xl capitalize   size-6 rounded-sm border  flex items-center justify-center absolute right-2 top-2 transition-all duration-100 lineal  `}>{allIcons.plus}</button>
+        
             <div className="flex flex-wrap gap-2">
-              {getSubCategoryFor(category).map((subCategory) => {
-                const meta = getSubCategoryMeta(subCategory);
+              {getSubCategoryFor(category).map((subCate) => {
+                const data = subcategoriesData.find((sc) => sc.title === subCate.title) || new SubCategory({id: null, title: subCate.title, icon: "", color: "", category: []}) 
+  
 
-                if (subcategory.includes(subCategory)) {
-                  return (
-                    <SubCategoryCard
-                      key={subCategory}
-                      subCategory={subCategory}
-                      onClick={() => updateSubCategories(subCategory)}
-                    />
-                   
-                  );
-                }
+                return(<SubCategortCardForList sc={data} editSubCategory={() => updateSubCategories(subCate.title.toLowerCase())} size="M" showColor={subcategory.includes(subCate.title.toLowerCase())}  />)
 
-                return (
-                  <span
-                    key={subCategory}
-                    onClick={() => updateSubCategories(subCategory)}
-                    className="bg-gray-200 border border-gray-500 text-gray-500 opacity-60 px-4 rounded capitalize"
-                  >
-                    {meta.label}
-                  </span>
-                );
+               
               })}
             </div>
 
@@ -284,7 +275,7 @@ const FrameDetail = ({
   title: string;
 }) => {
   return (
-    <div className="w-full gap-1 rounded-2xl shadow-md p-4 flex flex-col bg-white text-gray-700">
+    <div className="w-full gap-1 rounded-2xl shadow-md p-4 flex flex-col bg-white text-gray-700 relative">
       <div className="flex gap-4">
         {icon}
         <span className="font-bold capitalize">{title}</span>

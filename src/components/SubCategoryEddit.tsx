@@ -4,7 +4,8 @@ import { useBudgetContext } from "../provide/budget";
 import HeatherView from "../UI/HeatherView";
 import { Layout } from "../UI/Layout";
 import { allIcons } from "../UI/allIicons";
-import { fliterCategoryAvailable } from "../Models/dummyData";
+import { fliterCategoryAvailable, type Category } from "../Models/dummyData";
+import { useLocation } from "react-router";
 
 
 export interface SubCategoryEdditProps {
@@ -55,11 +56,17 @@ export class SubCategory implements SubCategoryEdditProps {
 
 const SubCategoryEddit = () => {
 
-  const { subcategoriesData ,saveSubCategories } = useBudgetContext()
+  const { subcategoriesData, saveSubCategories } = useBudgetContext()
+    const location = useLocation();
   
-  const keys = fliterCategoryAvailable 
+  const dataReceived:string = location?.state?.subCategory
+  console.log(dataReceived)
+  
+  let keys:Category[] = [...fliterCategoryAvailable,"savings","stocks" ,"crypto"]
 
-
+  if (dataReceived) {
+    keys = keys.filter((c) => c == dataReceived)
+  }
 
   const createAnewSubCategory = ({title, icon, color, category}:{title: string;
   icon: string;
@@ -165,7 +172,7 @@ const SubCategoryRow = ({createAnewSubCategory, title , data }:{createAnewSubCat
         <div className="flex flex-row justify-between relative">
               <p className="text-stone-800 font-semibold text-xl capitalize w-full mb-1 border-b border-gray-300">{title}</p>
           <button onClick={() => setShowModal(true)}
-            className={`${showModal ? "rotate-45 bg-red-500 text-white" : "bg-blue-100"} text-stone-800 font-semibold text-xl capitalize   size-6 rounded-full flex items-center justify-center absolute right-2 transition-all duration-300 lineal shadow `}>{allIcons.plus}</button>
+            className={`${showModal ? "rotate-45 bg-red-500 text-white" : "bg-gray-100"} text-stone-500 font-semibold text-xl capitalize   size-6 rounded-full flex items-center justify-center absolute right-2 transition-all duration-100 lineal  `}>{allIcons.plus}</button>
         </div>
         <div className="flex flex-wrap gap-1 ">
          
@@ -181,13 +188,25 @@ const SubCategoryRow = ({createAnewSubCategory, title , data }:{createAnewSubCat
 }
 
 
-export const SubCategortCardForList = ({sc, editSubCategory,showColor = true ,size = 32}: {sc: SubCategory, editSubCategory: (sc: SubCategory) => void, showColor?: boolean , size?: number }) => {
+export const SubCategortCardForList = ({sc, editSubCategory,showColor = true ,size = "M"}: {sc: SubCategory, editSubCategory: (sc: SubCategory) => void, showColor?: boolean , size?: "S" | "M" | "L" }) => {
+  const ajust = {
+    hight: "32px",
+    fontSize: "14px"
+  }
+
+  if (size === "S") {
+    ajust.hight = "20px"
+    ajust.fontSize = "8px"
+  }
+  
+  
+  
   return (
     <div 
                       onClick={() =>  editSubCategory(sc)}
-                      style={{height:size + "px", backgroundColor:showColor? sc.color + 50 : "", color:showColor? sc.color : "" }}
-                      className={`text-stone-800 cursor-pointer font-light text-[12px] border flex items-center justify-center    px-2 rounded capitalize  `}
-                    ><span className="mr-1">{sc.icon}</span>  <span>{sc.title}</span></div>
+                      style={{fontSize:ajust.fontSize, height:ajust.hight, backgroundColor:showColor? sc.color + 50 : "", color:showColor? sc.color : "" }}
+                      className={`text-stone-800 cursor-pointer font-light  border flex items-center justify-center  text-nowrap truncate   px-2 rounded capitalize  `}
+                    >{size !== "S" && <span className="mr-1">{sc.icon}</span>}  <span>{sc.title}</span></div>
   )
 }
 

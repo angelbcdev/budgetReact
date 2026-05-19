@@ -1,5 +1,4 @@
 import type { Category, TransactionType, PaymentMethod } from "./dummyData";
-import type { Subcategory } from "./subCateriesAvailable";
 
 interface ITransaction {
   id: string;
@@ -9,7 +8,7 @@ interface ITransaction {
   date: Date | string; // ISO format
   type: TransactionType;
   category: Category;
-  subcategory: Subcategory[];
+  subcategory: string[];
   paymentMethod: PaymentMethod;
 }
 
@@ -23,7 +22,7 @@ export class Transaction implements ITransaction {
   date: Date | string; // ISO format
   type: TransactionType;
   category: Category;
-  subcategory: Subcategory[];
+  subcategory: string[];
   paymentMethod: PaymentMethod;
 
   constructor(data: ITransaction) {
@@ -61,7 +60,7 @@ export class Transaction implements ITransaction {
       date: new Date(this.date).toISOString().split("T")[0],
       type: this.type,
       category: this.category,
-      subcategory: this.subcategory.join(", "),
+      subcategory: this.subcategory.join(","),
       paymentMethod: this.paymentMethod ?? "",
     };
   }

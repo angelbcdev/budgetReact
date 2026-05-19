@@ -2,15 +2,7 @@ import { Layout } from "../UI/Layout";
 import HeatherView from "../UI/HeatherView";
 import { useState } from "react";
 
-import {
 
-  getSubCategoryFor,
-  getSubCategoryMeta,
-
-
-
-
-} from "../Models/subCateriesAvailable";
 
 import {
   fliterCategoryAvailable,
@@ -26,6 +18,7 @@ import { VALID_ROUTES } from "../Routes/routes";
 import { MultipleAcctionButtons } from "./addNewTransactions/Keyboard";
 // import { SubCategoryCard } from "../UI/SubCategoryCard";
 import { SelectDateGlobal } from "../UI/SelectDateGlobal";
+import { SubCategortCardForList, SubCategory } from "./SubCategoryEddit";
 
 
 
@@ -37,7 +30,7 @@ interface IMultiTrnsaction {
   title: string | null;
   description: string;
   paymentMethod: PaymentMethod | "";
-  subcategory: Subcategory[];
+  subcategory: string[];
   isReaddy: boolean;
   id?: string;
   date?: string;
@@ -56,7 +49,7 @@ const emptyData: IMultiTrnsaction = {
 };
 
 const MultiTransactions = () => {
-  const { saveMultipleTransaction } = useBudgetContext();
+  const { saveMultipleTransaction, getSubCategoryFor } = useBudgetContext();
   const minRow = 2;
   const [numberTransactions, setNumberTransactions] = useState(minRow);
   const [allNewsTransactions, setAllNewTransactions] = useState<
@@ -101,22 +94,22 @@ const MultiTransactions = () => {
 
     const billsData = data
       .map((element) => {
-        if (element != "mortgage" ) {
+        if (element.title != "mortgage" ) {
           return {
             amount: "",
-            title: `${element}'s pay  `,
+            title: `${element.title}'s pay  `,
             id: "",
             description: `Bill ${dateForRow}`,
             category: "bills",
             type: "",
             isReaddy: false,
-            paymentMethod:element == "cel_tmobil" ? "checking" : "credit_card_red",
-            subcategory: [element],
+            paymentMethod:element.title == "cel tmobil" ? "checking" : "credit_card_red",
+            subcategory: [element.title],
           };
         }
       })
       .filter(Boolean);
-    setAllNewTransactions(billsData as IMultiTrnsaction[]);
+    setAllNewTransactions(billsData as IMultiTrnsaction[] );
   };
 
   const createMultipleTransactions = () => {
@@ -201,7 +194,7 @@ const MultiTransactions = () => {
 
         <div className="absolute bottom-5 left-3  gap-2 flex ">
           <MultipleAcctionButtons
-            bt1={{ title: "<", path: VALID_ROUTES.Add }}
+            bt1={{ title: "<", path: VALID_ROUTES.add }}
             bt2={{
               title: "Add Transactions",
               action: createMultipleTransactions,
@@ -224,7 +217,8 @@ const RowNewTransactions = ({
   setAllNewTransactions: React.Dispatch<
     React.SetStateAction<IMultiTrnsaction[]>
   >;
-}) => {
+  }) => {
+   const { getSubCategoryFor , subcategoriesData } = useBudgetContext()
   const onChange = (e: React.ChangeEvent<any>) => {
     const { name, value } = e.target;
 
@@ -254,7 +248,9 @@ const RowNewTransactions = ({
     });
   };
 
-  const updateSubCategories = (sc: Subcategory) => {
+  const updateSubCategories = (sc: string) => {
+
+   
     setAllNewTransactions((prev) => {
       const copy = [...prev];
 
@@ -321,29 +317,13 @@ const RowNewTransactions = ({
       </div>
       <div className="flex flex-wrap   gap-2 text-[12px]">
         {getSubCategoryFor(dataRow.category as Category).map((subCategory) => {
-          if (subCategory == "mortgage") return;
-          const meta = getSubCategoryMeta(subCategory);
+          if (subCategory.title == "mortgage") return;
+          
 
-          if (!dataRow.subcategory.includes(subCategory)) {
-            return (
-              <span
-                onClick={() => updateSubCategories(subCategory)}
-                className={`  bg-gray-200 border border-gray-500 text-gray-500  opacity-60 px-4 rounded capitalize`}
-                key={subCategory}
-              >
-                {meta.label}
-              </span>
-            );
-          }
-
+          const data = subcategoriesData.find((sc) => sc.title === subCategory.title) || new SubCategory({id: null, title: subCategory.title, icon: "", color: "", category: []}) 
+            
           return (
-            // <SubCategoryCard
-            //   subCategory={subCategory}
-            //   key={subCategory}
-            //   onClick={() => updateSubCategories(subCategory)}
-            // />
-            <>ddd</>
-          );
+             <SubCategortCardForList sc={data} editSubCategory={() => updateSubCategories(subCategory.title.toLowerCase())} size="M" showColor={dataRow.subcategory.includes(subCategory.title)}  />);
         })}
       </div>
     </div>
@@ -430,22 +410,24 @@ const MySelector = ({
   );
 };
 
-const MyInputText = ({
+export const MyInputText = ({
   name,
   onChange,
   defaulvalue,
+  type="text"
 }: {
   name: string;
   onChange: (e: any) => void;
-  defaulvalue: string;
+    defaulvalue: string;
+  type?: string
 }) => {
   return (
     <label className="flex flex-col gap-1  relative group">
       <span
         className=" left-2 text-sm transition-all duration-200  
-            pointer-events-none text-gray-500
+            pointer-events-none text-gray-500 
             
-            group-focus-within:-top-px text-xs group-focus-within:text-blue-500 group-focus-within:bg-white"
+            group-focus-within:-top-px  group-focus-within:text-blue-500 group-focus-within:bg-white"
       >
         {name}
       </span>
@@ -453,8 +435,8 @@ const MyInputText = ({
         defaultValue={defaulvalue}
         name={name}
         onChange={(e) => onChange(e)}
-        className="border-gray-300 border rounded-sm h-6 w-34 bg-transparent px-2 py-1 outline-none focus:border-blue-500"
-        type="text"
+        className="border-gray-300 border rounded-sm h-6 min-w-34 w-40 bg-transparent px-2 py-1 outline-none focus:border-blue-500"
+        type={type}
       />
     </label>
   );

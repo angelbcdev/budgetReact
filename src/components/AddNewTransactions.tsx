@@ -5,7 +5,7 @@ import {
   savingsMethodAvailable,
   type Category,
   type PaymentMethod,
-  type Subcategory,
+
   type TransactionType,
 } from "../Models/dummyData";
 import { Layout } from "../UI/Layout";
@@ -28,7 +28,7 @@ export interface ITransaction {
   category: Category;
   type: TransactionType;
   paymentMethod: PaymentMethod;
-  subcategory: Subcategory[];
+  subcategory: string[];
 
 }
 

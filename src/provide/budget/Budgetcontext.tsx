@@ -7,12 +7,12 @@ import {
   type ReactElement,
 } from "react";
 import { BudgetContext } from "./data";
-import {        GoogleSheetsServiciesTransactions, ServiciesLocalTransactions   } from "../../Services/Servicies";
+import {        GoogleSheetsServiciesTransactions  } from "../../Services/Servicies";
 import { Transaction } from "../../Models/DataTransactions";
 
 import { useSummary, type ISummaryHomeData } from "../hooks/useSummaryTransactions";
 import { goalsDataDefault, type TKEY_GOALS, type TKEY_MONTHS } from "../interfaces";
-import { GoogleSheetsServiciesSubCategories, ServiciesLocalSubCategories, type IServiciesDBSubCategories } from "../../Services/ServiciesSubCategory";
+import { GoogleSheetsServiciesSubCategories, type IServiciesDBSubCategories } from "../../Services/ServiciesSubCategory";
 import type { SubCategory } from "../../components/SubCategoryEddit";
 // import { settings } from "../../api";
 
@@ -34,7 +34,10 @@ export interface IBudgetContext {
   handleUpdate:(data:Transaction)=>void
   handleDeleteOne: (data: Transaction) => void
   udateLocalDataBase: () => void
+  saveStocksProfit: (cuantity: number) => void
   validateSavingsAccountBalance: (cuantity?: number) => boolean
+  getSubCategoryFor: (category: string) => SubCategory[]
+  stocksProfit: number
   global: ISummaryHomeData
   curentDate:{
     year: string,
@@ -63,6 +66,7 @@ export const BudgetContextProvider = ({ children }: { children: ReactElement }) 
   const [isLoading, setIsLoading] = useState(false )
   const [transactionsData, setTransactionsData] = useState<Transaction[]>([])
   const [subcategoriesData, setSubcategoriesData] = useState<SubCategory[]>([])
+  const [stocksProfit, setStocksProfit] = useState(10)
 
   
   const { global, monthly, lastMonth, allMonthsData ,    acumulateMonth,
@@ -75,7 +79,12 @@ export const BudgetContextProvider = ({ children }: { children: ReactElement }) 
 
   const currentMonthGoals = goalsMonthly[currentMonthKey || lastMonth ] ?? goalsDataDefault
 
-  const summaryHomeData =monthly[currentMonthKey]
+  const summaryHomeData = monthly[currentMonthKey]
+  
+
+  const getSubCategoryFor = (category: string) => {
+    return subcategoriesData.filter((f) => f.category.includes(category)) 
+  }
  
 
 
@@ -116,6 +125,9 @@ export const BudgetContextProvider = ({ children }: { children: ReactElement }) 
   const dataBaseSubCategories:IServiciesDBSubCategories = new GoogleSheetsServiciesSubCategories() //ServiciesLocalSubCategories()
 
   useEffect(() => {
+
+   
+
     setIsLoading(true)
     dataBase.getSheetData().then((data) => {
       
@@ -127,9 +139,21 @@ export const BudgetContextProvider = ({ children }: { children: ReactElement }) 
     dataBaseSubCategories.getSheetData().then((data) => {
       setSubcategoriesData(data)
     })
-   
+    const stored = typeof window !== "undefined"
+    ? window.localStorage.getItem("stocksProfit")
+    : null
+
+  if (stored !== null) {
+    setStocksProfit(parseInt(stored, 10) || 10)
+  }
    
   }, [])
+
+
+  const saveStocksProfit = (cuantity: number) => {
+    localStorage.setItem("stocksProfit", cuantity.toString())
+    setStocksProfit(cuantity)
+  }
 
   const saveSubCategories = (data: SubCategory[]) => {
     setIsLoading(true)
@@ -248,7 +272,7 @@ export const BudgetContextProvider = ({ children }: { children: ReactElement }) 
     handleBackup, saveMultipleTransaction, handleUpdate, handleDeleteOne,
     udateLocalDataBase,
     validateSavingsAccountBalance,
-    subcategoriesData,saveSubCategories
+    subcategoriesData,saveSubCategories,getSubCategoryFor,stocksProfit,saveStocksProfit
 
   }
 

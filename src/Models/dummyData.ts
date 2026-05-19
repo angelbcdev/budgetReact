@@ -41,7 +41,6 @@ export const allCategoryAvailable: Category[] = [
   "credit_card_payment",
   "other",
   "mortgage",
-  "savings",
   "stocks",
   "crypto",
   "checking",
@@ -65,6 +64,7 @@ export type TallTypeCategory =
   | PaymentMethod
   | SavingsMethod
   | TKEY_GOALS
+  | "ForStocksProfit"
   | "Balance";
 export interface TCategory_Meta {
   icon: string;
@@ -113,6 +113,7 @@ export const CATEGORY_META: Record<TallTypeCategory, TCategory_Meta> = {
   savingsCrypto: createMeta("For Crypto", "₿", "#1fa3fa"),
   savings_account: createMeta("Savings", "💰", "#1ffffa"),
   Balance: createMeta("Balance", "💰", "#1faffa"),
+  ForStocksProfit: createMeta("For Stocks Profit", "📉", "#fff003"),
 };
 
 export function getCategoryMeta(category: TallTypeCategory): TCategory_Meta {

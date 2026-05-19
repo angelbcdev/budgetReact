@@ -93,7 +93,7 @@ const BudgetHome = () => {
   
 
   const manualNavigation = () => {
-    navigate(VALID_ROUTES.Graph ,{ state: { data: "GENERAL" } }) 
+    navigate(VALID_ROUTES.graph ,{ state: { data: "GENERAL" } }) 
   }
  
   return(

@@ -2,7 +2,6 @@ import { Transaction } from "../../Models/DataTransactions";
 import type {
   Category,
   PaymentMethod,
-  Subcategory,
   TransactionType,
 } from "../../Models/dummyData";
 import type { ITransaction } from "../AddNewTransactions";
@@ -146,7 +145,7 @@ export const ajustDataForTransaction = ({
     return dataTransaction.title || dataTransaction.category;
   };
 
-  const validateSubcategory = (): Subcategory[] => {
+  const validateSubcategory = (): string[] => {
     if (validatePayCreditCard) {
       return ["payment_card"];
     }
@@ -159,11 +158,20 @@ export const ajustDataForTransaction = ({
     }
     return dataTransaction.category;
   };
+  const clearDiscription = () => {
+    const has1 =
+      dataTransaction.description[dataTransaction.description.length - 1] ==
+      "1";
+    if (has1) {
+      return dataTransaction.description.slice(0, -1);
+    }
+    return dataTransaction.description;
+  };
 
   return new Transaction({
     id: crypto.randomUUID(),
     title: checkValidationTitle(),
-    description: dataTransaction.description,
+    description: clearDiscription(),
     amount: Number(dataTransaction.amount),
     date: dataTransaction.date,
     type: dataTransaction.type,

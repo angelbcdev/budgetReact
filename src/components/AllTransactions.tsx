@@ -200,14 +200,14 @@ const AllTransactions = () => {
                                
                                 return (
                                
-                                  <SubCategoryCard key={subCategory} subCategory={subCategory as Subcategory} showIcon={false} onClick={()=>{}}/>
+                                  <SubCategoryCard key={subCategory} subCategory={subCategory } onClick={()=>{}}/>
                                 );
                               }
                               if (subCategory != "" && i == 2) {
                                 return (
                                   <span
                                     key={subCategory}
-                                    className="inline-block h-4 text-[10px] px-2 py-0.5 rounded-md bg-gray-100 text-gray-600"
+                                    className="   h-5 text-[10px] px-2 py-0.5 rounded-sm bg-gray-100 text-gray-600 border border-gray-300"
                                   >
                                     ...
                                   </span>
