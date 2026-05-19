@@ -45,8 +45,6 @@ export const validateSavingDataToShow: TKEY_SUMMARY[] = [
   "savingsCrypto",
 ];
 
-export function useSummary(transactions: Transaction[]) {
-  // 🔹 create empty summary
   const createEmptySummary = (): ISummaryHomeData => ({
     totalBalance: 0,
     totalIncome: 0,
@@ -78,6 +76,35 @@ export function useSummary(transactions: Transaction[]) {
     },
   });
 
+
+export interface ISubCategorySumary {
+  [key: string]: {
+    totalIcome: number;
+    totalUse: number;
+    
+  }
+}
+
+export function useSummary(transactions: Transaction[]) {
+  // 🔹 create empty summary
+  const subCategoriesUsed = new Set(
+  transactions
+    .map((t) => t.subcategory)
+    .flat()
+    .filter((t) => t !== "")
+);
+
+  const emptySubCategorySummary: ISubCategorySumary =
+  Object.fromEntries(
+    [...subCategoriesUsed].map((sc) => [
+      sc,
+      {
+        totalIcome: 0,
+        totalUse: 0,
+      },
+    ])
+  );
+  
   // 🔹 merge two summaries into one (suma campo a campo)
   const mergeSummaries = (
     a: ISummaryHomeData,
@@ -108,9 +135,10 @@ export function useSummary(transactions: Transaction[]) {
   const applyTransaction = (acc: ISummaryHomeData, t: Transaction) => {
     const amount = Math.abs(t.amount);
 
-     if (acc.databyCatefory[t.category]) {
+     if (!acc.databyCatefory[t.category]) {
       acc.databyCatefory[t.category] = 0
-    }
+     }
+    const oldAmount = acc.databyCatefory[t.category];
 
     // PAYCHECK
     if (
@@ -141,13 +169,16 @@ export function useSummary(transactions: Transaction[]) {
 
     //PAY Mortgage
     if (t.type === "credit_card_payment" && t.paymentMethod === "mortgage") {
-       acc.databyCatefory["mortgage_Payment"] += amount;
+         const oldAmountw = acc.databyCatefory["mortgage_Payment"];
+      
+       acc.databyCatefory["mortgage_Payment"] =  oldAmountw + amount;
       acc.savingsMortgage -= amount;
       return;
     }
      //PAY with savings
     if (t.type === "spending" && t.paymentMethod === "savings_account") {
-      acc.databyCatefory[t.category] += amount;
+        
+      acc.databyCatefory[t.category] =  oldAmount + amount;
       acc.savingsBank -= amount;
       return;
     }
@@ -156,7 +187,9 @@ export function useSummary(transactions: Transaction[]) {
     // SAVINGS
     if (t.type === "saving") {
       acc.totalBalance -= amount;
-      acc.databyCatefory[t.category] += amount;
+   
+        
+      acc.databyCatefory[t.category] =  oldAmount + amount;
 
       switch (t.category) {
         case "mortgage":
@@ -178,7 +211,9 @@ export function useSummary(transactions: Transaction[]) {
     // SPENDING mortgage_Payment
     if (t.type === "spending") {
       acc.totalExpenses += amount;
-      acc.databyCatefory[t.category] += amount;
+         
+      acc.databyCatefory[t.category] =  oldAmount + amount;
+      
 
       switch (t.paymentMethod) {
        
@@ -249,6 +284,22 @@ export function useSummary(transactions: Transaction[]) {
     return result;
   }, [monthly]);
 
+
+  transactions.forEach((t) => { 
+
+    t.subcategory.map((sc) => {
+      if (sc == "") return
+      const oldAmount = emptySubCategorySummary[sc].totalIcome;
+      const oldUse = emptySubCategorySummary[sc].totalUse;
+      emptySubCategorySummary[sc].totalUse = oldUse + 1
+      emptySubCategorySummary[sc].totalIcome = oldAmount + t.amount
+    })
+
+   
+  })
+
+  console.log(emptySubCategorySummary)
+
   return {
     global,
     monthly,
@@ -257,5 +308,6 @@ export function useSummary(transactions: Transaction[]) {
     sortedMonths,
     allMonthsData,
     acumulateMonth,
+    subCategorySummary: emptySubCategorySummary
   };
 }

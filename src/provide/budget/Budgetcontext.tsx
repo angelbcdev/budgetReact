@@ -10,7 +10,7 @@ import { BudgetContext } from "./data";
 import {        GoogleSheetsServiciesTransactions  } from "../../Services/Servicies";
 import { Transaction } from "../../Models/DataTransactions";
 
-import { useSummary, type ISummaryHomeData } from "../hooks/useSummaryTransactions";
+import { useSummary, type ISubCategorySumary, type ISummaryHomeData } from "../hooks/useSummaryTransactions";
 import { goalsDataDefault, type TKEY_GOALS, type TKEY_MONTHS } from "../interfaces";
 import { GoogleSheetsServiciesSubCategories, type IServiciesDBSubCategories } from "../../Services/ServiciesSubCategory";
 import type { SubCategory } from "../../components/SubCategoryEddit";
@@ -52,6 +52,7 @@ export interface IBudgetContext {
   lastMonth: string
   allMonthsDataSort: Record<string, ISummaryHomeData>
   acumulateMonth: Record<string, ISummaryHomeData>
+  subCategorySummary: ISubCategorySumary
 }
 
 
@@ -69,7 +70,7 @@ export const BudgetContextProvider = ({ children }: { children: ReactElement }) 
   const [stocksProfit, setStocksProfit] = useState(10)
 
   
-  const { global, monthly, lastMonth, allMonthsData ,    acumulateMonth,
+  const { global, monthly, lastMonth, allMonthsData , acumulateMonth, subCategorySummary
  } = useSummary(transactionsData);
   
   const [currentMountIndex, setCurrentMountIndex] = useState(allMonthsData.findIndex((f) => f === lastMonth))
@@ -271,8 +272,9 @@ export const BudgetContextProvider = ({ children }: { children: ReactElement }) 
     acumulateMonth,
     handleBackup, saveMultipleTransaction, handleUpdate, handleDeleteOne,
     udateLocalDataBase,
-    validateSavingsAccountBalance,
-    subcategoriesData,saveSubCategories,getSubCategoryFor,stocksProfit,saveStocksProfit
+    validateSavingsAccountBalance,subCategorySummary,
+    subcategoriesData, saveSubCategories, getSubCategoryFor, stocksProfit, saveStocksProfit,
+    
 
   }
 

@@ -54,13 +54,13 @@ export class Transaction implements ITransaction {
   toSheetRow(): Record<string, string | number> {
     return {
       id: this.id,
-      title: this.title,
-      description: this.description,
+      title: this.title.toLocaleLowerCase(),
+      description: this.description.toLocaleLowerCase(),
       amount: this.amount,
       date: new Date(this.date).toISOString().split("T")[0],
       type: this.type,
-      category: this.category,
-      subcategory: this.subcategory.join(","),
+      category: this.category.toLocaleLowerCase(),
+      subcategory: this.subcategory.map((s) => s.toLocaleLowerCase()).join(","),
       paymentMethod: this.paymentMethod ?? "",
     };
   }

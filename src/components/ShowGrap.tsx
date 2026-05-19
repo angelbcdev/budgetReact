@@ -12,7 +12,7 @@ import { DataShowListCategory } from "../UI/DataShowListCategory";
 
 const ShowGrap = () => {
   // const location = useLocation();
-  const { curentDate, allMonthsData , lastMonth , acumulateMonth  ,global, stocksProfit} = useBudgetContext();
+  const { curentDate, allMonthsData , lastMonth , acumulateMonth  ,global, stocksProfit } = useBudgetContext();
   const [monthToShowString, setMonthToShowString] = useState<string>(lastMonth);
 
  
@@ -81,15 +81,17 @@ const searchDataMonth = (search: "Current" | "Last") => {
         <CardMonthData title={"Last Month"} data={dataOldMonth} />
 
         </div>
+            <div className="flex flex-col w-93 h-24 mx-auto bg-blue-400 relative">
+          <SubCategoryDetails />
+         </div>
         
-        <div className="flex flex-col w-93  mx-auto">
+        <div className="flex flex-col w-93 mt-20  mx-auto">
           <p className="text-xl font-bold pl-20 ">Total Available: {totalAvailable.toFixed(2)}</p>
         <DataShowListCategory title="Globals Savings" sizeScroll={100} data={dataToShow} valueSort={true} setSortToggle={() => { }} />
       
         </div>
-
-      
-
+   
+    
         </section>
 
     </Layout>
@@ -188,3 +190,26 @@ const emptyData = () => {
     ],
   };
 };
+
+
+const SubCategoryDetails = () => {
+   const { subCategorySummary} = useBudgetContext();
+  return (
+       <div className="flex flex-row w-93 overflow-x-scroll h-20 gap-2 mx-auto  rounded-md absolute  ">
+          {
+            Object.keys(subCategorySummary).map((key) => {
+              const data = subCategorySummary[key]
+             
+              return(
+              <section key={key} className="  p-2 border border-gray-400 bg-white h-full w-60 rounded-md " >
+                <p className="text-lg font-bold capitalize " >{key}</p>
+                <div className="flex flex-row w-full justify-start gap-6 text-gray-700 ">
+                    <p className="font-semibold " >X:{data.totalUse}</p>
+                    <p>Total:{data.totalIcome}</p>
+                </div>
+              </section>
+            )})
+          }
+        </div>
+  )
+}

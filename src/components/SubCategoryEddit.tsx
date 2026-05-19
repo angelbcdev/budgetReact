@@ -46,10 +46,10 @@ export class SubCategory implements SubCategoryEdditProps {
   toSheetRow(): Record<string, string | number> {
     return {
       id: this.id,
-      title: this.title,
+      title: this.title.toLocaleLowerCase(),
       icon: this.icon,
       color: this.color,
-      category: this.category.join(",")
+      category: this.category.map(s => s.toLocaleLowerCase()).join(",")
     }
   }
 }
