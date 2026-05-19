@@ -57,7 +57,7 @@ const SubCategoryEddit = () => {
 
   const { subcategoriesData ,saveSubCategories } = useBudgetContext()
   
-  const keys = fliterCategoryAvailable //Object.entries(subCateriesAvailable).map(([key , value]) => value.length > 0 && {key, value})
+  const keys = fliterCategoryAvailable 
 
 
 
@@ -102,7 +102,7 @@ const SubCategoryEddit = () => {
 export default SubCategoryEddit; 
 
 
-const SubCategoryRow = ({createAnewSubCategory, title , data}:{createAnewSubCategory: (data: SubCategoryEdditProps) => void, title: string, data:SubCategory[] }) => {
+const SubCategoryRow = ({createAnewSubCategory, title , data }:{createAnewSubCategory: (data: SubCategoryEdditProps) => void, title: string, data:SubCategory[] }) => {
   const [showModal, setShowModal] = useState(false)
   const [newSubCategory, setNewSubCategory] = useState({ title: "", icon: "", color: "", category: "" })
   const [allCategories, setAllCategories] = useState([title])
@@ -157,7 +157,7 @@ const SubCategoryRow = ({createAnewSubCategory, title , data}:{createAnewSubCate
         <section
           onClick={closeModal}
           className="w-full h-full fixed bg-black/50 top-0 left-0 z-50 flex  ">
-         <SubCategoryModal setShowModal={setShowModal}  addValue={addValue} title={title} allCategories={allCategories} addCategory={addCategory} subCategoryToEdit={subCategoryToEdit} createSubCategory={createSubCategory} />
+         <SubCategoryModal   addValue={addValue} title={title} allCategories={allCategories} addCategory={addCategory} subCategoryToEdit={subCategoryToEdit} createSubCategory={createSubCategory} />
           
         </section>
       }
@@ -171,11 +171,7 @@ const SubCategoryRow = ({createAnewSubCategory, title , data}:{createAnewSubCate
          
                 {
                   data.map((sc) => (
-                    <p key={sc.id}
-                      onClick={() =>  editSubCategory(sc)}
-                      style={{ backgroundColor: sc.color + 50, color: sc.color }}
-                      className={`text-stone-800 font-light text-[12px] border   px-2 rounded capitalize  `}
-                    ><span className="mr-1">{sc.icon}</span>  {sc.title}</p>
+                    <SubCategortCardForList key={sc.id} sc={sc} editSubCategory={editSubCategory} />
                   ))
                 }
               </div>
@@ -185,17 +181,25 @@ const SubCategoryRow = ({createAnewSubCategory, title , data}:{createAnewSubCate
 }
 
 
-const SubCategoryModal = ({setShowModal,  addValue ,title, allCategories, addCategory, subCategoryToEdit ,createSubCategory }: {
-  title: string, subCategoryToEdit: SubCategory | null , createSubCategory: () => void ,setShowModal: (show: boolean) => void
+export const SubCategortCardForList = ({sc, editSubCategory,showColor = true ,size = 32}: {sc: SubCategory, editSubCategory: (sc: SubCategory) => void, showColor?: boolean , size?: number }) => {
+  return (
+    <div 
+                      onClick={() =>  editSubCategory(sc)}
+                      style={{height:size + "px", backgroundColor:showColor? sc.color + 50 : "", color:showColor? sc.color : "" }}
+                      className={`text-stone-800 cursor-pointer font-light text-[12px] border flex items-center justify-center    px-2 rounded capitalize  `}
+                    ><span className="mr-1">{sc.icon}</span>  <span>{sc.title}</span></div>
+  )
+}
+
+
+const SubCategoryModal = ({  addValue ,title, allCategories, addCategory, subCategoryToEdit ,createSubCategory }: {
+  title: string, subCategoryToEdit: SubCategory | null , createSubCategory: () => void 
   addValue: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void, allCategories: string[], addCategory: (category: string) => void,
 }) => {
-    const { subcategoriesData ,saveSubCategories } = useBudgetContext()
+  
   
 
-   const deleteSubCategory = (id: string) => {
-     saveSubCategories(subcategoriesData.filter((f) => f.id !== id))
-     setShowModal(false)
-  }
+   
 
   return (
      <div

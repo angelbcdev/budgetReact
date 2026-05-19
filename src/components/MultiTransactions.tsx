@@ -8,7 +8,7 @@ import {
   getSubCategoryMeta,
 
 
-  type Subcategory,
+
 
 } from "../Models/subCateriesAvailable";
 
@@ -24,7 +24,7 @@ import { Transaction } from "../Models/DataTransactions";
 import { useBudgetContext } from "../provide/budget";
 import { VALID_ROUTES } from "../Routes/routes";
 import { MultipleAcctionButtons } from "./addNewTransactions/Keyboard";
-import { SubCategoryCard } from "../UI/SubCategoryCard";
+// import { SubCategoryCard } from "../UI/SubCategoryCard";
 import { SelectDateGlobal } from "../UI/SelectDateGlobal";
 
 
@@ -337,11 +337,12 @@ const RowNewTransactions = ({
           }
 
           return (
-            <SubCategoryCard
-              subCategory={subCategory}
-              key={subCategory}
-              onClick={() => updateSubCategories(subCategory)}
-            />
+            // <SubCategoryCard
+            //   subCategory={subCategory}
+            //   key={subCategory}
+            //   onClick={() => updateSubCategories(subCategory)}
+            // />
+            <>ddd</>
           );
         })}
       </div>

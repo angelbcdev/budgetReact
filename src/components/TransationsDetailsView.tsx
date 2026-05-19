@@ -5,16 +5,17 @@ import { useLocation, useNavigate } from "react-router";
 import {
   getSubCategoryFor,
   getSubCategoryMeta,
-  type Subcategory,
+
 } from "../Models/subCateriesAvailable";
 import type { Transaction } from "../Models/DataTransactions";
 import { allIcons } from "../UI/allIicons";
 import { useEffect, useState, type JSX } from "react";
 import BlurContainer from "../UI/BlurContainer";
-import { SubCategoryCard } from "../UI/SubCategoryCard";
+
 import { MultipleAcctionButtons } from "./addNewTransactions/Keyboard";
 import { useBudgetContext } from "../provide/budget";
 import { TRANSACTION_TYPE_META } from "../Models/dummyData";
+import { SubCategoryCard } from "../UI/SubCategoryCard";
 
 const TransationsDetailsView = () => {
   const location = useLocation();
@@ -79,7 +80,7 @@ const TransationsDetailsView = () => {
   };
 
   // ================= SUBCATEGORÍAS =================
-  const updateSubCategories = (sc: Subcategory) => {
+  const updateSubCategories = (sc: any) => {
     if (!canEdit) return;
 
     setLocalDataToShow((prev:any) => {
@@ -196,6 +197,7 @@ const TransationsDetailsView = () => {
                       subCategory={subCategory}
                       onClick={() => updateSubCategories(subCategory)}
                     />
+                   
                   );
                 }
 

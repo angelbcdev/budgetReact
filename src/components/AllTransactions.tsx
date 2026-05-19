@@ -2,7 +2,7 @@ import {
   CATEGORY_META,
   fliterCategoryAvailable,
   type PaymentMethod,
-  type Subcategory,
+  
 } from "../Models/dummyData";
 import { useState, useRef } from "react";
 import { Layout } from "../UI/Layout";
@@ -13,7 +13,7 @@ import SelectorContainer from "../UI/SelectorContainer";
 import { BiToogleButton } from "../UI/DataShowListCategory";
 import { VALID_ROUTES } from "../Routes/routes";
 import { useNavigate } from "react-router";
-import { SubCategoryCard } from "../UI/SubCategoryCard";
+  import { SubCategoryCard } from "../UI/SubCategoryCard";
 
 const extraFilters = ["mortgage", "Spend", "Earn", "Saved"];
 const AllTransactions = () => {
@@ -86,7 +86,7 @@ const AllTransactions = () => {
   };
 
    const manualNavigation = (data: Transaction) => {
-      navigate(VALID_ROUTES.Details ,{ state: { transaction: data } }) 
+      navigate(VALID_ROUTES.details ,{ state: { transaction: data } }) 
     }
 
   return (
@@ -199,6 +199,7 @@ const AllTransactions = () => {
                               if (subCategory != "" && i < 2) {
                                
                                 return (
+                               
                                   <SubCategoryCard key={subCategory} subCategory={subCategory as Subcategory} showIcon={false} onClick={()=>{}}/>
                                 );
                               }

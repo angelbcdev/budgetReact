@@ -1,6 +1,6 @@
 import { createMeta, type Category, type TCategory_Meta } from "./dummyData";
 
-export const subCateriesAvailable: Record<Category, Subcategory[]> = {
+export const subCateriesAvailable: Record<Category, TSubcategory[]> = {
   food: [
     "restaurant",
     "delivery",
@@ -49,7 +49,7 @@ export function getSubCategoryFor(cat: Category) {
   }
 }
 
-export type Subcategory =
+export type TSubcategory =
   | "payment_card"
   // general
   | "books"
@@ -111,7 +111,7 @@ export type Subcategory =
   | "walmart"
   | "other";
 
-export const SUBCATEGORY_META: Record<Subcategory, TCategory_Meta> = {
+export const SUBCATEGORY_META: Record<TSubcategory, TCategory_Meta> = {
   payment_card: createMeta("payment_card", "💳", "#3b82f6"),
 
   books: createMeta("books", "📚", "#a855f7"),
@@ -165,7 +165,7 @@ export const SUBCATEGORY_META: Record<Subcategory, TCategory_Meta> = {
   other: createMeta("other", "📌", "#9ca3af"),
 };
 
-export function getSubCategoryMeta(subcate: Subcategory): TCategory_Meta {
+export function getSubCategoryMeta(subcate: TSubcategory): TCategory_Meta {
   if (SUBCATEGORY_META[subcate]) {
     return SUBCATEGORY_META[subcate];
   } else {

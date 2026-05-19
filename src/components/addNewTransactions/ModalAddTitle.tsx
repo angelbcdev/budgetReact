@@ -1,8 +1,12 @@
 import { useEffect, useRef } from "react";
-import { subCateriesAvailable, type Subcategory } from "../../Models/subCateriesAvailable";
+import {  type TSubcategory } from "../../Models/subCateriesAvailable";
 import { allIcons } from "../../UI/allIicons";
 import type { ITransaction } from "../AddNewTransactions";
 import type { Category } from "../../Models/dummyData";
+import { useBudgetContext } from "../../provide/budget";
+
+
+import { SubCategortCardForList ,SubCategory } from "../SubCategoryEddit";
 
 export  const ModalAddTitle = ({
   setShowModal,
@@ -20,6 +24,7 @@ export  const ModalAddTitle = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const { subcategoriesData} = useBudgetContext()
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -32,18 +37,18 @@ export  const ModalAddTitle = ({
     const name = e.target.name;
     setDataTransaction((data) => ({ ...data, [name]: value + 1 }));
   };
-  const addSubcategory = (newSubcategory: string) => {
-    if (dataTransaction.subcategory.includes(newSubcategory as Subcategory)) {
+  const addSubcategory = (newSubcategory: SubCategory) => {
+    if (dataTransaction.subcategory.includes(newSubcategory.title)) {
       setDataTransaction((data) => ({
         ...data,
         subcategory: data.subcategory.filter(
-          (sub: Subcategory) => sub !== newSubcategory,
+          (sub: TSubcategory) => sub !==  newSubcategory.title,
         ),
       }));
     } else {
       setDataTransaction((data) => ({
         ...data,
-        subcategory: [...data.subcategory, newSubcategory as Subcategory],
+        subcategory: [...data.subcategory, newSubcategory.title],
       }));
     }
   };
@@ -125,18 +130,17 @@ export  const ModalAddTitle = ({
           Done
         </button>
         <div className="grid grid-cols-3 h-22 gap-1 pt-3   overflow-scroll">
-          {subCateriesAvailable[defaultCategory as Category].map((category) => {
-            return (
-              <div
-                onClick={() => addSubcategory(category)}
-                key={category}
-                className={`${dataTransaction.subcategory.includes(category) ? "bg-green-600 text-white " : "bg-gray-200"}
-                      flex flex-row gap-1.5  text-[13px] font-semibold relative  h-8  items-center justify-center    min-w-24 text  rounded-full py-1 px-3 `}
-              >
-                {category}
-              </div>
-            );
-          })}
+          
+
+            {
+              subcategoriesData.map((sub) => {
+                if (!sub.category.includes(defaultCategory as Category)) return
+                return (
+                    
+                  <SubCategortCardForList key={sub.id} sc={sub} editSubCategory={addSubcategory} showColor={dataTransaction.subcategory.includes(sub.title)} />
+                )
+              })
+            }
         </div>
       </form>
     </div>}
