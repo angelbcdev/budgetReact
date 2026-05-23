@@ -19,8 +19,9 @@ import { TypeSelectorButtons } from "./addNewTransactions/TypeSelectorButtons";
 import { ModalAddTitle } from "./addNewTransactions/ModalAddTitle";
 import { BalanceNotification } from "./addNewTransactions/BalanceNotification";
 import { ajustDataForTransaction, emptyNewTransactions, emptyNotification, validateEnoughBalance, validateEnoughPayCreditCart, validateEnoughPayMortgage } from "./addNewTransactions/helpers";
+import type { IKeyboardEdditable } from "./InternalTransactions/SavaingsMovement";
 
-export interface ITransaction {
+export interface ITransaction extends IKeyboardEdditable {
   title: string | null;
   description: string;
   date: Date;

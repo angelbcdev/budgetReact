@@ -5,9 +5,9 @@ import type { Transaction } from "../Models/DataTransactions";
 export const settings = {
   id: import.meta.env.VITE_GOOGLE_ID,
   url: import.meta.env.VITE_SHEET,
-  password: import.meta.env.VITE_PASSWORD,
-  email: import.meta.env.VITE_EMAIL,
-  isDev: import.meta.env.VITE_IS_DEV,
+  password: import.meta.env.VITE_PASSWORD || "1234",
+  email: import.meta.env.VITE_EMAIL ||"test@mail.cim",
+  isDev: import.meta.env.VITE_IS_DEV || true,
 };
 
 export async function getSheetData(sheetName: string) {

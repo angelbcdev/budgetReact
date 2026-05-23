@@ -1,6 +1,8 @@
 export type TransactionType =
   | "spending"
   | "saving"
+  | "transaction_savings_to_mortgage"
+  | "transaction_mortgage_to_savings"
   | "credit_card_payment"
   | "income";
 
@@ -23,12 +25,14 @@ export type Category =
   | "other"
   | "mortgage"
   | "mortgage_Payment"
+  | "moneyTransactions"
   | "savings"
   | "stocks"
   | "crypto"
   | "checking"
   | "credit_card_blue"
   | "credit_card_red"
+
   | "house";
 
 export const allCategoryAvailable: Category[] = [
@@ -39,6 +43,7 @@ export const allCategoryAvailable: Category[] = [
   "amazon",
   "savings",
   "credit_card_payment",
+  
   "other",
   "mortgage",
   "stocks",

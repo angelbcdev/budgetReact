@@ -1,7 +1,8 @@
 import { useEffect } from "react";
-import type { ITransaction } from "../AddNewTransactions";
+
 import { useNavigate } from "react-router";
 import { VALID_ROUTES } from "../../Routes/routes";
+import type { IKeyboardEdditable } from "../InternalTransactions/SavaingsMovement";
 
 export const Keyboard = ({
   createTransaction,
@@ -11,14 +12,14 @@ export const Keyboard = ({
 }: {
   triggerAnimation: () => void;
   createTransaction: () => void;
-  dataTransaction: ITransaction;
-  setDataTransaction: React.Dispatch<React.SetStateAction<ITransaction>>;
+  dataTransaction: IKeyboardEdditable;
+  setDataTransaction: React.Dispatch<React.SetStateAction<IKeyboardEdditable>>;
 }) => {
   
   const keyBoard = ["1", "2", "3", "4", "5", "6", "7", "8", "9", ".", "0", "<"];
 
   const isReadyToSubmit =
-    Number(dataTransaction.amount || 0) > 0 && dataTransaction.title !== "";
+    Number(dataTransaction.amount || 0) > 0 ;
 
   const normalize = (value: string) => {
     if (

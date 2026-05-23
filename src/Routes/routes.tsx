@@ -10,7 +10,9 @@ export const VALID_ROUTES = {
   "graph": "/graph",
   "details": "/transactionsDetails",
   "multiTransactions": "/multiTransactions",
-  "subcategory":"/subcategory"
+  "subcategory":"/subcategory",
+  "internalTransactions":"/internalTransactions",
+  "sellassects":"/sellassects",
 }
 
 export const routes = [
@@ -37,12 +39,12 @@ export const routes = [
   },
   // {
   //   name: "multi",
-  //   path: VALID_ROUTES.subcategory,
+  //   path: VALID_ROUTES.sellassects,
   //   icon: allIcons.wallet,
   // },
-  //  {
-  //   name: "transactions",
-  //   path: VALID_ROUTES.Details,
-  //   icon: allIcons.wallet,
-  // },
+   {
+    name: "transactions",
+    path: VALID_ROUTES.internalTransactions,
+    icon: allIcons.note,
+  },
 ];

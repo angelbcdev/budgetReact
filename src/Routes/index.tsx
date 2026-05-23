@@ -13,6 +13,8 @@ import TransationsDetailsView from "../components/TransationsDetailsView";
 import MultiTransactions from "../components/MultiTransactions"
 import { VALID_ROUTES } from "./routes";
 import SubCategoryEddit from "../components/SubCategoryEddit";
+import { AssectsSell } from "../components/InternalTransactions/AssectsSell";
+import { SavaingsMovement } from "../components/InternalTransactions/SavaingsMovement";
 
 export const router = createBrowserRouter([
   {
@@ -57,6 +59,18 @@ export const router = createBrowserRouter([
       {
         path: VALID_ROUTES.subcategory,
         element: <SubCategoryEddit />,
+      },
+      ,
+      
+      {
+        path: VALID_ROUTES.internalTransactions,
+        element: <SavaingsMovement />,
+      },
+      ,
+      
+      {
+        path: VALID_ROUTES.sellassects,
+        element: <AssectsSell />,
       },
       // SubCategoryEddit
       {
