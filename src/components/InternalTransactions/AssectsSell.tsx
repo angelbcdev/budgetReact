@@ -18,11 +18,13 @@ export const AssectsSell = ()=>{
         useBudgetContext();
      
     
-      const [fromAccountValue, setFromAccountValue] = useState({ amount: initialAmount })
+      const [amountAssect, setAmountAssect] = useState({ amount: initialAmount })
+      const [profitAssect, setProfitAssect] = useState({ amount: initialAmount })
       const [animate, setAnimate] = useState(false);
       const [balanceNotification, setBalanceNotification] = useState<IBalanceNotification>({ ...emptyNotification });
     
       const [isSellStocks, setIsSellStocks] = useState(true);
+      const [isAmount, setIsAmount] = useState(true);
 
        const defaultTypeTransaction = "sell_stocks"
     
@@ -37,8 +39,7 @@ export const AssectsSell = ()=>{
       };
     
       const changeType = () => {
-        setDefaultTypeTransaction(defaultTypeTransaction == "sell_stocks" ? "sell_crypto" : "sell_stocks")
-        setFromAccountValue({ amount: initialAmount })
+        setAmountAssect({ amount: initialAmount })
       }
     
       const showNotification = ({ msj, color }: { msj: string, color: { text: string, bg: string } }) => {
@@ -57,7 +58,7 @@ export const AssectsSell = ()=>{
           title: isSellStocks ? "Sell Stocks" : "Sell Crypto",
           description: "",
           date: new Date(),
-          amount: fromAccountValue.amount,
+          amount: amountAssect.amount,
           category: "moneyTransactions",
           type: defaultTypeTransaction,
           paymentMethod: "savings_account",
@@ -70,19 +71,19 @@ export const AssectsSell = ()=>{
     
     
           if (isSellStocks) {
-            if (!validateSavingsAccountBalance(Number(fromAccountValue.amount))) {
+            if (!validateSavingsAccountBalance(Number(amountAssect.amount))) {
               showNotification({ msj: "Not enough balance in savings account", color: { text: "#FF0000", bg: "#FFCCCC" } })
               return;
             }
           }else {
-            if (!validateMortgageFound(Number(fromAccountValue.amount))) {
+            if (!validateMortgageFound(Number(amountAssect.amount))) {
               showNotification({ msj: "Not enough balance in mortgage found", color: { text: "#FF0000", bg: "#FFCCCC" } })
               return;
             }
           }
     
         saveNewTransaction(data, () => {
-          setFromAccountValue({ amount: initialAmount })
+          setAmountAssect({ amount: initialAmount })
           triggerAnimation()
           showNotification({ msj: "Transaction saved", color: { text: "#00AA00", bg: "#CCFFCC" } })
         })
@@ -92,23 +93,17 @@ export const AssectsSell = ()=>{
     
       const cards = [
         {
-          element: fromAccountValue,
+          element: amountAssect,
     
     
-          title: {
-            a: "Savings",
-            b: "Mortgage"
-          }
+          title: "my Assect",
         },
     
         {
-          element: null,
+          element: profitAssect,
     
     
-          title: {
-            a: "Mortgage",
-            b: "Savings",
-          }
+          title: "Profit",
         }]
 
 
@@ -134,10 +129,12 @@ export const AssectsSell = ()=>{
      
                  {
                    cards.map((e, i) => (
-                     <div key={i} className={`w-3/4 bg-white min-h-12 border-4 p-2  rounded-md shadow  ${i == 0 ? "  border-blue-200 " : "border-transparent "}`}>
-                       <p className=" text-[11px]" >{i == 0 ? "FROM :" : "TO :"} <span className="font-semibold text-xl">{isSellStocks ? e.title.a : e.title.b}</span></p>
-                       {i == 0 && <p className={`font-md text-3xl text-gray-700 text-end ${animate ? "scale-103 opacity-70 pr-px " : "scale-100 opacity-100"
-                         }`}>{e?.element?.amount}</p>}
+                     <div 
+                     onClick={() => setIsAmount(i === 0)}
+                     key={i} className={`w-3/4 bg-white min-h-12 border-4 p-2  rounded-md shadow  ${isAmount ? "  border-blue-200 " : "border-transparent "}`}>
+                       <p className=" text-[11px]" >{i == 0 ? "FROM :" : "TO :"} <span className="font-semibold text-xl">{ e.title}</span></p>
+                        <p className={`font-md text-3xl text-gray-700 text-end ${animate ? "scale-103 opacity-70 pr-px " : "scale-100 opacity-100"
+                         }`}>{e?.element?.amount}</p>
                      </div>))
                  }
      
@@ -146,9 +143,9 @@ export const AssectsSell = ()=>{
      
              <Keyboard triggerAnimation={triggerAnimation}
                createTransaction={makeTransiction}
-               dataTransaction={fromAccountValue}
+               dataTransaction={amountAssect}
                setDataTransaction=
-               {setFromAccountValue} 
+               {setAmountAssect} 
                buttonOptions={{title:"Move Savings",path:VALID_ROUTES.internalTransactions}}
                />
            </section>
