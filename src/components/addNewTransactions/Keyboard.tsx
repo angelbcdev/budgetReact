@@ -9,11 +9,13 @@ export const Keyboard = ({
   dataTransaction,
   setDataTransaction,
   triggerAnimation,
+  buttonOptions = {title:"+ 1",path:VALID_ROUTES.multiTransactions}
 }: {
   triggerAnimation: () => void;
   createTransaction: () => void;
   dataTransaction: IKeyboardEdditable;
   setDataTransaction: React.Dispatch<React.SetStateAction<IKeyboardEdditable>>;
+  buttonOptions?: IActionButtons
 }) => {
   
   const keyBoard = ["1", "2", "3", "4", "5", "6", "7", "8", "9", ".", "0", "<"];
@@ -143,7 +145,7 @@ export const Keyboard = ({
 
       {/*     */}
 
-      <MultipleAcctionButtons bt1={{title:"+ 1",path:VALID_ROUTES.multiTransactions}} bt2={{title:"Add Transaction",action:handleSubmit ,validator:isReadyToSubmit}} />
+      <MultipleAcctionButtons bt1={buttonOptions} bt2={{title:"Add Transaction",action:handleSubmit ,validator:isReadyToSubmit}} />
       </div>
     </div>
   );

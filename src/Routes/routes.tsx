@@ -37,14 +37,10 @@ export const routes = [
     path: VALID_ROUTES.settings,
     icon: allIcons.gear,
   },
-  // {
-  //   name: "multi",
-  //   path: VALID_ROUTES.sellassects,
-  //   icon: allIcons.wallet,
-  // },
-   {
-    name: "transactions",
-    path: VALID_ROUTES.internalTransactions,
-    icon: allIcons.note,
+  {
+    name: "multi",
+    path: VALID_ROUTES.sellassects,
+    icon: allIcons.wallet,
   },
+   
 ];

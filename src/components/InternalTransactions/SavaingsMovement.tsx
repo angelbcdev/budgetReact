@@ -7,6 +7,7 @@ import { ajustDataForTransaction, emptyNotification } from "../addNewTransaction
 import type { TransactionType } from "../../Models/dummyData"
 import { useBudgetContext } from "../../provide/budget"
 import { BalanceNotification } from "../addNewTransactions/BalanceNotification"
+import { VALID_ROUTES } from "../../Routes/routes"
 
 
 export interface IKeyboardEdditable {
@@ -139,7 +140,9 @@ export const SavaingsMovement = () => {
           createTransaction={makeTransiction}
           dataTransaction={fromAccountValue}
           setDataTransaction=
-          {setFromAccountValue} />
+          {setFromAccountValue} 
+          buttonOptions={{title:"Sell Stocks",path:VALID_ROUTES.sellassects}}
+          />
       </section>
     </Layout>
   )
