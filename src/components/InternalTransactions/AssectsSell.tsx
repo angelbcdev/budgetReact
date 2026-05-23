@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useBudgetContext } from "../../provide/budget"
 import { VALID_ROUTES } from "../../Routes/routes"
 import HeatherView from "../../UI/HeatherView"
@@ -9,11 +9,12 @@ import type { IBalanceNotification, ITransaction } from "../AddNewTransactions"
 import { ajustDataForTransaction, emptyNotification } from "../addNewTransactions/helpers"
 import { BalanceNotification } from "../addNewTransactions/BalanceNotification"
 import { BiToogleButton } from "../../UI/DataShowListCategory"
+import { SubCategortCardForList } from "../SubCategoryEddit"
 
 
 const initialAmount = "0.00"
 export const AssectsSell = ()=>{
-      const { saveNewTransaction ,validateMortgageFound ,
+      const { saveNewTransaction ,validateMortgageFound , subcategoriesData,
       validateSavingsAccountBalance } =
         useBudgetContext();
      
@@ -26,7 +27,20 @@ export const AssectsSell = ()=>{
       const [isSellStocks, setIsSellStocks] = useState(true);
       const [isAmount, setIsAmount] = useState(true);
 
-       const defaultTypeTransaction = "sell_stocks"
+       const defaultTypeTransaction = isSellStocks ? "sell_stocks" : "sell_crypto"
+       const [allCategories, setAllCategories] = useState<string[]>([])
+
+    const addCategory = (category: string) => {
+    console.log(allCategories)
+    if (allCategories.includes(category)) {
+      setAllCategories(allCategories.filter((c) => c !== category));
+    } else {
+       setAllCategories([...allCategories, category]);
+    }
+  }
+  useEffect(() => {
+    setAllCategories([])
+  }, [isSellStocks])
     
   
       const triggerAnimation = () => {
@@ -59,10 +73,11 @@ export const AssectsSell = ()=>{
           description: "",
           date: new Date(),
           amount: amountAssect.amount,
-          category: "moneyTransactions",
+          category: "sell_assets",
           type: defaultTypeTransaction,
           paymentMethod: "savings_account",
           subcategory: [],
+          porcentage: 100,
         }
     
         const data = ajustDataForTransaction({ dataTransaction: d })
@@ -70,18 +85,19 @@ export const AssectsSell = ()=>{
     
     
     
-          if (isSellStocks) {
-            if (!validateSavingsAccountBalance(Number(amountAssect.amount))) {
-              showNotification({ msj: "Not enough balance in savings account", color: { text: "#FF0000", bg: "#FFCCCC" } })
-              return;
-            }
-          }else {
-            if (!validateMortgageFound(Number(amountAssect.amount))) {
-              showNotification({ msj: "Not enough balance in mortgage found", color: { text: "#FF0000", bg: "#FFCCCC" } })
-              return;
-            }
-          }
-    
+          // if (isSellStocks) {
+          //   if (!validateSavingsAccountBalance(Number(amountAssect.amount))) {
+          //     showNotification({ msj: "Not enough balance in savings account", color: { text: "#FF0000", bg: "#FFCCCC" } })
+          //     return;
+          //   }
+          // }else {
+          //   if (!validateMortgageFound(Number(amountAssect.amount))) {
+          //     showNotification({ msj: "Not enough balance in mortgage found", color: { text: "#FF0000", bg: "#FFCCCC" } })
+          //     return;
+          //   }
+          // }
+          console.log(data)
+          return
         saveNewTransaction(data, () => {
           setAmountAssect({ amount: initialAmount })
           triggerAnimation()
@@ -94,15 +110,15 @@ export const AssectsSell = ()=>{
       const cards = [
         {
           element: amountAssect,
-    
-    
-          title: "my Assect",
+          value: true,
+          isSelected:isAmount,
+          title: "Assect",
         },
     
         {
           element: profitAssect,
-    
-    
+    value: false,
+          isSelected:!isAmount,
           title: "Profit",
         }]
 
@@ -113,7 +129,6 @@ export const AssectsSell = ()=>{
      <HeatherView title="Assects Sell" />
        <section>
              <section className="h-64 px-10 pt-4 relative flex  flex-col gap-4 ">
-               <button onClick={changeType} className=" top-24 left-3/4  size-16 bg-blue-400 text-white font-semibold border-2 shadow border-white text-sm -translate- x-1 /2 -translate-y-1/4  rounded-md  ">Change</button>
                
                 <div className="w-36">
                    <BiToogleButton
@@ -125,27 +140,37 @@ export const AssectsSell = ()=>{
                 </div>
                
                <p className="absolute -top-20 ">{defaultTypeTransaction}</p>
-               <div className=" gap-5 flex flex-col  ">
+               <div className=" gap-5 flex flex-row  ">
      
                  {
                    cards.map((e, i) => (
                      <div 
-                     onClick={() => setIsAmount(i === 0)}
-                     key={i} className={`w-3/4 bg-white min-h-12 border-4 p-2  rounded-md shadow  ${isAmount ? "  border-blue-200 " : "border-transparent "}`}>
-                       <p className=" text-[11px]" >{i == 0 ? "FROM :" : "TO :"} <span className="font-semibold text-xl">{ e.title}</span></p>
-                        <p className={`font-md text-3xl text-gray-700 text-end ${animate ? "scale-103 opacity-70 pr-px " : "scale-100 opacity-100"
+                     onClick={() => setIsAmount(e.value)}
+                     key={i} className={`w-3/4 bg-white min-h-12 border-4 p-2  rounded-md shadow  ${e.isSelected ? "  border-blue-200 " : "border-transparent "}`}>
+                       <p className=" " > <span className="font-semibold text-xl">{ e.title}</span></p>
+                        <p className={`font-md text-3xl text-gray-700 text-end ${ (e.isSelected && animate) ? "scale-103 opacity-70 pr-px " : "scale-100 opacity-100"
                          }`}>{e?.element?.amount}</p>
                      </div>))
                  }
      
                </div>
+               <div className="flex flex-wrap gap-2 overflow-auto  w-full  h-20 rounded-md p-2 overflow-y-auto w-full  ">
+                {
+                  subcategoriesData.map(sc => {
+                    if (isSellStocks && !sc.category.includes("stocks")) return null;
+                    if (!isSellStocks && !sc.category.includes("crypto")) return null;
+                    console.log(sc)
+                    
+                    return (<SubCategortCardForList sc={sc} editSubCategory={()=>addCategory(sc.title)} size="M" showColor={allCategories.includes(sc.title)}  />)})
+                }
+               </div>
              </section>
      
              <Keyboard triggerAnimation={triggerAnimation}
                createTransaction={makeTransiction}
-               dataTransaction={amountAssect}
+               dataTransaction={isAmount ? amountAssect : profitAssect}
                setDataTransaction=
-               {setAmountAssect} 
+               {isAmount ? setAmountAssect : setProfitAssect} 
                buttonOptions={{title:"Move Savings",path:VALID_ROUTES.internalTransactions}}
                />
            </section>

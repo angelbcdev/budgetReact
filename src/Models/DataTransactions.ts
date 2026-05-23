@@ -10,6 +10,7 @@ interface ITransaction {
   category: Category;
   subcategory: string[];
   paymentMethod: PaymentMethod;
+  porcentage: number;
 }
 
 // ─── Transaction Class ────────────────────────────────────────────────────────
@@ -24,6 +25,7 @@ export class Transaction implements ITransaction {
   category: Category;
   subcategory: string[];
   paymentMethod: PaymentMethod;
+  porcentage: number;
 
   constructor(data: ITransaction) {
     this.validate(data);
@@ -42,6 +44,7 @@ export class Transaction implements ITransaction {
     this.category = data.category;
     this.subcategory = data.subcategory;
     this.paymentMethod = data.paymentMethod;
+    this.porcentage = data.porcentage ?? 0;
   }
 
   private validate(data: Omit<ITransaction, "id">): void {
@@ -54,7 +57,7 @@ export class Transaction implements ITransaction {
   toSheetRow(): Record<string, string | number> {
     return {
       id: this.id,
-      title: this.title.toLocaleLowerCase(),
+    title: this.title.toLocaleLowerCase(),
       description: this.description.toLocaleLowerCase(),
       amount: this.amount,
       date: new Date(this.date).toISOString().split("T")[0],
@@ -62,6 +65,7 @@ export class Transaction implements ITransaction {
       category: this.category.toLocaleLowerCase(),
       subcategory: this.subcategory.map((s) => s.toLocaleLowerCase()).join(","),
       paymentMethod: this.paymentMethod ?? "",
+      porcentage: this.porcentage,
     };
   }
 }

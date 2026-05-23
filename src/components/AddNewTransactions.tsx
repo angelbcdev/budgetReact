@@ -30,6 +30,7 @@ export interface ITransaction extends IKeyboardEdditable {
   type: TransactionType;
   paymentMethod: PaymentMethod;
   subcategory: string[];
+  porcentage?: number;
 
 }
 

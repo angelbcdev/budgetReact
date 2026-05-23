@@ -12,6 +12,7 @@ export interface IServiciesDBSubCategories {
   handleDelete(): Promise<boolean>;
 }
 
+
 export class ServiciesLocalSubCategories implements IServiciesDBSubCategories {
   constructor() {}
 
