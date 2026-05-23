@@ -278,6 +278,7 @@ const AddNewTransactions = () => {
         dataTransaction={dataTransaction}
         setDataTransaction={setDataTransaction}
         triggerAnimation={triggerAnimation}
+        isReadyToSubmit={Number(dataTransaction.amount || 0) > 0}
       />
     </Layout>
   );

@@ -23,6 +23,8 @@ export const AssectsSell = ()=>{
       const [profitAssect, setProfitAssect] = useState({ amount: initialAmount })
       const [animate, setAnimate] = useState(false);
       const [balanceNotification, setBalanceNotification] = useState<IBalanceNotification>({ ...emptyNotification });
+
+      const porcentage = Number(profitAssect.amount || 0) > 0 ? Number(profitAssect.amount || 0) / Number(amountAssect.amount || 0) : 0;
     
       const [isSellStocks, setIsSellStocks] = useState(true);
       const [isAmount, setIsAmount] = useState(true);
@@ -31,7 +33,7 @@ export const AssectsSell = ()=>{
        const [allCategories, setAllCategories] = useState<string[]>([])
 
     const addCategory = (category: string) => {
-    console.log(allCategories)
+  
     if (allCategories.includes(category)) {
       setAllCategories(allCategories.filter((c) => c !== category));
     } else {
@@ -52,8 +54,10 @@ export const AssectsSell = ()=>{
         return () => clearTimeout(t);
       };
     
-      const changeType = () => {
+      const clearData = () => {
         setAmountAssect({ amount: initialAmount })
+        setProfitAssect({ amount: initialAmount })
+       setAllCategories([])
       }
     
       const showNotification = ({ msj, color }: { msj: string, color: { text: string, bg: string } }) => {
@@ -76,12 +80,12 @@ export const AssectsSell = ()=>{
           category: "sell_assets",
           type: defaultTypeTransaction,
           paymentMethod: "savings_account",
-          subcategory: [],
-          porcentage: 100,
+          subcategory: allCategories,
+          porcentage,
         }
     
         const data = ajustDataForTransaction({ dataTransaction: d })
-        // console.log(data)
+        console.log(data)
     
     
     
@@ -96,7 +100,7 @@ export const AssectsSell = ()=>{
           //     return;
           //   }
           // }
-          console.log(data)
+      
           return
         saveNewTransaction(data, () => {
           setAmountAssect({ amount: initialAmount })
@@ -130,13 +134,19 @@ export const AssectsSell = ()=>{
        <section>
              <section className="h-64 px-10 pt-4 relative flex  flex-col gap-4 ">
                
-                <div className="w-36">
+                <div className="flex flex-row items-center justify-between gap-5 text-gray-700 font-semibold text-lg ">
+
+                  <div className="w-36">
                    <BiToogleButton
                              data={[true, false]}
                              title={["sell stocks", "sell crypto"]}
                              valueSort={isSellStocks}
                              setSortToggle={setIsSellStocks}
                            />
+                </div>
+
+                <p>{Number.isFinite(porcentage) ? porcentage?.toFixed(2) : "0.00"}%</p>
+                <button onClick={clearData} className="bg-gray-200 px-3 py-1 rounded-md shadow hover:bg-gray-300 active:bg-gray-400 transition-colors">Clear</button>
                 </div>
                
                <p className="absolute -top-20 ">{defaultTypeTransaction}</p>
@@ -159,19 +169,20 @@ export const AssectsSell = ()=>{
                   subcategoriesData.map(sc => {
                     if (isSellStocks && !sc.category.includes("stocks")) return null;
                     if (!isSellStocks && !sc.category.includes("crypto")) return null;
-                    console.log(sc)
+                 
                     
                     return (<SubCategortCardForList sc={sc} editSubCategory={()=>addCategory(sc.title)} size="M" showColor={allCategories.includes(sc.title)}  />)})
                 }
                </div>
              </section>
-     
+                {/* // */}
              <Keyboard triggerAnimation={triggerAnimation}
                createTransaction={makeTransiction}
                dataTransaction={isAmount ? amountAssect : profitAssect}
                setDataTransaction=
                {isAmount ? setAmountAssect : setProfitAssect} 
                buttonOptions={{title:"Move Savings",path:VALID_ROUTES.internalTransactions}}
+               isReadyToSubmit={(Number(amountAssect.amount || 0) > 0 ) && (Number(profitAssect.amount || 0) > 0 ) }
                />
            </section>
      </Layout>

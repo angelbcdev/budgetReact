@@ -183,5 +183,6 @@ export const ajustDataForTransaction = ({
     category: checkValidationsCategory(),
     subcategory: validateSubcategory(),
     paymentMethod: checkValidationsPayment(),
+    porcentage: dataTransaction.porcentage,
   });
 };

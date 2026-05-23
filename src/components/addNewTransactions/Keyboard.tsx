@@ -9,19 +9,20 @@ export const Keyboard = ({
   dataTransaction,
   setDataTransaction,
   triggerAnimation,
-  buttonOptions = {title:"+ 1",path:VALID_ROUTES.multiTransactions}
+  buttonOptions = {title:"+ 1",path:VALID_ROUTES.multiTransactions},
+ isReadyToSubmit 
 }: {
   triggerAnimation: () => void;
   createTransaction: () => void;
   dataTransaction: IKeyboardEdditable;
   setDataTransaction: React.Dispatch<React.SetStateAction<IKeyboardEdditable>>;
+  isReadyToSubmit: boolean;
   buttonOptions?: IActionButtons
 }) => {
   
   const keyBoard = ["1", "2", "3", "4", "5", "6", "7", "8", "9", ".", "0", "<"];
 
-  const isReadyToSubmit =
-    Number(dataTransaction.amount || 0) > 0 ;
+;
 
   const normalize = (value: string) => {
     if (
