@@ -17,39 +17,62 @@ export const SavaingsMovement = ()=>{
   
         ...emptyNewTransactions({ defaultCategory:"moneyTransactions" , defaultTypeTransaction })
       });
-      const [fromAccountValue , setFromAccountValue]= useState({amount:"0"})
-      const [toAccountValue , setToAccountValue]= useState({amount:"0"})
+      const [fromAccountValue , setFromAccountValue]= useState({amount:""})
+      const [toAccountValue , setToAccountValue]= useState({amount:""})
+      const [isSelecteFrom , SetIsSelecteFrom] = useState(true)
 
       const isToMortgage = defaultTypeTransaction == "transaction_savings_to_mortgage"
-      const isSelecteFrom = true
+   
       const changeType = ()=>{
         setDefaultTypeTransaction(defaultTypeTransaction == "transaction_savings_to_mortgage" ?"transaction_mortgage_to_savings" :"transaction_savings_to_mortgage")
+        SetIsSelecteFrom(true)
+        setFromAccountValue({amount:""})
+        setToAccountValue({amount:""})
       }
+
+
+      const cards = [
+        {
+            element:fromAccountValue,
+            option:isSelecteFrom,
+            value:true,
+            title:{
+                a:"",
+                b:""
+            }
+},
+      {
+            element:fromAccountValue,
+            option:!isSelecteFrom,
+            value:false
+}]
+
     return(
     <Layout>
      <HeatherView title="Savaings Movements" />
 
      <section>
-        <section className="h-64 p-4 relative">
+        <section className="h-64 p-4 relative flex  flex-col gap-4">
             <button onClick={changeType} className="absolute top-1/2 left-1/2  size-20 bg-gray-400 -translate-x-1/2 -translate-y-1/2 rounded-full">Press</button>
             <p>{defaultTypeTransaction}</p>
           <div className=" gap-8 flex flex-col ">
-              {[fromAccountValue, toAccountValue].map((e, i) =>{
-            return(
-            <div key={i} className="w-full bg-red-200 h-23">
-                <p>{  i == 0 ? isToMortgage ? "Savings" : "Morgage" : !isToMortgage ? "Savings" : "Morgage"}</p>
-               <p>{e.amount}</p> 
-            </div>
-            )
-            })}
+
+            {
+                cards.map((e,i)=>( 
+                <div key={i} onClick={()=>SetIsSelecteFrom(e.value)}  className={`w-full bg-white h-23 border-4  rounded-md  ${e.option ? "  border-red-500 " : "border-trwansparent "}`}>
+                <p>from:{e.option ? " Savings " :" Mortgage "}</p>
+               <p>{e.element.amount}</p> 
+            </div>))
+            }
+
           </div>
         </section>
 
         <Keyboard triggerAnimation={()=>{}} 
         createTransaction={()=>{}}
-         dataTransaction={fromAccountValue}
+         dataTransaction={isSelecteFrom ?fromAccountValue : toAccountValue}
           setDataTransaction=
-         {setFromAccountValue} />
+         {isSelecteFrom ? setFromAccountValue : setToAccountValue} />
      </section>
      </Layout>
     )
