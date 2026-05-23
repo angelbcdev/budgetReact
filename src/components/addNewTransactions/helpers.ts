@@ -123,6 +123,8 @@ export const ajustDataForTransaction = ({
     (dataTransaction.category == "credit_card_blue" ||
       dataTransaction.category == "credit_card_red");
 
+   const validateMoveSavings = dataTransaction.type ==  "transaction_savings_to_mortgage"
+
   const checkValidationsPayment = (): PaymentMethod => {
     if (validatePayMortgage) {
       return "mortgage";
@@ -132,6 +134,9 @@ export const ajustDataForTransaction = ({
     }
     if (validatePayCreditCard) {
       return "cards_payment";
+    }
+    if (validateMoveSavings) {
+      return "savings_account";
     }
     return dataTransaction.paymentMethod;
   };
