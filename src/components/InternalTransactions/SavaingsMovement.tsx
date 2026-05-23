@@ -33,18 +33,23 @@ export const SavaingsMovement = ()=>{
 
       const cards = [
         {
-            element:fromAccountValue,
+            element: fromAccountValue,
             option:isSelecteFrom,
             value:true,
             title:{
-                a:"",
-                b:""
+                a:"Savings",
+                b:"Mortgage"
             }
 },
+
       {
-            element:fromAccountValue,
+            element:toAccountValue,
             option:!isSelecteFrom,
-            value:false
+            value:false,
+            title:{
+                a:"Mortgage",
+                b:"Savings",
+            }
 }]
 
     return(
@@ -55,12 +60,12 @@ export const SavaingsMovement = ()=>{
         <section className="h-64 p-4 relative flex  flex-col gap-4">
             <button onClick={changeType} className="absolute top-1/2 left-1/2  size-20 bg-gray-400 -translate-x-1/2 -translate-y-1/2 rounded-full">Press</button>
             <p>{defaultTypeTransaction}</p>
-          <div className=" gap-8 flex flex-col ">
+          <div className=" gap-5 flex flex-col ">
 
             {
                 cards.map((e,i)=>( 
-                <div key={i} onClick={()=>SetIsSelecteFrom(e.value)}  className={`w-full bg-white h-23 border-4  rounded-md  ${e.option ? "  border-red-500 " : "border-trwansparent "}`}>
-                <p>from:{e.option ? " Savings " :" Mortgage "}</p>
+                <div key={i} onClick={()=>SetIsSelecteFrom(e.value)}  className={`w-full bg-white h-20 border-4  rounded-md  ${e.option ? "  border-blue-500 " : "border-transparent "}`}>
+                <p>from:{isToMortgage ? e.title.a :e.title.b}</p>
                <p>{e.element.amount}</p> 
             </div>))
             }
