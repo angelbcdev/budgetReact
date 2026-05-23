@@ -95,6 +95,7 @@ export const BudgetContextProvider = ({ children }: { children: ReactElement }) 
    const validateSavingsAccountBalance = (cuantity: number = 0) => {
     return global?.savingsBank > cuantity
   }
+
   const validateMortgageFound = (cuantity: number = 0) => {
 
     return global?.savingsMortgage > cuantity

@@ -167,6 +167,14 @@ export const TRANSACTION_TYPE_META: Record<
   credit_card_payment: { label: "CC Payment", fill: "#a855f7" },
   saving: { label: "Saving", fill: "#3b82f6" },
   income: { label: "Income", fill: "#22c55e" },
+  transaction_savings_to_mortgage: {
+    label: " Savings to Mortgage",
+    fill: "#3b82f6"
+  },
+  transaction_mortgage_to_savings: {
+    label: " Mortgage to Savings",
+    fill: "#16a34a"
+  }
 };
 
 export const TYPE_META = {

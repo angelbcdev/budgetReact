@@ -72,7 +72,8 @@ export const validateSavingDataToShow: TKEY_SUMMARY[] = [
       credit_card_blue: 0,
       credit_card_red: 0,
       house: 0,
-      mortgage_Payment: 0
+      mortgage_Payment: 0,
+      moneyTransactions: 0
     },
   });
 
@@ -139,6 +140,23 @@ export function useSummary(transactions: Transaction[]) {
       acc.databyCatefory[t.category] = 0
      }
     const oldAmount = acc.databyCatefory[t.category];
+
+    //MOVE MONEY BETWEEN SAVINGS AND MORTGAGE
+    if (t.paymentMethod === "savings_account" && ( t.type === "transaction_savings_to_mortgage" || t.type === "transaction_mortgage_to_savings")) {
+      
+      
+      switch (t.type) {
+        case "transaction_savings_to_mortgage":
+          acc.savingsBank -= amount;
+      acc.savingsMortgage += amount;
+          break;
+            case "transaction_mortgage_to_savings":
+              acc.savingsBank += amount;
+      acc.savingsMortgage -= amount;
+          break;
+      }
+      return;
+    }
 
     // PAYCHECK
     if (

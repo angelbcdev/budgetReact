@@ -266,8 +266,8 @@ function getTxnAmountStyle(txn: Transaction) {
   if (txn.type === "saving") {
     return { color: "text-blue-600", sign: "" };
   }
-   if (txn.type === "transaction_savings_to_mortgage") {
-    return { color: "text-blue-600", sign: "" };
+   if (txn.type === "transaction_savings_to_mortgage" || txn.type === "transaction_mortgage_to_savings") {
+    return { color: "text-yellow-700", sign: "" };
   }
 
   return { color: "text-red-600", sign: "-" };
