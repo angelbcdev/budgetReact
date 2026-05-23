@@ -70,14 +70,14 @@ export const BiToogleButton = ({data, valueSort, setSortToggle ,title }: {data: 
   
 
 
-  return(<div className="flex bg-gray-300 rounded-md p-px h-6">
+  return(<div className="flex bg-gray-300  rounded-md p-px h-6">
               
               {
                 data.map((f, i) => (
                   <button
                     key={i}
                     onClick={() => setSortToggle(f)}
-                    className={` text-[12px] w-14 rounded-sm flex justify-center items-center  whitespace-nowrap transition overflow-hidden
+                    className={` text-[12px] min-w-14 px-4 rounded-sm flex justify-center items-center  whitespace-nowrap transition overflow-hidden
                     ${
                       f === valueSort
                         ? "bg-gray-100 text-blue-500 "

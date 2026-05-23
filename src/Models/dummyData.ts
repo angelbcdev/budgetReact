@@ -4,6 +4,8 @@ export type TransactionType =
   | "transaction_savings_to_mortgage"
   | "transaction_mortgage_to_savings"
   | "credit_card_payment"
+  | "sell_stocks"
+  | "sell_crypto"
   | "income";
 
 export type SavingsMethod = "mortgage" | "savings" | "stocks" | "crypto";
@@ -23,6 +25,7 @@ export type Category =
   | "savings"
   | "credit_card_payment"
   | "other"
+  
   | "mortgage"
   | "mortgage_Payment"
   | "moneyTransactions"
@@ -32,7 +35,7 @@ export type Category =
   | "checking"
   | "credit_card_blue"
   | "credit_card_red"
-
+  | "sell_assets"
   | "house";
 
 export const allCategoryAvailable: Category[] = [
