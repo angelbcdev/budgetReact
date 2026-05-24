@@ -223,6 +223,7 @@ const AddNewTransactions = () => {
         dataTransaction={dataTransaction}
         setDataTransaction={setDataTransaction}
       />
+    
 
 
       <div className="flex flex-col gap-1  bg-white relative  items-center   py-7 ">
@@ -252,10 +253,14 @@ const AddNewTransactions = () => {
             </button>
           )}
         </div>
+        <div className="flex gap-1">
         <TypeSelectorButtons
           selectCurrentType={selectCurrentType}
           defaultTypeTransaction={defaultTypeTransaction}
         />
+          {/* VALID_ROUTES.internalTransactions */}
+      <button className="bg-gray-200 rounded-md px-4 ">Sell Assets</button>
+      </div>
       </div>
       <section className=" justify-center flex flex-col items-center">
         <SelectorContainer

@@ -60,7 +60,7 @@ const SubCategoryEddit = () => {
     const location = useLocation();
   
   const dataReceived:string = location?.state?.subCategory
-  console.log(dataReceived)
+
   
   let keys:Category[] = [...fliterCategoryAvailable,"savings","stocks" ,"crypto"]
 
@@ -133,7 +133,7 @@ const SubCategoryRow = ({createAnewSubCategory, title , data }:{createAnewSubCat
     closeModal()
   }
   const addCategory = (category: string) => {
-    console.log(allCategories)
+    
     if (allCategories.includes(category)) {
       setAllCategories(allCategories.filter((c) => c !== category));
     } else {

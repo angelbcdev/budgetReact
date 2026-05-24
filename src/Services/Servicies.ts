@@ -15,21 +15,29 @@ export interface IServiciesDB {
   getSheetData(): Promise<Transaction[]>;
   sendSheetDataTransaction(data: Transaction[]): Promise<boolean>;
 
-  handleBackup(data: Transaction[]): void;
-  handleUpdate(data: Transaction[]): void;
-  handleDeleteOne(data: Transaction[]): void;
+  handleBackup(data: Transaction[]): Promise<void>;
+  handleUpdate(data: Transaction[]): Promise<boolean>;
+  handleDeleteOne(data: Transaction[]): Promise<boolean>;
   handleDelete(): Promise<boolean>;
 }
 
 export class ServiciesLocalTransactions implements IServiciesDB {
   constructor() {}
 
-  handleUpdate(data: Transaction[]): void {
+  handleUpdate(data: Transaction[]): Promise<boolean> {
     localStorage.setItem(KEY_SERVICES.TRANSACIONS, JSON.stringify(data));
+    return new Promise((resolve) => {
+     
+      resolve(true);
+    })
   }
 
-  handleDeleteOne(data: Transaction[]): void {
+  handleDeleteOne(data: Transaction[]): Promise<boolean> {
     localStorage.setItem(KEY_SERVICES.TRANSACIONS, JSON.stringify(data));
+    return new Promise((resolve) => {
+     
+      resolve(true);
+    })
   }
   handleDelete(): Promise<boolean> {
     return new Promise((resolve) => {
@@ -56,17 +64,25 @@ export class ServiciesLocalTransactions implements IServiciesDB {
     });
   }
 
-  handleBackup(data: Transaction[]): void {
+  handleBackup(data: Transaction[]): Promise<void> {
     localStorage.setItem(KEY_SERVICES.TRANSACIONS, JSON.stringify(data));
     const db = new GoogleSheetsServiciesTransactions();
     db.handleBackup(data);
+     return new Promise((resolve) => {
+     
+      resolve();
+    })
   }
 }
 
 export class GoogleSheetsServiciesTransactions implements IServiciesDB {
   constructor() {}
-  handleUpdate(data: Transaction[]): void {
+  handleUpdate(data: Transaction[]): Promise<boolean> {
     this.handleBackup(data);
+     return new Promise((resolve) => {
+     
+      resolve(true);
+    })
   }
   async handleBackup(data?: Transaction[]): Promise<void> {
     if (!data) return;
@@ -95,8 +111,13 @@ export class GoogleSheetsServiciesTransactions implements IServiciesDB {
       resolve(false);
     });
   }
-  handleDeleteOne(data: Transaction[]): void {
+  handleDeleteOne(data: Transaction[]): Promise<boolean> {
     this.handleBackup(data);
+
+     return new Promise((resolve) => {
+     
+      resolve(true);
+    })
   }
 
   async getSheetData() {

@@ -186,11 +186,11 @@ const AllTransactions = () => {
                         </div>
 
                         {/* TEXT */}
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-gray-900 truncate w-44 capitalize  text-ellipsis">
-                            {txn.title}
+                        <div className="flex-1 min-w-0 flex flex-col ">
+                          <p className="text-md font-medium text-gray-900 truncate w-44 h-6 capitalize  text-ellipsis">
+                            {txn.title}  {txn.porcentage > 0 && <span className="text-[10px] text-gray-400 h-4">{txn.amount /  txn.porcentage} x {txn.porcentage.toFixed(2)}</span>}
                           </p>
-
+                         
                           <p className="text-xs text-gray-500 truncate w-44  text-ellipsis">
                             {txn.description}
                           </p>
@@ -270,7 +270,7 @@ function getTxnAmountStyle(txn: Transaction) {
     return { color: "text-yellow-700", sign: "" };
   }
     if ((txn.type === "sell_stocks" || txn.type == "sell_crypto") || txn.category === "sell_assets") {
-    return { color: "text-violet-700", sign: "+" };
+    return { color: "text-[#3c9f03]", sign: "+" };
   }
 
   return { color: "text-red-600", sign: "-" };

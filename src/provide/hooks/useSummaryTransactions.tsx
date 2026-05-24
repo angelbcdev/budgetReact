@@ -91,6 +91,8 @@ export function useSummary(transactions: Transaction[]) {
   // 🔹 create empty summary
   const subCategoriesUsed = new Set(
   transactions
+  //TODO: no count when you sell assets
+    // .filter((t) => t.type !== "sell_crypto" && t.type !== "sell_stocks")
     .map((t) => t.subcategory)
     .flat()
     .filter((t) => t !== "")
@@ -330,7 +332,7 @@ export function useSummary(transactions: Transaction[]) {
    
   })
 
-  console.log(emptySubCategorySummary)
+ 
 
   return {
     global,

@@ -121,7 +121,7 @@ export const SavaingsMovement = () => {
       <section>
         <section className="h-64 px-10 pt-4 relative flex  flex-col gap-4 ">
           <button onClick={changeType} className="absolute top-24 left-3/4  size-16 bg-blue-400 text-white font-semibold border-2 shadow border-white text-sm -translate- x-1 /2 -translate-y-1/4  rounded-md  ">Change</button>
-          <p className="absolute -top-20 ">{defaultTypeTransaction}</p>
+         
           <div className=" gap-5 flex flex-col  ">
 
             {
@@ -137,12 +137,10 @@ export const SavaingsMovement = () => {
         </section>
 
         <Keyboard triggerAnimation={triggerAnimation}
-          createTransaction={makeTransiction}
-          dataTransaction={fromAccountValue}
-          setDataTransaction=
-          {setFromAccountValue} 
-          buttonOptions={{title:"Sell Stocks",path:VALID_ROUTES.sellassects}}
-          />
+        createTransaction={makeTransiction}
+        dataTransaction={fromAccountValue}
+        setDataTransaction={setFromAccountValue}
+        buttonOptions={{ title: "Sell Stocks", path: VALID_ROUTES.sellassets }} isReadyToSubmit={Number(fromAccountValue.amount ) > 0}          />
       </section>
     </Layout>
   )

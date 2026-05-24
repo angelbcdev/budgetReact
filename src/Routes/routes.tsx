@@ -12,7 +12,7 @@ export const VALID_ROUTES = {
   "multiTransactions": "/multiTransactions",
   "subcategory":"/subcategory",
   "internalTransactions":"/internalTransactions",
-  "sellassects":"/sellassects",
+  "sellassets":"/sellassets",
 }
 
 export const routes = [
@@ -39,7 +39,7 @@ export const routes = [
   },
   {
     name: "multi",
-    path: VALID_ROUTES.sellassects,
+    path: VALID_ROUTES.sellassets,
     icon: allIcons.wallet,
   },
    

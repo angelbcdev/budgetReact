@@ -4,7 +4,7 @@ import { VALID_ROUTES } from "../../Routes/routes"
 import HeatherView from "../../UI/HeatherView"
 import { Layout } from "../../UI/Layout"
 import { Keyboard } from "../addNewTransactions/Keyboard"
-import type { TransactionType } from "../../Models/dummyData"
+
 import type { IBalanceNotification, ITransaction } from "../AddNewTransactions"
 import { ajustDataForTransaction, emptyNotification } from "../addNewTransactions/helpers"
 import { BalanceNotification } from "../addNewTransactions/BalanceNotification"
@@ -13,7 +13,7 @@ import { SubCategortCardForList } from "../SubCategoryEddit"
 
 
 const initialAmount = "0.00"
-export const AssectsSell = ()=>{
+export const AssetsSell = ()=>{
       const { saveNewTransaction ,validateCryptoFound,validateStockFound , subcategoriesData,
        } =
         useBudgetContext();
@@ -85,7 +85,7 @@ export const AssectsSell = ()=>{
         }
     
         const data = ajustDataForTransaction({ dataTransaction: d })
-        console.log(data)
+      
     
     
     
@@ -131,7 +131,7 @@ export const AssectsSell = ()=>{
     return(
     <Layout>
         <BalanceNotification {...{ balanceNotification, setBalanceNotification }} />
-     <HeatherView title="Assects Sell" />
+     <HeatherView title="Assets Sell" />
        <section>
              <section className="h-64 px-10 pt-4 relative flex  flex-col gap-4 ">
                
@@ -150,7 +150,7 @@ export const AssectsSell = ()=>{
                 <button onClick={clearData} className="bg-gray-200 px-3 py-1 rounded-md shadow hover:bg-gray-300 active:bg-gray-400 transition-colors">Clear</button>
                 </div>
                
-               <p className="absolute -top-20 ">{defaultTypeTransaction}</p>
+              
                <div className=" gap-5 flex flex-row  ">
      
                  {

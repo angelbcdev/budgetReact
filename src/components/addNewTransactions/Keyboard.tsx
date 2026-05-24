@@ -6,7 +6,6 @@ import type { IKeyboardEdditable } from "../InternalTransactions/SavaingsMovemen
 
 export const Keyboard = ({
   createTransaction,
-  dataTransaction,
   setDataTransaction,
   triggerAnimation,
   buttonOptions = {title:"+ 1",path:VALID_ROUTES.multiTransactions},
@@ -14,7 +13,6 @@ export const Keyboard = ({
 }: {
   triggerAnimation: () => void;
   createTransaction: () => void;
-  dataTransaction: IKeyboardEdditable;
   setDataTransaction: React.Dispatch<React.SetStateAction<IKeyboardEdditable>>;
   isReadyToSubmit: boolean;
   buttonOptions?: IActionButtons
