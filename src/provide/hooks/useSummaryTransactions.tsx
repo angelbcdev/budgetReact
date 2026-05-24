@@ -73,7 +73,8 @@ export const validateSavingDataToShow: TKEY_SUMMARY[] = [
       credit_card_red: 0,
       house: 0,
       mortgage_Payment: 0,
-      moneyTransactions: 0
+      moneyTransactions: 0,
+      sell_assets: 0
     },
   });
 
@@ -143,8 +144,6 @@ export function useSummary(transactions: Transaction[]) {
 
     //MOVE MONEY BETWEEN SAVINGS AND MORTGAGE
     if (t.paymentMethod === "savings_account" && ( t.type === "transaction_savings_to_mortgage" || t.type === "transaction_mortgage_to_savings")) {
-      
-      
       switch (t.type) {
         case "transaction_savings_to_mortgage":
           acc.savingsBank -= amount;
@@ -153,6 +152,21 @@ export function useSummary(transactions: Transaction[]) {
             case "transaction_mortgage_to_savings":
               acc.savingsBank += amount;
       acc.savingsMortgage -= amount;
+          break;
+      }
+      return;
+    }
+
+    //Sell Stocks and Crypt
+    if ((t.type === "sell_stocks" || t.type == "sell_crypto") || t.category === "sell_assets") {
+      switch (t.type) {
+        case "sell_stocks":
+          acc.savingsStocks -= (amount / t.porcentage);
+          acc.totalBalance += amount ;
+          break;
+        case "sell_crypto":
+           acc.savingsCrypto -= (amount / t.porcentage);
+          acc.totalBalance += amount ;
           break;
       }
       return;

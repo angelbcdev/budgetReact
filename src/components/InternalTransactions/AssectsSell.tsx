@@ -14,8 +14,8 @@ import { SubCategortCardForList } from "../SubCategoryEddit"
 
 const initialAmount = "0.00"
 export const AssectsSell = ()=>{
-      const { saveNewTransaction ,validateMortgageFound , subcategoriesData,
-      validateSavingsAccountBalance } =
+      const { saveNewTransaction ,validateCryptoFound,validateStockFound , subcategoriesData,
+       } =
         useBudgetContext();
      
     
@@ -76,7 +76,7 @@ export const AssectsSell = ()=>{
           title: isSellStocks ? "Sell Stocks" : "Sell Crypto",
           description: "",
           date: new Date(),
-          amount: amountAssect.amount,
+          amount:String(Number(amountAssect.amount) * porcentage),
           category: "sell_assets",
           type: defaultTypeTransaction,
           paymentMethod: "savings_account",
@@ -89,21 +89,22 @@ export const AssectsSell = ()=>{
     
     
     
-          // if (isSellStocks) {
-          //   if (!validateSavingsAccountBalance(Number(amountAssect.amount))) {
-          //     showNotification({ msj: "Not enough balance in savings account", color: { text: "#FF0000", bg: "#FFCCCC" } })
-          //     return;
-          //   }
-          // }else {
-          //   if (!validateMortgageFound(Number(amountAssect.amount))) {
-          //     showNotification({ msj: "Not enough balance in mortgage found", color: { text: "#FF0000", bg: "#FFCCCC" } })
-          //     return;
-          //   }
-          // }
+          if (isSellStocks) {
+            if (!validateStockFound(Number(amountAssect.amount))) {
+              showNotification({ msj: "Not enough balance in savings account", color: { text: "#FF0000", bg: "#FFCCCC" } })
+              return;
+            }
+          }else {
+            if (!validateCryptoFound(Number(amountAssect.amount))) {
+              showNotification({ msj: "Not enough balance in mortgage found", color: { text: "#FF0000", bg: "#FFCCCC" } })
+              return;
+            }
+          }
       
-          return
+ 
         saveNewTransaction(data, () => {
           setAmountAssect({ amount: initialAmount })
+          setProfitAssect({ amount: initialAmount })
           triggerAnimation()
           showNotification({ msj: "Transaction saved", color: { text: "#00AA00", bg: "#CCFFCC" } })
         })

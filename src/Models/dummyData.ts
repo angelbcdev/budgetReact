@@ -122,6 +122,13 @@ export const CATEGORY_META: Record<TallTypeCategory, TCategory_Meta> = {
   savings_account: createMeta("Savings", "💰", "#1ffffa"),
   Balance: createMeta("Balance", "💰", "#1faffa"),
   ForStocksProfit: createMeta("For Stocks Profit", "📉", "#fff003"),
+  //TODO:
+  sell_assets: createMeta("sell assets", "📉", "#fff003"),
+  moneyTransactions: createMeta("For Stocks Profit", "📉", "#fff003"),
+  sell_stocks:createMeta("For Stocks Profit", "📉", "#fff003"),
+  sell_crypto: createMeta("For Stocks Profit", "📉", "#fff003"),
+  transaction_savings_to_mortgage: createMeta("For Stocks Profit", "📉", "#fff003"),
+  transaction_mortgage_to_savings: createMeta("For Stocks Profit", "📉", "#fff003")
 };
 
 export function getCategoryMeta(category: TallTypeCategory): TCategory_Meta {
@@ -177,6 +184,14 @@ export const TRANSACTION_TYPE_META: Record<
   transaction_mortgage_to_savings: {
     label: " Mortgage to Savings",
     fill: "#16a34a"
+  },
+  sell_stocks: {
+    label: "",
+    fill: "#16a34a"
+  },
+  sell_crypto: {
+    label: "",
+    fill: "#0e91b9"
   }
 };
 

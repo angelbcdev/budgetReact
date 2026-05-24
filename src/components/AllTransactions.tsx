@@ -269,6 +269,9 @@ function getTxnAmountStyle(txn: Transaction) {
    if (txn.type === "transaction_savings_to_mortgage" || txn.type === "transaction_mortgage_to_savings") {
     return { color: "text-yellow-700", sign: "" };
   }
+    if ((txn.type === "sell_stocks" || txn.type == "sell_crypto") || txn.category === "sell_assets") {
+    return { color: "text-violet-700", sign: "+" };
+  }
 
   return { color: "text-red-600", sign: "-" };
 }
