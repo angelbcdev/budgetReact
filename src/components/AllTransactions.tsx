@@ -15,7 +15,7 @@ import { VALID_ROUTES } from "../Routes/routes";
 import { useNavigate } from "react-router";
   import { SubCategoryCard } from "../UI/SubCategoryCard";
 
-const extraFilters = ["mortgage", "Spend", "Earn", "Saved"];
+const extraFilters = ["Mortgage", "Spend", "Earn", "Saved","Cards", "Blue Card" ,"Red Card" ,"C.Payment"];
 const AllTransactions = () => {
   const { transactionsData } = useBudgetContext();
   const [activeFilter, setActiveFilter] = useState("All");
@@ -52,17 +52,30 @@ const AllTransactions = () => {
     if (!extraFilters.includes(activeFilter)) {
       return dataForTransactions.filter((t) => t.category === activeFilter);
     }
-    if (activeFilter === "mortgage") {
-      return dataForTransactions.filter((t) => t.category === "mortgage");
+    if (activeFilter === "Mortgage") {
+      return dataForTransactions.filter((t) => t.category === "mortgage_Payment");
     }
     if (activeFilter === "Spend") {
       return dataForTransactions.filter((t) => t.type === "spending");
     }
     if (activeFilter === "Earn") {
-      return dataForTransactions.filter((t) => t.paymentMethod === "paycheck");
+      return dataForTransactions.filter((t) => t.paymentMethod === "paycheck" || t.type =="sell_crypto" || t.type == "sell_stocks");
     }
     if (activeFilter === "Saved") {
       return dataForTransactions.filter((t) => t.type === "saving");
+    }
+     if (activeFilter === "C.Payment") {
+      return dataForTransactions.filter((t) => t.type === "credit_card_payment" && (t.category !== "mortgage_Payment" && t.category !== "checking"));
+    }
+    // "" ""
+     if (activeFilter === "Cards") {
+      return dataForTransactions.filter((t) => t.paymentMethod === "credit_card_red" || t.paymentMethod === "credit_card_blue");
+    }
+     if (activeFilter === "Red Card") {
+      return dataForTransactions.filter((t) => t.paymentMethod === "credit_card_red");
+    }
+     if (activeFilter === "Blue Card") {
+      return dataForTransactions.filter((t) => t.paymentMethod === "credit_card_blue");
     }
 
     return [];
@@ -79,7 +92,7 @@ const AllTransactions = () => {
 
   const resetSearch = () => {
     setSearch("");
-  
+  setActiveFilter("All")
     if (inputRer.current) {
       inputRer.current.value = "";
     }
@@ -89,6 +102,10 @@ const AllTransactions = () => {
       navigate(VALID_ROUTES.details ,{ state: { transaction: data } }) 
     }
 
+  const hasFilterActive = search.length > 1 || activeFilter !== "All"
+  const totalForFilter = filtered.reduce((acc ,value) =>{
+    return acc += value.amount
+  }, 0)
   return (
     <Layout>
       <div className="   mx-auto">
@@ -111,7 +128,9 @@ const AllTransactions = () => {
             />
             <button
               onClick={resetSearch}
-              className={`${search.length < 1 ? "text-gray-400" : "text-red-400"}  bg-gray-700 size-10 rounded-full flex justify-center items-center `}
+              className={`${hasFilterActive
+    ? "text-white bg-red-500 border-white shadow"
+    : "text-gray-500 bg-gray-200 border-gray-500 "} border  size-10 rounded-full flex justify-center items-center `}
             >
               {allIcons.trashCan}
             </button>
@@ -122,7 +141,8 @@ const AllTransactions = () => {
         <div className="sticky w-92 sm:w-160 mx-auto top-0  backdrop-blur-xl border-b border-black/10 px-2 pt-2 pb-4">
           <div className="flex justify-between items-end">
             <h1 className="text-xl font-semibold text-gray-900">Categories</h1>
-
+            {/* TODO */}
+                {hasFilterActive && <p className="text-sm font-light pb-px ">TOTAL: {totalForFilter.toFixed(2)}</p>}
             <BiToogleButton
               data={[true, false]}
               title={["Month", "All"]}
@@ -130,8 +150,9 @@ const AllTransactions = () => {
               setSortToggle={setFilterByMonth}
             />
           </div>
-
-          <SelectorContainer
+  {/* FILTER */}
+         <div className=" h-18 overflow-scroll rounded-md mt-2 ">
+           <SelectorContainer
             options={[
               "All",
               ...fliterCategoryAvailable.map((c) => c),
@@ -144,8 +165,9 @@ const AllTransactions = () => {
               if (inputRer.current) inputRer.current.value = "";
             }}
           />
+         </div>
 
-          {/* FILTER */}
+        
         </div>
 
         <div className="h-110 w-88 sm:w-160   overflow-scroll rounded-b-2xl    mx-auto ">
@@ -173,6 +195,7 @@ const AllTransactions = () => {
                         key={txn.id}
                         className="flex items-center gap-3 py-1 px-4"
                         onClick={() => {
+                          console.log(txn)
                           manualNavigation(txn)
                     
                         }}

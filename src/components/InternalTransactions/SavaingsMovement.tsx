@@ -138,7 +138,7 @@ export const SavaingsMovement = () => {
 
         <Keyboard triggerAnimation={triggerAnimation}
         createTransaction={makeTransiction}
-        dataTransaction={fromAccountValue}
+      
         setDataTransaction={setFromAccountValue}
         buttonOptions={{ title: "Sell Stocks", path: VALID_ROUTES.sellassets }} isReadyToSubmit={Number(fromAccountValue.amount ) > 0}          />
       </section>

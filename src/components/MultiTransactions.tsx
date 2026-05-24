@@ -124,6 +124,7 @@ const MultiTransactions = () => {
         type: "spending" as TransactionType,
         paymentMethod: data.paymentMethod as PaymentMethod,
         subcategory: data.subcategory,
+        porcentage:0
       };
 
       return new Transaction(newData);

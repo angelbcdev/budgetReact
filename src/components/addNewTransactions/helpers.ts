@@ -123,6 +123,8 @@ export const ajustDataForTransaction = ({
     (dataTransaction.category == "credit_card_blue" ||
       dataTransaction.category == "credit_card_red");
 
+  console.log(dataTransaction)
+
    const validateMoveSavings = dataTransaction.type ==  "transaction_savings_to_mortgage"
 
   const checkValidationsPayment = (): PaymentMethod => {
@@ -152,7 +154,7 @@ export const ajustDataForTransaction = ({
 
   const validateSubcategory = (): string[] => {
     if (validatePayCreditCard) {
-      return ["payment_card"];
+      return [""];
     }
     return dataTransaction.subcategory;
   };
@@ -183,6 +185,6 @@ export const ajustDataForTransaction = ({
     category: checkValidationsCategory(),
     subcategory: validateSubcategory(),
     paymentMethod: checkValidationsPayment(),
-    porcentage: dataTransaction.porcentage,
+    porcentage: dataTransaction.porcentage || 0,
   });
 };

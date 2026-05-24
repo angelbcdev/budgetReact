@@ -20,6 +20,8 @@ import { ModalAddTitle } from "./addNewTransactions/ModalAddTitle";
 import { BalanceNotification } from "./addNewTransactions/BalanceNotification";
 import { ajustDataForTransaction, emptyNewTransactions, emptyNotification, validateEnoughBalance, validateEnoughPayCreditCart, validateEnoughPayMortgage } from "./addNewTransactions/helpers";
 import type { IKeyboardEdditable } from "./InternalTransactions/SavaingsMovement";
+import { useNavigate } from "react-router";
+import { VALID_ROUTES } from "../Routes/routes";
 
 export interface ITransaction extends IKeyboardEdditable {
   title: string | null;
@@ -44,6 +46,7 @@ export interface IBalanceNotification {
 }
 
 const AddNewTransactions = () => {
+  const navigate = useNavigate(); 
   const { saveNewTransaction, validateBalance, validatePaymentCard, validateMortgageFound , validateSavingsAccountBalance } =
     useBudgetContext();
   const [defaultTypeTransaction, setDefaultTypeTransaction] =
@@ -232,36 +235,40 @@ const AddNewTransactions = () => {
           <p className=" w-40 text-nowrap overflow-hidden text-ellipsis" >Description: {dataTransaction.description}</p>
           <p >Subcategory:{dataTransaction.subcategory.length }</p>
         </div>}
-        <h3 className="text-xl font-bold ">New Transaction</h3>
-        <div className="flex flex-row gap-4 items-center justify-center transition-all ease-in duration-300 ">
+        <div className="flex relative ">
+          <h3 className="text-xl font-bold ">New Transaction</h3>
+           {Number(dataTransaction.amount || 0) != 0 && (
+            <button
+              onClick={() =>
+                setDataTransaction({ ...dataTransaction, amount: "0.00" })
+              }
+              className={`text-3xl text-red-600 size-8 bg-gray-300 rounded-full flex items-center justify-center absolute -right-26 top-13`}
+            >
+              {allIcons.trashCan}
+            </button>
+          )}
+        </div>
+        
+        <div className="flex flex-row gap-4 items-center  w-full h-12 justify-center transition-all ease-in duration-300 ">
           <p
-            className={`  transition-all text-5xl font-light text-gray-600  ${animate ? "scale-103 opacity-70 pr-px " : "scale-100 opacity-100"
+            className={`  transition-all text-6xl font- text-gray-500  absolute ${animate ? "scale-103 opacity-70 pr-px " : "scale-100 opacity-100"
               }`}
           >
             $ {Number(dataTransaction.amount || 0).toFixed(2)}
           </p>
 
 
-          {Number(dataTransaction.amount || 0) != 0 && (
-            <button
-              onClick={() =>
-                setDataTransaction({ ...dataTransaction, amount: "0.00" })
-              }
-              className={`text-5xl text-red-600 size-10 bg-gray-300 rounded-full flex items-center justify-center`}
-            >
-              {allIcons.trashCan}
-            </button>
-          )}
+         
         </div>
-        <div className="flex gap-1">
+        <div className="flex gap-1 flex-row-reverse relative top-4">
         <TypeSelectorButtons
           selectCurrentType={selectCurrentType}
           defaultTypeTransaction={defaultTypeTransaction}
         />
-          {/* VALID_ROUTES.internalTransactions */}
-      <button className="bg-gray-200 rounded-md px-4 ">Sell Assets</button>
+         
+      <button onClick={()=>navigate(VALID_ROUTES.internalTransactions)} className="border-gray-200 border text-blue-600 rounded-md px-2  ">Sell Assets</button>
       </div>
-      </div>
+    </div>
       <section className=" justify-center flex flex-col items-center">
         <SelectorContainer
           options={categoryToShow}
@@ -280,8 +287,8 @@ const AddNewTransactions = () => {
       </section>
       <Keyboard
         createTransaction={createTransaction}
-        dataTransaction={dataTransaction}
-        setDataTransaction={setDataTransaction}
+        
+        setDataTransaction={setDataTransaction as any}
         triggerAnimation={triggerAnimation}
         isReadyToSubmit={Number(dataTransaction.amount || 0) > 0}
       />

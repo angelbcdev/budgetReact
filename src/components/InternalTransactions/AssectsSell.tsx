@@ -140,14 +140,14 @@ export const AssetsSell = ()=>{
                   <div className="w-36">
                    <BiToogleButton
                              data={[true, false]}
-                             title={["sell stocks", "sell crypto"]}
+                             title={["Sell Stocks", "Sell Crypto"]}
                              valueSort={isSellStocks}
                              setSortToggle={setIsSellStocks}
                            />
                 </div>
 
                 <p>{Number.isFinite(porcentage) ? porcentage?.toFixed(2) : "0.00"}%</p>
-                <button onClick={clearData} className="bg-gray-200 px-3 py-1 rounded-md shadow hover:bg-gray-300 active:bg-gray-400 transition-colors">Clear</button>
+                <button onClick={clearData} className="border-gray-200 border text-blue-600 rounded-md px-4 bg-white  ">Clear</button>
                 </div>
                
               
@@ -179,7 +179,7 @@ export const AssetsSell = ()=>{
                 {/* // */}
              <Keyboard triggerAnimation={triggerAnimation}
                createTransaction={makeTransiction}
-               dataTransaction={isAmount ? amountAssect : profitAssect}
+              
                setDataTransaction=
                {isAmount ? setAmountAssect : setProfitAssect} 
                buttonOptions={{title:"Move Savings",path:VALID_ROUTES.internalTransactions}}

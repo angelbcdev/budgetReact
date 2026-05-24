@@ -32,7 +32,7 @@ const SelectorContainer = ({
 
   return (
     <div
-      className={`flex flex-col gap-1 w-${size ? size : "90"} max-w-90 bg-gray-200 rounded-md shadow-inner-md p-px my-1`}
+      className={`flex flex-col gap-1 w-${size ? size : "90"} max-w-88 bg-gray-200 rounded-md shadow-inner-md p-px my-1`}
     >
       {rows.map((row, rowIndex) => (
         <div

@@ -61,19 +61,18 @@ export const router = createBrowserRouter([
         path: VALID_ROUTES.subcategory,
         element: <SubCategoryEddit />,
       },
-      ,
+      
       
       {
         path: VALID_ROUTES.internalTransactions,
         element: <SavaingsMovement />,
       },
-      ,
       
       {
         path: VALID_ROUTES.sellassets,
         element: <AssetsSell />,
       },
-      // SubCategoryEddit
+    
       {
         path: "*",
         element: <Layout>404</Layout>,
