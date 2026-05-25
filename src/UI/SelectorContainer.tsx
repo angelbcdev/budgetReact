@@ -17,27 +17,16 @@ const SelectorContainer = ({
     return type;
   };
 
-  const getGridCols = (count: number) => {
-    switch (count) {
-      case 1:
-        return "grid-cols-1";
-      case 2:
-        return "grid-cols-2";
-      case 3:
-        return "grid-cols-3";
-      default:
-        return "grid-cols-4";
-    }
-  };
+
 
   return (
     <div
-      className={`flex flex-col gap-1 w-${size ? size : "90"} max-w-88 bg-gray-200 rounded-md shadow-inner-md p-px my-1`}
+      className={`flex flex-col gap-1 w-${size && size } max-w-90 bg-gray-200 rounded-md text-sm shadow-inner-md p-px my-1`}
     >
       {rows.map((row, rowIndex) => (
         <div
           key={rowIndex}
-          className={`grid ${getGridCols(row.length)} gap-1`}
+          className={`grid grid-cols-4 {getGridCols(row.length)} gap-1`}
         >
           {row.map((type) => {
             const isSelected = type === selecteOption;
@@ -46,11 +35,11 @@ const SelectorContainer = ({
               <button
                 key={type}
                 onClick={() => changeOtion(type)}
-                className={`px-2 py-1 w-full rounded-md ${
+                className={`px-2 py-1 w-full h-8 rounded-md ${
                   isSelected
                     ? "bg-white text-blue-600"
                     : "text-gray-700"
-                } transition-all duration-100 capitalize`}
+                } transition-all duration-100 capitalize  text-nowrap truncate `}
               >
                 {getTitle(type)}
               </button>

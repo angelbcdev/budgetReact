@@ -62,7 +62,7 @@ const SubCategoryEddit = () => {
   const dataReceived:string = location?.state?.subCategory
 
   
-  let keys:Category[] = [...fliterCategoryAvailable,"savings","stocks" ,"crypto"]
+  let keys:Category[] = [...fliterCategoryAvailable,"checking","savings","stocks" ,"crypto"]
 
   if (dataReceived) {
     keys = keys.filter((c) => c == dataReceived)
@@ -113,7 +113,7 @@ const SubCategoryRow = ({createAnewSubCategory, title , data }:{createAnewSubCat
   const [showModal, setShowModal] = useState(false)
   const [newSubCategory, setNewSubCategory] = useState({ title: "", icon: "", color: "", category: "" })
   const [allCategories, setAllCategories] = useState([title])
-  const [subCategoryToEdit, setSubCategoryToEdit] = useState<SubCategory | null>(null)
+
 
   const addValue = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -145,13 +145,13 @@ const SubCategoryRow = ({createAnewSubCategory, title , data }:{createAnewSubCat
 
   const closeModal = () => {
     setShowModal(false)
-    setSubCategoryToEdit(null)
+    
     setAllCategories([title])
   }
 
   const editSubCategory = (subCategory: SubCategory) => {
     
-    setSubCategoryToEdit(subCategory)
+   
     setAllCategories([...allCategories, ...subCategory.category])
     setTimeout(() => {
       setShowModal(true)
@@ -164,7 +164,7 @@ const SubCategoryRow = ({createAnewSubCategory, title , data }:{createAnewSubCat
         <section
           onClick={closeModal}
           className="w-full h-full fixed bg-black/50 top-0 left-0 z-50 flex  ">
-         <SubCategoryModal   addValue={addValue} title={title} allCategories={allCategories} addCategory={addCategory} subCategoryToEdit={subCategoryToEdit} createSubCategory={createSubCategory} />
+         <SubCategoryModal   addValue={addValue} title={title} allCategories={allCategories} addCategory={addCategory}  createSubCategory={createSubCategory} />
           
         </section>
       }
@@ -188,7 +188,7 @@ const SubCategoryRow = ({createAnewSubCategory, title , data }:{createAnewSubCat
 }
 
 
-export const SubCategortCardForList = ({sc, editSubCategory,showColor = true ,size = "M"}: {sc: SubCategory, editSubCategory: (sc: SubCategory) => void, showColor?: boolean , size?: "S" | "M" | "L" }) => {
+export const SubCategortCardForList = ({sc,showColor = true ,size = "M",editSubCategory}: {sc: SubCategory, editSubCategory: (sc: SubCategory) => void, showColor?: boolean , size?: "S" | "M" | "L" }) => {
   const ajust = {
     hight: "32px",
     fontSize: "14px"
@@ -211,8 +211,8 @@ export const SubCategortCardForList = ({sc, editSubCategory,showColor = true ,si
 }
 
 
-const SubCategoryModal = ({  addValue ,title, allCategories, addCategory, subCategoryToEdit ,createSubCategory }: {
-  title: string, subCategoryToEdit: SubCategory | null , createSubCategory: () => void 
+const SubCategoryModal = ({  addValue ,title, allCategories, addCategory ,createSubCategory }: {
+  title: string , createSubCategory: () => void 
   addValue: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void, allCategories: string[], addCategory: (category: string) => void,
 }) => {
   
@@ -229,7 +229,7 @@ const SubCategoryModal = ({  addValue ,title, allCategories, addCategory, subCat
               <input
                 type="text"
           name="title"
-                value={subCategoryToEdit?.title}
+                
                 className="border-gray-300 border rounded-sm h-6 w-34 bg-transparent px-2 py-1 outline-none focus:border-blue-500"
                 placeholder="Title"
                 onChange={addValue}
@@ -237,7 +237,7 @@ const SubCategoryModal = ({  addValue ,title, allCategories, addCategory, subCat
                <input
                 type="text"
           name="icon"
-                value={subCategoryToEdit?.icon}
+               
                 className="border-gray-300 border rounded-sm h-6 w-14 bg-transparent px-2 py-1 outline-none focus:border-blue-500"
                 placeholder="Icon"
                 onChange={addValue}
@@ -245,7 +245,7 @@ const SubCategoryModal = ({  addValue ,title, allCategories, addCategory, subCat
               <input
                 type="color"
           name="color"
-                value={subCategoryToEdit?.color}
+               
                 className="border-gray-300 border rounded-sm h-6 w-8 bg-transparent px-2 py-1 outline-none focus:border-blue-500"
                 placeholder="color"
                 onChange={addValue}

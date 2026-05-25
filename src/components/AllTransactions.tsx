@@ -2,7 +2,6 @@ import {
   CATEGORY_META,
   fliterCategoryAvailable,
   type PaymentMethod,
-  
 } from "../Models/dummyData";
 import { useState, useRef } from "react";
 import { Layout } from "../UI/Layout";
@@ -13,99 +12,82 @@ import SelectorContainer from "../UI/SelectorContainer";
 import { BiToogleButton } from "../UI/DataShowListCategory";
 import { VALID_ROUTES } from "../Routes/routes";
 import { useNavigate } from "react-router";
-  import { SubCategoryCard } from "../UI/SubCategoryCard";
+import { SubCategoryCard } from "../UI/SubCategoryCard";
 
-const extraFilters = ["Mortgage", "Spend", "Earn", "Saved","Cards", "Blue Card" ,"Red Card" ,"C.Payment"];
+const extraFilters = [
+  "Mortgage",
+  "Spend",
+  "Earn",
+  "Saved",
+  "Cards",
+  "Blue Card",
+  "Red Card",
+  "C.Payment",
+];
+
 const AllTransactions = () => {
-  const { transactionsData } = useBudgetContext();
+  const { transactionsData, subcategoriesData } = useBudgetContext();
+  const [activeHeather, setActiveHeather] = useState("Summary");
   const [activeFilter, setActiveFilter] = useState("All");
+
+  const allSubCategoriesInUse = subcategoriesData.map((s) => s.title).sort((a, b) => a.localeCompare(b))
+  const filterHeathers = {
+    "Summary": ["All", "Mortgage", "Spend", "Earn", "Saved"],
+    "Categories": [...fliterCategoryAvailable.map((c) => c)],
+    "Cards": ["Cards", "Blue Card", "Red Card", "C.Payment"],
+    "Sub Cat": allSubCategoriesInUse,
+  }
+    
+    
+    
+    
+    
+    
+    
 
   const [search, setSearch] = useState("");
   const inputRer = useRef<HTMLInputElement>(null);
-  const minimunSearch = 3;
+
   const currentMonth = new Date().getMonth();
   const currentMonthName = new Date().toLocaleString("en-US", {
     month: "long",
   });
   const [filterByMonth, setFilterByMonth] = useState(true);
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
   const dataForTransactions = transactionsData; //.filter(t => fliterCategoryAvailable.includes(t.category));
 
-  const makeFilter = (): Transaction[] => {
-    if (search.length >= minimunSearch) {
-      return dataForTransactions.filter(
-        (t) =>
-          t.title.toLowerCase().includes(search.toLowerCase()) ||
-          t.description.toLowerCase().includes(search.toLowerCase()) ||
-          t.category.toLowerCase().includes(search.toLowerCase()) ||
-          t.subcategory
-            .join(" ")
-            .toLowerCase()
-            .includes(search.toLowerCase()) ||
-          t.paymentMethod.toLowerCase().includes(search.toLowerCase()),
-      );
-    }
-
-    if (activeFilter === "All") {
-      return dataForTransactions;
-    }
-    if (!extraFilters.includes(activeFilter)) {
-      return dataForTransactions.filter((t) => t.category === activeFilter);
-    }
-    if (activeFilter === "Mortgage") {
-      return dataForTransactions.filter((t) => t.category === "mortgage_Payment");
-    }
-    if (activeFilter === "Spend") {
-      return dataForTransactions.filter((t) => t.type === "spending");
-    }
-    if (activeFilter === "Earn") {
-      return dataForTransactions.filter((t) => t.paymentMethod === "paycheck" || t.type =="sell_crypto" || t.type == "sell_stocks");
-    }
-    if (activeFilter === "Saved") {
-      return dataForTransactions.filter((t) => t.type === "saving");
-    }
-     if (activeFilter === "C.Payment") {
-      return dataForTransactions.filter((t) => t.type === "credit_card_payment" && (t.category !== "mortgage_Payment" && t.category !== "checking"));
-    }
-    // "" ""
-     if (activeFilter === "Cards") {
-      return dataForTransactions.filter((t) => t.paymentMethod === "credit_card_red" || t.paymentMethod === "credit_card_blue");
-    }
-     if (activeFilter === "Red Card") {
-      return dataForTransactions.filter((t) => t.paymentMethod === "credit_card_red");
-    }
-     if (activeFilter === "Blue Card") {
-      return dataForTransactions.filter((t) => t.paymentMethod === "credit_card_blue");
-    }
-
-    return [];
-  };
-
-  const filtered = makeFilter();
+  const filtered = makeFilter({
+    search,
+    activeFilter,
+    dataForTransactions,
+    allSubCategoriesInUse
+  });
 
   const groups: Record<string, Transaction[]> = groupByDate(
     filtered,
     currentMonth,
     filterByMonth,
   );
-  
 
   const resetSearch = () => {
     setSearch("");
-  setActiveFilter("All")
+    setActiveFilter("All");
+    setActiveHeather("Summary");
     if (inputRer.current) {
       inputRer.current.value = "";
     }
   };
 
-   const manualNavigation = (data: Transaction) => {
-      navigate(VALID_ROUTES.details ,{ state: { transaction: data } }) 
-    }
+  const manualNavigation = (data: Transaction) => {
+    navigate(VALID_ROUTES.details, { state: { transaction: data } });
+  };
 
-  const hasFilterActive = search.length > 1 || activeFilter !== "All"
-  const totalForFilter = filtered.reduce((acc ,value) =>{
-    return acc += value.amount
-  }, 0)
+  const hasFilterActive = search.length > 1 || activeFilter !== "All";
+  const totalForFilter = filtered.reduce((acc, value) => {
+    const data = new Date(value.date);
+    if (filterByMonth && data.getMonth() !== currentMonth) return acc;
+    return (acc += value.amount);
+  }, 0);
   return (
     <Layout>
       <div className="   mx-auto">
@@ -128,9 +110,11 @@ const AllTransactions = () => {
             />
             <button
               onClick={resetSearch}
-              className={`${hasFilterActive
-    ? "text-white bg-red-500 border-white shadow"
-    : "text-gray-500 bg-gray-200 border-gray-500 "} border  size-10 rounded-full flex justify-center items-center `}
+              className={`${
+                hasFilterActive
+                  ? "text-white bg-red-500 border-white shadow"
+                  : "text-gray-500 bg-gray-200 border-gray-500 "
+              } border  size-10 rounded-full flex justify-center items-center `}
             >
               {allIcons.trashCan}
             </button>
@@ -138,11 +122,15 @@ const AllTransactions = () => {
         </div>
 
         {/* HEADER */}
-        <div className="sticky w-92 sm:w-160 mx-auto top-0  backdrop-blur-xl border-b border-black/10 px-2 pt-2 pb-4">
+        <div className="sticky w-92 sm:w-160 mx-auto top-0  backdrop-blur-xl border-b border-black/10 px-2 pt-2 pb-1">
           <div className="flex justify-between items-end">
             <h1 className="text-xl font-semibold text-gray-900">Categories</h1>
-            {/* TODO */}
-                {hasFilterActive && <p className="text-sm font-light pb-px ">TOTAL: {totalForFilter.toFixed(2)}</p>}
+   
+            {hasFilterActive && (
+              <p className="text-sm font-light pb-px ">
+                TOTAL: {totalForFilter.toFixed(2)}
+              </p>
+            )}
             <BiToogleButton
               data={[true, false]}
               title={["Month", "All"]}
@@ -150,122 +138,150 @@ const AllTransactions = () => {
               setSortToggle={setFilterByMonth}
             />
           </div>
-  {/* FILTER */}
-         <div className=" h-18 overflow-scroll rounded-md mt-2 ">
-           <SelectorContainer
-            options={[
-              "All",
-              ...fliterCategoryAvailable.map((c) => c),
-              ...extraFilters,
-            ]}
-            selecteOption={activeFilter}
-            changeOtion={(t) => {
-              setActiveFilter(t);
-              setSearch("");
-              if (inputRer.current) inputRer.current.value = "";
-            }}
-          />
-         </div>
-
-        
+          {/* FILTER */}
+          <div className="   rounded-md mt-2 flex flex-col gap-1 ">
+            <div className="flex flex-row gap-2">
+               {Object.keys(filterHeathers).map((filter) => {
+              return (
+                <section
+                  className={`px-3 py-1 text-[14px]  font-semibold rounded-md cursor-pointer ${filter === activeHeather ? "bg-white text-blue-500" : "bg-gray-200 text-gray-600"}`}
+                  onClick={() => { setActiveHeather(filter);  setActiveFilter(filterHeathers[filter as keyof typeof filterHeathers][0]);}}
+                  key={filter}
+                >
+                  {filter}
+                </section>
+              );
+            })}
+            </div>
+            <div className="max-h-20 overflow-scroll mx-auto rounded-md ">
+            <SelectorContainer
+              options={
+                filterHeathers[activeHeather as keyof typeof filterHeathers] || []
+                  
+              }
+              selecteOption={activeFilter}
+              changeOtion={(t) => {
+                setActiveFilter(t);
+                setSearch("");
+                if (inputRer.current) inputRer.current.value = "";
+              }}
+               
+              />
+              </div>
+          </div>
         </div>
 
         <div className="h-110 w-88 sm:w-160   overflow-scroll rounded-b-2xl    mx-auto ">
           {/* LIST */}
           {Object.entries(groups)
-            .sort((a, b) => b[0].localeCompare(a[0])).map(([date, items]) => (
+            .sort((a, b) => b[0].localeCompare(a[0]))
+            .map(([date, items]) => (
               <div key={date} className="mt-1  w-88 ">
                 <h2 className="px-5 text-xs h-8 w-86  sm:w-160  font-semibold text-gray-400 uppercase sticky top-0 bg-[#f2f2f7]/00 backdrop-blur-sm flex items-center  ">
                   {date}
                 </h2>
                 <section className="bg-white px-2 rounded-xl sm:w-160">
-                  
-                <div className="   overflow-hidden divide-y divide-gray-200 ">
-                  {items.sort((a, b) => Date.parse(String(b.date)) - Date.parse(String(a.date))).map((txn) => {
-                    const meta = CATEGORY_META[
-                      txn.category as keyof typeof CATEGORY_META
-                    ] || {
-                      icon: "💳",
-                      bg: "bg-gray-100",
-                    };
-                    const { color, sign } = getTxnAmountStyle(txn);
+                  <div className="   overflow-hidden divide-y divide-gray-200 ">
+                    {items
+                      .sort(
+                        (a, b) =>
+                          Date.parse(String(b.date)) -
+                          Date.parse(String(a.date)),
+                      )
+                      .map((txn) => {
+                        const meta = CATEGORY_META[
+                          txn.category as keyof typeof CATEGORY_META
+                        ] || {
+                          icon: "💳",
+                          bg: "bg-gray-100",
+                        };
+                        const { color, sign } = getTxnAmountStyle(txn);
 
-                    return (
-                      <div
-                        key={txn.id}
-                        className="flex items-center gap-3 py-1 px-4"
-                        onClick={() => {
-                          console.log(txn)
-                          manualNavigation(txn)
-                    
-                        }}
-                      >
-                        {/* ICON */}
-                        <div
-                        style={{backgroundColor:meta.bg + "30"}}
-                          className={`w-10 h-10 flex items-center justify-center rounded-full bg-d bg- [$}d]`}
-                        >
-                          <span className="text-lg">{meta.icon}</span>
-                        </div>
+                        return (
+                          <div
+                            key={txn.id}
+                            className="flex items-center gap-3 py-1 px-4"
+                            onClick={() => {
+                              console.log(txn);
+                              manualNavigation(txn);
+                            }}
+                          >
+                            {/* ICON */}
+                            <div
+                              style={{ backgroundColor: meta.bg + "30" }}
+                              className={`w-10 h-10 flex items-center justify-center rounded-full bg-d bg- [$}d]`}
+                            >
+                              <span className="text-lg">{meta.icon}</span>
+                            </div>
 
-                        {/* TEXT */}
-                        <div className="flex-1 min-w-0 flex flex-col ">
-                          <p className="text-md font-medium text-gray-900 truncate w-44 h-6 capitalize  text-ellipsis">
-                            {txn.title}  {txn.porcentage > 0 && <span className="text-[10px] text-gray-400 h-4">{txn.amount /  txn.porcentage} x {txn.porcentage.toFixed(2)}</span>}
-                          </p>
-                         
-                          <p className="text-xs text-gray-500 truncate w-44  text-ellipsis">
-                            {txn.description}
-                          </p>
-                          <div className="flex gap-1   p-px capitalize">
-                            {txn.subcategory.map((subCategory:string , i) => {
-                              if (subCategory != "" && i < 2) {
-                               
-                                return (
-                               
-                                  <SubCategoryCard key={subCategory} subCategory={subCategory } onClick={()=>{}}/>
-                                );
-                              }
-                              if (subCategory != "" && i == 2) {
-                                return (
-                                  <span
-                                    key={subCategory}
-                                    className="   h-5 text-[10px] px-2 py-0.5 rounded-sm bg-gray-100 text-gray-600 border border-gray-300"
-                                  >
-                                    ...
+                            {/* TEXT */}
+                            <div className="flex-1 min-w-0 flex flex-col ">
+                              <p className="text-md font-medium text-gray-900 truncate w-44 h-6 capitalize  text-ellipsis">
+                                {txn.title}{" "}
+                                {txn.porcentage > 0 && (
+                                  <span className="text-[10px] text-gray-400 h-4">
+                                    {txn.amount / txn.porcentage} x{" "}
+                                    {txn.porcentage.toFixed(2)}
                                   </span>
-                                );
+                                )}
+                              </p>
+
+                              <p className="text-xs text-gray-500 truncate w-44  text-ellipsis">
+                                {txn.description}
+                              </p>
+                              <div className="flex gap-1   p-px capitalize">
+                                {txn.subcategory.map(
+                                  (subCategory: string, i) => {
+                                    if (subCategory != "" && i < 2) {
+                                      return (
+                                        <SubCategoryCard
+                                          key={subCategory}
+                                          subCategory={subCategory}
+                                          onClick={() => {}}
+                                        />
+                                      );
+                                    }
+                                    if (subCategory != "" && i == 2) {
+                                      return (
+                                        <span
+                                          key={subCategory}
+                                          className="   h-5 text-[10px] px-2 py-0.5 rounded-sm bg-gray-100 text-gray-600 border border-gray-300"
+                                        >
+                                          ...
+                                        </span>
+                                      );
+                                    }
+                                    if (subCategory == "" || i >= 3)
+                                      return null;
+                                  },
+                                )}
+                              </div>
+                            </div>
+
+                            {/* AMOUNT */}
+                            <div className="text-right pb-6">
+                              {
+                                <p className={`text-md font-semibold ${color}`}>
+                                  {sign} {formatAmount(txn.amount)}
+                                </p>
                               }
-                              if (subCategory == "" || i >= 3) return null;
-                            })}
+
+                              <p className="text-[11px] text-gray-400">
+                                {
+                                  paymentLabels[
+                                    txn.paymentMethod as keyof typeof paymentLabels
+                                  ]
+                                }
+                              </p>
+                            </div>
+
+                            {/* chevron */}
+                            <span className="text-gray-300 text-lg">›</span>
                           </div>
-                        </div>
-
-                        {/* AMOUNT */}
-                        <div className="text-right pb-6">
-                          {
-                            <p className={`text-md font-semibold ${color}`}>
-                              {sign} {formatAmount(txn.amount)}
-                            </p>
-                          }
-
-                          <p className="text-[11px] text-gray-400">
-                            {
-                              paymentLabels[
-                                txn.paymentMethod as keyof typeof paymentLabels
-                              ]
-                            }
-                          </p>
-                        </div>
-
-                        {/* chevron */}
-                        <span className="text-gray-300 text-lg">›</span>
-                      </div>
-                    );
-                  })}
-                </div>
-
-                  </section>
+                        );
+                      })}
+                  </div>
+                </section>
               </div>
             ))}
           <div className=" w-full h-20"></div>
@@ -276,6 +292,98 @@ const AllTransactions = () => {
 };
 
 export default AllTransactions;
+
+const makeFilter = ({
+  search,
+  activeFilter,
+  dataForTransactions,
+  allSubCategoriesInUse,
+}: {
+  search: string;
+  activeFilter: string;
+    dataForTransactions: Transaction[];
+  allSubCategoriesInUse: string[];
+}): Transaction[] => {
+  const minimunSearch = 3;
+
+  if (search.length >= minimunSearch) {
+    return dataForTransactions.filter(
+      (t) =>
+        t.title.toLowerCase().includes(search.toLowerCase()) ||
+        t.description.toLowerCase().includes(search.toLowerCase()) ||
+        t.category.toLowerCase().includes(search.toLowerCase()) ||
+        t.subcategory.join(" ").toLowerCase().includes(search.toLowerCase()) ||
+        t.paymentMethod.toLowerCase().includes(search.toLowerCase()),
+    );
+  }
+ 
+
+  if (activeFilter === "All") {
+    return dataForTransactions;
+  }
+  if (allSubCategoriesInUse.includes(activeFilter)) {
+   
+   
+    return dataForTransactions.filter(
+      (t) =>
+        t.subcategory.includes(activeFilter) 
+    );
+  }
+  if (!extraFilters.includes(activeFilter)) {
+    return dataForTransactions.filter((t) => t.category === activeFilter);
+  }
+  if (activeFilter === "Mortgage") {
+    return dataForTransactions.filter((t) => t.category === "mortgage_Payment");
+  }
+  if (activeFilter === "Spend") {
+    return dataForTransactions.filter((t) => t.type === "spending");
+  }
+  if (activeFilter === "Earn") {
+    return dataForTransactions.filter(
+      (t) =>
+        t.paymentMethod === "paycheck" ||
+        t.type == "sell_crypto" ||
+        t.type == "sell_stocks",
+    );
+  }
+  if (activeFilter === "Saved") {
+    return dataForTransactions.filter((t) => t.type === "saving");
+  }
+  if (activeFilter === "C.Payment") {
+    return dataForTransactions.filter(
+      (t) =>
+        t.type === "credit_card_payment" &&
+        t.category !== "mortgage_Payment" &&
+        t.category !== "checking",
+    );
+  }
+  // """" ""
+
+  
+  
+
+
+
+  if (activeFilter === "Cards") {
+    return dataForTransactions.filter(
+      (t) =>
+        t.paymentMethod === "credit_card_red" ||
+        t.paymentMethod === "credit_card_blue",
+    );
+  }
+  if (activeFilter === "Red Card") {
+    return dataForTransactions.filter(
+      (t) => t.paymentMethod === "credit_card_red",
+    );
+  }
+  if (activeFilter === "Blue Card") {
+    return dataForTransactions.filter(
+      (t) => t.paymentMethod === "credit_card_blue",
+    );
+  }
+
+  return [];
+};
 
 function getTxnAmountStyle(txn: Transaction) {
   if (
@@ -289,10 +397,17 @@ function getTxnAmountStyle(txn: Transaction) {
   if (txn.type === "saving") {
     return { color: "text-blue-600", sign: "" };
   }
-   if (txn.type === "transaction_savings_to_mortgage" || txn.type === "transaction_mortgage_to_savings") {
+  if (
+    txn.type === "transaction_savings_to_mortgage" ||
+    txn.type === "transaction_mortgage_to_savings"
+  ) {
     return { color: "text-yellow-700", sign: "" };
   }
-    if ((txn.type === "sell_stocks" || txn.type == "sell_crypto") || txn.category === "sell_assets") {
+  if (
+    txn.type === "sell_stocks" ||
+    txn.type == "sell_crypto" ||
+    txn.category === "sell_assets"
+  ) {
     return { color: "text-[#3c9f03]", sign: "+" };
   }
 
@@ -306,7 +421,7 @@ const paymentLabels: Record<PaymentMethod, string> = {
   checking: "Checking",
   mortgage: "Mortgage Account",
   cards_payment: "Card payment",
-  savings_account: "Savings DCU"
+  savings_account: "Savings DCU",
 };
 
 function formatAmount(n: number) {
@@ -317,8 +432,6 @@ function formatAmount(n: number) {
   return "$ " + abs;
 }
 
-
-
 function groupByDate(
   txns: Transaction[],
   currentMonth: number,
@@ -328,9 +441,6 @@ function groupByDate(
     (acc, t) => {
       // ✅ SAFE parsing (no timezone issues)
       const dateToString = new Date(t.date).toISOString().split("T")[0];
-      
-     
-
 
       const [_, month] = dateToString.split("-").map(Number);
 
@@ -338,11 +448,8 @@ function groupByDate(
 
       // ✅ correct filter
       if (filter && monthIndex !== currentMonth) return acc;
-     
- 
 
       const key = dateToString;
-     
 
       if (!acc[key]) acc[key] = [];
       acc[key].push(t);

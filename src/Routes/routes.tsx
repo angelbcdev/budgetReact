@@ -36,11 +36,6 @@ export const routes = [
     name: "Settings",
     path: VALID_ROUTES.settings,
     icon: allIcons.gear,
-  },
-  {
-    name: "multi",
-    path: VALID_ROUTES.sellassets,
-    icon: allIcons.wallet,
-  },
+  }
    
 ];

@@ -80,7 +80,9 @@ const TransationsDetailsView = () => {
 
   // ================= SUBCATEGORÍAS =================
   const updateSubCategories = (sc: any) => {
+    
     if (!canEdit) return;
+   
 
     setLocalDataToShow((prev:any) => {
       let copy = { ...prev };
@@ -140,6 +142,7 @@ const TransationsDetailsView = () => {
           {canEdit ? (
             <>
               <input
+                placeholder="v"
                 value={title}
                 onChange={(e) =>
                   setLocalDataToShow((prev:any) => ({
@@ -161,6 +164,7 @@ const TransationsDetailsView = () => {
           {canEdit ? (
             <>
               <input
+                placeholder="$0.00"
                 type="number"
                 value={amount}
                 onChange={(e) =>
@@ -214,6 +218,7 @@ const TransationsDetailsView = () => {
             <div className="border rounded-md p-1 min-h-6 border-gray-400 shadow-inner bg-gray-200 mt-1">
               {canEdit ? (
                 <textarea
+                  placeholder="descriptions..."
                   value={description}
                   onChange={(e) =>
                     setLocalDataToShow((prev:any) => ({

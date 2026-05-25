@@ -89,25 +89,9 @@ export interface ISubCategorySumary {
 
 export function useSummary(transactions: Transaction[]) {
   // 🔹 create empty summary
-  const subCategoriesUsed = new Set(
-  transactions
-  //TODO: no count when you sell assets
-    // .filter((t) => t.type !== "sell_crypto" && t.type !== "sell_stocks")
-    .map((t) => t.subcategory)
-    .flat()
-    .filter((t) => t !== "")
-);
 
-  const emptySubCategorySummary: ISubCategorySumary =
-  Object.fromEntries(
-    [...subCategoriesUsed].map((sc) => [
-      sc,
-      {
-        totalIcome: 0,
-        totalUse: 0,
-      },
-    ])
-  );
+
+  
   
   // 🔹 merge two summaries into one (suma campo a campo)
   const mergeSummaries = (
@@ -188,7 +172,7 @@ export function useSummary(transactions: Transaction[]) {
     // PAY CREDIT dataCards
     if (
       t.type == "credit_card_payment" &&
-      t.paymentMethod == "cards_payment" &&
+      t.paymentMethod == "checking" &&
       (t.category == "credit_card_red" || t.category == "credit_card_blue")
     ) {
       if (t.category == "credit_card_blue") {
@@ -319,18 +303,7 @@ export function useSummary(transactions: Transaction[]) {
   }, [monthly]);
 
 
-  transactions.forEach((t) => { 
 
-    t.subcategory.map((sc) => {
-      if (sc == "") return
-      const oldAmount = emptySubCategorySummary[sc].totalIcome;
-      const oldUse = emptySubCategorySummary[sc].totalUse;
-      emptySubCategorySummary[sc].totalUse = oldUse + 1
-      emptySubCategorySummary[sc].totalIcome = oldAmount + t.amount
-    })
-
-   
-  })
 
  
 
@@ -342,6 +315,5 @@ export function useSummary(transactions: Transaction[]) {
     sortedMonths,
     allMonthsData,
     acumulateMonth,
-    subCategorySummary: emptySubCategorySummary
   };
 }
