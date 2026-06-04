@@ -15,7 +15,7 @@ const Settings = () => {
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
   const [amount, setAmount] = useState(0);
-  const version = "Version 1.2.0";
+  const version = "Version 2.0.0";
 
   const data = Object.keys(currentMonthGoals).map((key) => {
     return {

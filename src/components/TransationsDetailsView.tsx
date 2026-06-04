@@ -10,7 +10,7 @@ import BlurContainer from "../UI/BlurContainer";
 
 import { MultipleAcctionButtons } from "./addNewTransactions/Keyboard";
 import { useBudgetContext } from "../provide/budget";
-import { TRANSACTION_TYPE_META } from "../Models/dummyData";
+import { getCategoryMeta } from "../Models/dummyData"; //getCategoryMeta
 
 import { SubCategortCardForList, SubCategory } from "./SubCategoryEddit";
 import { VALID_ROUTES } from "../Routes/routes";
@@ -113,7 +113,7 @@ const TransationsDetailsView = () => {
     
     
 
-  
+  const datameta = getCategoryMeta(dataShow.type);
 
   return (
     <Layout>
@@ -129,11 +129,11 @@ const TransationsDetailsView = () => {
         <section
           style={{
             background: `linear-gradient(120deg, ${
-              TRANSACTION_TYPE_META[dataShow.type].fill
+              datameta.bg
             }90 0%, ${
-              TRANSACTION_TYPE_META[dataShow.type].fill
+              datameta.bg
             } 50%, ${
-              TRANSACTION_TYPE_META[dataShow.type].fill
+              datameta.bg
             }90 100%)`,
           }}
           className="w-full h-40 rounded-2xl shadow-md gap-3 flex flex-col justify-center items-center text-white"
@@ -184,7 +184,7 @@ const TransationsDetailsView = () => {
           )}
 
           <p className="text-sm font-bold">
-            {TRANSACTION_TYPE_META[dataShow.type].label}
+            {datameta.icon} {datameta.label }
           </p>
         </section>
 

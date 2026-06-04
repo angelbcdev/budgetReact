@@ -47,7 +47,7 @@ export interface IBalanceNotification {
 
 const AddNewTransactions = () => {
   const navigate = useNavigate(); 
-  const { saveNewTransaction, validateBalance, validatePaymentCard, validateMortgageFound , validateSavingsAccountBalance } =
+  const { saveNewTransaction, validateBalance, validatePaymentCard, validateMortgageFound , validateCashFound , validateSavingsAccountBalance } =
     useBudgetContext();
   const [defaultTypeTransaction, setDefaultTypeTransaction] =
     useState<TransactionType>("spending");
@@ -92,21 +92,21 @@ const AddNewTransactions = () => {
   const createTransaction = () => {
 
 
-    console.log(dataTransaction)
+  
 
-    // //Validate Balance
-    // if (!validateEnoughBalance({ dataTransaction, validateBalance , validateSavingsAccountBalance})
+    //Validate Balance
+    if (!validateEnoughBalance({ dataTransaction, validateBalance , validateSavingsAccountBalance})
 
-    // ) {
-    //   showNotification({
-    //     msj: "Exceeded balance",
-    //     color: {
-    //       text: "#FF0000",
-    //       bg: "#ffb3b3"
-    //     }
-    //   })
-    //   return;
-    // }
+    ) {
+      showNotification({
+        msj: "Exceeded balance",
+        color: {
+          text: "#FF0000",
+          bg: "#ffb3b3"
+        }
+      })
+      return;
+    }
     // Validate Payment Card
 
 
@@ -123,6 +123,18 @@ const AddNewTransactions = () => {
         }
       })
       return;
+    }
+
+    // validate Cash 
+    if (dataTransaction.paymentMethod == "cash" && !validateCashFound(Number(dataTransaction.amount))) {
+      showNotification({
+        msj: "Cash not found",
+        color: {
+          text: "FF0000",
+          bg: "#ffb3b3"
+        }
+      })
+      return
     }
 
     //Validate Payment Mortgage
@@ -192,7 +204,7 @@ const AddNewTransactions = () => {
         break;
 
       case "credit_card_payment":
-        setCategoryToShow(paymentMethodAvailable.filter((method) => method !== "savings_account"));
+        setCategoryToShow(paymentMethodAvailable.filter((method) => (method !== "savings_account" && method !== "cash")));
         setDefaultCategory("credit_card_red");
         setDataTransaction((data) => ({
           ...data,

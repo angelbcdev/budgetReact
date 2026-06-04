@@ -57,7 +57,7 @@ const searchDataMonth = (search: "Current" | "Last") => {
   const dataCurrentMonth = searchDataMonth( "Current")
 
   const dataOldMonth = searchDataMonth("Last")
-  const moreData = [{category: 'ForStocksProfit', cuantity: stocksProfit} ,{category: 'Balance', cuantity: global.totalBalance}]
+  const moreData = [{category: 'ForStocksProfit', cuantity: stocksProfit} ,{category: 'Balance', cuantity: global.totalBalance},{category: 'Cash', cuantity: global.totalCash}]
   const dataToShow = [...moreData,...globalData]
 
   const totalAvailable = dataToShow.reduce((acc, item) => acc + item.cuantity, 0);
@@ -150,13 +150,14 @@ const setDataMonthToShow = (data?: ISummaryHomeData) => {
     savingsMortgage,
     savingsBank,
     savingsStocks,
-    savingsCrypto,
+      savingsCrypto,
+    totalCash,
     } = data;
   
  
 
   return {
-    Savings: [{ name: "Balance", value: totalBalance }],
+    Savings: [{ name: "Balance", value: totalBalance } ,{ name: "Cash", value: totalCash }],
     ["Credits Cards"]: [
       { name: "Red Card", value: totalCardRed },
       { name: "Blue Card", value: totalCardBlue },
@@ -173,7 +174,7 @@ const setDataMonthToShow = (data?: ISummaryHomeData) => {
 const emptyData = () => {
   const nodata = "x,xxx.xx";
   return {
-    Savings: [{ name: "Balance", value: nodata }],
+    Savings: [{ name: "Balance", value: nodata }, { name: "Cash", value: nodata }],
     ["Credits Cards"]: [
       { name: "Red Card", value: nodata },
       { name: "Blue Card", value: nodata },

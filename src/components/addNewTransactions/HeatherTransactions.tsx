@@ -19,7 +19,7 @@ export const HeathersTransactions = ({
   defaultTypeTransaction: string;
 }) => {
   const selectorRef = useRef<HTMLSelectElement>(null);
-  const { validateBalance , validateSavingsAccountBalance } = useBudgetContext();
+  const { validateBalance , validateSavingsAccountBalance ,validateCashFound } = useBudgetContext();
 
   const addValue = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -75,11 +75,14 @@ export const HeathersTransactions = ({
                
                
                 if (method === "checking" && !validateBalance()) {
-          
                   return;
                 }
 
                 if (method === "savings_account" && !validateSavingsAccountBalance()) {
+                  return;
+                }
+
+                if (method === "cash" && !validateCashFound()) {
                   return;
                 }
 

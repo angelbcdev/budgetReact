@@ -111,11 +111,25 @@ const BudgetHome = () => {
         <section
           onClick={manualNavigation}
           className="flex flex-col  gap-2  bg-linear-to-l to-blue-500 from-blue-800 h-50 p-4 text-white rounded-2xl  shadow-md">
-        <div className="flex flex-row gap-2">
+          <div className="flex flex-row justify-between">
+            <div>
+                 <p className="flex flex-row gap-2">
           {allIcons.wallet}
           <span className="text-mediumd font-bold ">Total Balance</span>
-        </div>
+          </p>
+          
         <p className="text-4xl font-bold ">${global?.totalBalance.toFixed(2) ?? 0}</p>
+            </div>
+            
+              <div className="flex flex-col justify-center items-center relative right-16">
+                 <p className="flex flex-row gap-2">
+        
+          <span className="text-mediumd  ">Total cash</span>
+          </p>
+          
+        <p className="text-xl  ">${global?.totalCash.toFixed(2) ?? 0}</p>
+         </div>
+        </div>
         <div className="bg-white h-px w-[90%] rounded mx-auto"></div>
         <div className="flex flex-row  gap-20 justify-between sm:pr-40 pr-10 ">
         

@@ -36,6 +36,7 @@ export interface IBudgetContext {
   udateLocalDataBase: () => void
   saveStocksProfit: (cuantity: number) => void
   validateStockFound:(cuantity: number) => boolean
+  validateCashFound:(cuantity?: number) => boolean
   validateSavingsAccountBalance: (cuantity?: number) => boolean
   getSubCategoryFor: (category: string) => SubCategory[]
   stocksProfit: number
@@ -109,6 +110,12 @@ export const BudgetContextProvider = ({ children }: { children: ReactElement }) 
   const validateCryptoFound = (cuantity: number = 0) => {
 
     return global?.savingsCrypto >= cuantity
+  }
+
+
+  const validateCashFound = (cuantity: number = 0) => {
+   
+    return global?.totalCash >= cuantity
   }
   const validatePaymentCard = (card: string, cuantity: number = 0, acction: (newAmount: string) => void): boolean => {
     
@@ -285,7 +292,7 @@ export const BudgetContextProvider = ({ children }: { children: ReactElement }) 
     udateLocalDataBase,
     validateSavingsAccountBalance,
     subcategoriesData, saveSubCategories, getSubCategoryFor, stocksProfit, saveStocksProfit,
-    validateCryptoFound,validateStockFound
+    validateCryptoFound,validateStockFound,validateCashFound
     
 
   }

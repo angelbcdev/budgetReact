@@ -1,3 +1,5 @@
+import { createMeta, type TCategory_Meta } from "./baseData";
+
 export type TransactionType =
   | "spending"
   | "saving"
@@ -8,13 +10,67 @@ export type TransactionType =
   | "sell_crypto"
   | "income";
 
-export type SavingsMethod = "mortgage" | "savings" | "stocks" | "crypto";
+const TransactionDetails = {
+  spending: createMeta("spending", "🛒", "#ef4444"),
+  saving: createMeta("saving", "💰", "#3b82f6"),
+  transaction_savings_to_mortgage: createMeta(
+    "transaction_savings_to_mortgage",
+    "⬅️",
+    "#14b8a6",
+  ),
+  transaction_mortgage_to_savings: createMeta(
+    "transaction_mortgage_to_savings",
+    "➡️",
+    "#16a34a",
+  ),
+  sell_stocks: createMeta("sell_stocks", "📉", "#f59e0b"),
+  sell_crypto: createMeta("sell_crypto", "🪙", "#f97316"),
+  income: createMeta("income", "💸", "#16a34a"),
+};
+
+export type SavingsMethod =
+  | "mortgage"
+  | "savings"
+  | "stocks"
+  | "crypto"
+  | "cash";
+
+const SavingsMethodDetails = {
+  mortgage: createMeta("mortgage", "🏠", "#14b8a6"),
+  savings: createMeta("savings", "💰", "#22c55e"),
+  stocks: createMeta("stocks", "📉", "#f59e0b"),
+  crypto: createMeta("crypto", "🪙", "#f97316"),
+  cash: createMeta("cash", "💵", "#16a34a"),
+};
 
 type TKEY_GOALS =
   | "savingsMortgage"
   | "savingsBank"
   | "savingsStocks"
   | "savingsCrypto";
+
+const TKEY_GOALSDetails = {
+  savingsMortgage: createMeta("savings Mortgage", "🏠", "#14b8a6"),
+  savingsBank: createMeta("savings Bank", "🏦", "#22c55e"),
+  savingsStocks: createMeta("savings Stocks", "📈", "#10b981"),
+  savingsCrypto: createMeta("savings Crypto", "₿", "#f59e0b"),
+};
+
+export type PaymentMethod =
+  | "checking"
+  | "savings_account"
+  | "credit_card_blue"
+  | "credit_card_red"
+  | "cards_payment"
+  | "paycheck"
+  | "cash"
+  | "mortgage";
+
+const PaymentMethodDetails = {
+  savings_account: createMeta("savings_account", "💰", "#1ffffa"),
+  cards_payment: createMeta("cards_payment", "💳", "#af06d1"),
+  paycheck: createMeta("paycheck", "💼", "#16a34a"),
+};
 
 export type Category =
   | "food"
@@ -35,122 +91,8 @@ export type Category =
   | "credit_card_blue"
   | "credit_card_red"
   | "sell_assets"
+  | "cash"
   | "house";
-
-export const allCategoryAvailable: Category[] = [
-  "food",
-  "transport",
-  "drinks",
-  "bills",
-  "amazon",
-  "savings",
-  "credit_card_payment",
-
-  "other",
-  "mortgage",
-  "stocks",
-  "crypto",
-  "checking",
-  "credit_card_blue",
-  "credit_card_red",
-  "house",
-];
-
-export type PaymentMethod =
-  | "checking"
-  | "savings_account"
-  | "credit_card_blue"
-  | "credit_card_red"
-  | "cards_payment"
-  | "paycheck"
-  | "mortgage";
-
-export type TallTypeCategory =
-  | Category
-  | TransactionType
-  | PaymentMethod
-  | SavingsMethod
-  | TKEY_GOALS
-  | "ForStocksProfit"
-  | "Balance";
-export interface TCategory_Meta {
-  icon: string;
-  bg: string;
-  label: string;
-}
-const formatLabel = (key: string) =>
-  key.replaceAll("_", " ").replace(/\b\w/g, (c) => c.toUpperCase());
-
-export const createMeta = (
-  key: string,
-  icon: string,
-  bg: string,
-): TCategory_Meta => ({
-  icon,
-  bg,
-  label: formatLabel(key),
-});
-
-export const CATEGORY_META: Record<TallTypeCategory, TCategory_Meta> = {
-  checking: createMeta("checking", "💵", "#22c55e"),
-  credit_card_red: createMeta("credit_card_red", "💳", "#ef4444"),
-  credit_card_blue: createMeta("credit_card_blue", "💳", "#3b82f6"),
-  paycheck: createMeta("paycheck", "💼", "#16a34a"),
-  mortgage: createMeta("mortgage", "🏠", "#0004ff"),
-  cards_payment: createMeta("cards_payment", "💳<", "#af06d1"),
-  food: createMeta("food", "🍔", "#f97316"),
-  transport: createMeta("transport", "🚗", "#3b82f6"),
-  drinks: createMeta("drinks", "🍹", "#ec4899"),
-  bills: createMeta("bills", "💸", "#eab308"),
-  amazon: createMeta("amazon", "📦", "#ec4899"),
-  savings: createMeta("savings", "💰", "#22c55e"),
-  credit_card_payment: createMeta("credit_card_payment", "💳", "#a855f7"),
-  mortgage_Payment: createMeta("mortgage_Payment", "🏠", "#ff0055"),
-  stocks: createMeta("stocks", "📉", "#22c55e"),
-
-  crypto: createMeta("crypto", "₿", "#22c55e"),
-  house: createMeta("house", "🏠", "#1fa304"),
-  other: createMeta("other", "❓", "#9ca3af"),
-  spending: createMeta("spending", "💸", "#f97316"),
-  saving: createMeta("saving", "💰", "#22c55e"),
-  income: createMeta("income", "💵", "#16a34a"),
-  savingsMortgage: createMeta("For Mortgage", "🏠", "#ffa34a"),
-  savingsBank: createMeta("For Bank", "$", "#16304a"),
-  savingsStocks: createMeta("For Stocks", "📉", "#fff003"),
-  savingsCrypto: createMeta("For Crypto", "₿", "#1fa3fa"),
-  savings_account: createMeta("Savings", "💰", "#1ffffa"),
-  Balance: createMeta("Balance", "💰", "#1faffa"),
-  ForStocksProfit: createMeta("For Stocks Profit", "📉", "#fff003"),
-  //TODO:
-  sell_assets: createMeta("sell assets", "📉", "#fff003"),
-  moneyTransactions: createMeta("For Stocks Profit", "📉", "#fff003"),
-  sell_stocks: createMeta("For Stocks Profit", "📉", "#fff003"),
-  sell_crypto: createMeta("For Stocks Profit", "📉", "#fff003"),
-  transaction_savings_to_mortgage: createMeta(
-    "For Stocks Profit",
-    "📉",
-    "#fff003",
-  ),
-  transaction_mortgage_to_savings: createMeta(
-    "For Stocks Profit",
-    "📉",
-    "#fff003",
-  ),
-};
-
-export function getCategoryMeta(category: TallTypeCategory): TCategory_Meta {
-  if (CATEGORY_META[category]) {
-    return CATEGORY_META[category];
-  } else {
-    return { icon: "?", bg: "#1d2a9b", label: "no added" };
-  }
-}
-
-export const typeTransactionAvailable: TransactionType[] = [
-  "spending",
-  "saving",
-  "credit_card_payment",
-];
 
 export const fliterCategoryAvailable: Category[] = [
   "food",
@@ -161,12 +103,6 @@ export const fliterCategoryAvailable: Category[] = [
   "drinks",
   "other",
 ];
-export const savingsMethodAvailable: SavingsMethod[] = [
-  "mortgage",
-  "savings",
-  "stocks",
-  "crypto",
-];
 
 export const paymentMethodAvailable: PaymentMethod[] = [
   "mortgage",
@@ -174,43 +110,71 @@ export const paymentMethodAvailable: PaymentMethod[] = [
   "credit_card_blue",
   "checking",
   "savings_account",
+  "cash",
 ];
 
-export const TRANSACTION_TYPE_META: Record<
-  TransactionType,
-  { label: string; fill: string }
-> = {
-  spending: { label: "Spending", fill: "#ef4444" },
-  credit_card_payment: { label: "CC Payment", fill: "#a855f7" },
-  saving: { label: "Saving", fill: "#3b82f6" },
-  income: { label: "Income", fill: "#22c55e" },
-  transaction_savings_to_mortgage: {
-    label: " Savings to Mortgage",
-    fill: "#3b82f6",
-  },
-  transaction_mortgage_to_savings: {
-    label: " Mortgage to Savings",
-    fill: "#16a34a",
-  },
-  sell_stocks: {
-    label: "",
-    fill: "#16a34a",
-  },
-  sell_crypto: {
-    label: "",
-    fill: "#0e91b9",
-  },
+export const typeTransactionAvailable: TransactionType[] = [
+  "spending",
+  "saving",
+  "credit_card_payment",
+];
+
+export const savingsMethodAvailable: SavingsMethod[] = [
+  "mortgage",
+  "savings",
+  "stocks",
+  "crypto",
+  "cash",
+];
+
+const CategoryDetails = {
+  food: createMeta("food", "🍔", "#f97316"),
+  transport: createMeta("transport", "🚗", "#3b82f6"),
+  drinks: createMeta("drinks", "🍹", "#ec4899"),
+  bills: createMeta("bills", "💸", "#eab308"),
+  amazon: createMeta("amazon", "📦", "#f59e0b"),
+  savings: createMeta("savings", "💰", "#22c55e"),
+  credit_card_payment: createMeta("credit_card_payment", "💳", "#8b5cf6"),
+  other: createMeta("other", "📁", "#6b7280"),
+  mortgage: createMeta("mortgage", "🏠", "#14b8a6"),
+  mortgage_payment: createMeta("mortgage_payment", "🏡", "#0891b2"),
+  moneyTransactions: createMeta("moneyTransactions", "💵", "#16a34a"),
+  stocks: createMeta("stocks", "📈", "#10b981"),
+  crypto: createMeta("crypto", "₿", "#f59e0b"),
+  checking: createMeta("checking", "🏦", "#0ea5e9"),
+  credit_card_blue: createMeta("credit_card_blue", "💙", "#2563eb"),
+  credit_card_red: createMeta("credit_card_red", "❤️", "#dc2626"),
+  sell_assets: createMeta("sell_assets", "💲", "#65a30d"),
+  house: createMeta("house", "🏡", "#84cc16"),
 };
 
-export const TYPE_META = {
-  spending: { label: "Spending", fill: "#ef4444" },
-  credit_card_payment: { label: "CC Payment", fill: "#a855f7" },
-  saving: { label: "Saving", fill: "#3b82f6" },
+export type TallTypeCategory =
+  | Category
+  | TransactionType
+  | PaymentMethod
+  | SavingsMethod
+  | TKEY_GOALS
+  | "ForStocksProfit"
+  | "Cash"
+  | "Balance";
+
+// const All_Category
+
+export const CATEGORY_META: Record<TallTypeCategory, TCategory_Meta> = {
+  ...CategoryDetails,
+  ...TransactionDetails,
+  ...SavingsMethodDetails,
+  ...PaymentMethodDetails,
+  ...TKEY_GOALSDetails,
+  ForStocksProfit: createMeta("For Stocks Profit", "📉", "#f59e0b"),
+  Balance: createMeta("Balance", "💵", "#16a34a"),
+  Cash: createMeta("Cash", "💵", "#16a34a"),
 };
 
-export const METHOD_META = {
-  paycheck: { label: "Paycheck", fill: "#22c55e" },
-  credit_card_blue: { label: "Credit Blue", fill: "#3b82f6" },
-  credit_card_red: { label: "Credit Red", fill: "#ef4444" },
-  checking: { label: "Checking", fill: "#eab308" },
-};
+export function getCategoryMeta(category: TallTypeCategory): TCategory_Meta {
+  if (CATEGORY_META[category as TallTypeCategory]) {
+    return CATEGORY_META[category as TallTypeCategory];
+  } else {
+    return { icon: "?", bg: "#1d2a9b", label: category + " not found" };
+  }
+}

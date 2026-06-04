@@ -48,6 +48,10 @@ export const validateEnoughBalance = ({
   const isChecking = paymentMethod === "checking";
   const isCard =
     paymentMethod === "credit_card_blue" || paymentMethod === "credit_card_red";
+  //  validation Cash
+  if (paymentMethod === "cash") {
+    return true;
+  }
 
   // Credit cards always allowed
   if (isCard) return true;
@@ -166,7 +170,7 @@ export const ajustDataForTransaction = ({
 
   const checkValidationsCategory = (): Category => {
     if (validatePayMortgage) {
-      return "mortgage_Payment";
+      return "mortgage_payment";
     }
     return dataTransaction.category;
   };

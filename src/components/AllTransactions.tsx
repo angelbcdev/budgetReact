@@ -202,7 +202,7 @@ const AllTransactions = () => {
                             key={txn.id}
                             className="flex items-center gap-3 py-1 px-4"
                             onClick={() => {
-                              console.log(txn);
+                              // console.log(txn);
                               manualNavigation(txn);
                             }}
                           >
@@ -351,7 +351,7 @@ const makeFilter = ({
     return dataForTransactions.filter(
       (t) =>
         t.type === "credit_card_payment" &&
-        t.category !== "mortgage_Payment" &&
+        t.category !== "mortgage_payment" &&
         t.category !== "checking",
     );
   }
@@ -420,6 +420,7 @@ const paymentLabels: Record<PaymentMethod, string> = {
   mortgage: "Mortgage Account",
   cards_payment: "Card payment",
   savings_account: "Savings DCU",
+  cash: "Cash",
 };
 
 function formatAmount(n: number) {
