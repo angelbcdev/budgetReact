@@ -35,7 +35,7 @@ const SelectorContainer = ({
               <button
                 key={type}
                 onClick={() => changeOtion(type)}
-                className={`px-2 py-1 w-full h-8 rounded-md ${
+                className={`px-2 py-1 w-21 h-8 rounded-md ${
                   isSelected
                     ? "bg-white text-blue-600"
                     : "text-gray-700"

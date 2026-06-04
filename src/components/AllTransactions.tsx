@@ -32,7 +32,7 @@ const AllTransactions = () => {
 
   const allSubCategoriesInUse = subcategoriesData.map((s) => s.title).sort((a, b) => a.localeCompare(b))
   const filterHeathers = {
-    "Summary": ["All", "Mortgage", "Spend", "Earn", "Saved"],
+    "Summary": ["All", "Spend", "Earn", "Saved"],
     "Categories": [...fliterCategoryAvailable.map((c) => c)],
     "Cards": ["Cards", "Blue Card", "Red Card", "C.Payment"],
     "Sub Cat": allSubCategoriesInUse,
@@ -332,11 +332,9 @@ const makeFilter = ({
   if (!extraFilters.includes(activeFilter)) {
     return dataForTransactions.filter((t) => t.category === activeFilter);
   }
-  if (activeFilter === "Mortgage") {
-    return dataForTransactions.filter((t) => t.category === "mortgage_Payment");
-  }
+ 
   if (activeFilter === "Spend") {
-    return dataForTransactions.filter((t) => t.type === "spending");
+    return dataForTransactions.filter((t) => t.type === "spending" || t.category === "mortgage_payment");
   }
   if (activeFilter === "Earn") {
     return dataForTransactions.filter(

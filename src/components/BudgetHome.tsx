@@ -63,25 +63,25 @@ const BudgetHome = () => {
   const dataSavingsGoals = [
     {
       title: "Mortgage Savings Goal",
-      cuantity: summaryHomeData?.savingsMortgage.toFixed(2) ?? 0,
+      cuantity: Number(summaryHomeData?.savingsMortgage.toFixed(2)) > 0 ? summaryHomeData?.savingsMortgage.toFixed(2) : 0,
       Total: currentMonthGoals?.savingsMortgage.toFixed(2) ?? 0,
       
     },
     {
       title: "Savings DCU",
-      cuantity: summaryHomeData?.savingsBank.toFixed(2) ?? 0,
+      cuantity:  Number(summaryHomeData?.savingsBank.toFixed(2)) > 0 ? summaryHomeData?.savingsBank.toFixed(2) : 0,
       Total: currentMonthGoals?.savingsBank.toFixed(2) ?? 0,
       
     },
     {
       title: "Stocks Market",
-      cuantity: summaryHomeData?.savingsStocks.toFixed(2) ?? 0,
+      cuantity: Number(summaryHomeData?.savingsStocks.toFixed(2)) > 0 ? summaryHomeData?.savingsStocks.toFixed(2) : 0,
       Total: currentMonthGoals?.savingsStocks.toFixed(2) ?? 0,
     },
     
     {
       title: "crypto Currency",
-      cuantity: summaryHomeData?.savingsCrypto.toFixed(2) ?? 0,
+      cuantity: Number(summaryHomeData?.savingsCrypto.toFixed(2)) > 0 ? summaryHomeData?.savingsCrypto.toFixed(2) : 0,
       Total: currentMonthGoals?.savingsCrypto.toFixed(2) ?? 0,
       
     }
@@ -166,6 +166,8 @@ const BudgetHome = () => {
                      
                     if (percentage > 100) {
                       percentage = 100
+                    }else if (percentage < 0) {
+                      percentage = 0
                     }
                   
                   return (

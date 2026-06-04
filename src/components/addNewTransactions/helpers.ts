@@ -51,21 +51,27 @@ export const validateEnoughBalance = ({
 
   // Credit cards always allowed
   if (isCard) return true;
-  //using savings account
-  if (paymentMethod === "savings_account" && type === "spending") {
-    return validateSavingsAccountBalance(numericAmount);
-  }
 
   // Adding funds to checking
   if (category === "checking" && type === "credit_card_payment") return true;
+
+  //  validation mortgage
+  if (category === "mortgage" && type === "credit_card_payment") {
+    return true;
+  }
 
   // Actions that require balance validation
   if (isChecking && (type === "spending" || type === "credit_card_payment")) {
     return validateBalance(numericAmount);
   }
 
+  //using savings account
+  if (paymentMethod === "savings_account" && type === "spending") {
+    return validateSavingsAccountBalance(numericAmount);
+  }
+
   //  validation needed
-  if (isChecking && (type === "saving" || category === "mortgage")) {
+  if (isChecking && type === "saving") {
     return validateBalance(numericAmount);
   }
 

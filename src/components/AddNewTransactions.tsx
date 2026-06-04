@@ -92,19 +92,21 @@ const AddNewTransactions = () => {
   const createTransaction = () => {
 
 
-    //Validate Balance
-    if (!validateEnoughBalance({ dataTransaction, validateBalance , validateSavingsAccountBalance})
+    console.log(dataTransaction)
 
-    ) {
-      showNotification({
-        msj: "Exceeded balance",
-        color: {
-          text: "#FF0000",
-          bg: "#ffb3b3"
-        }
-      })
-      return;
-    }
+    // //Validate Balance
+    // if (!validateEnoughBalance({ dataTransaction, validateBalance , validateSavingsAccountBalance})
+
+    // ) {
+    //   showNotification({
+    //     msj: "Exceeded balance",
+    //     color: {
+    //       text: "#FF0000",
+    //       bg: "#ffb3b3"
+    //     }
+    //   })
+    //   return;
+    // }
     // Validate Payment Card
 
 
@@ -142,7 +144,8 @@ const AddNewTransactions = () => {
 
 
    
-    const dataForSave:Transaction = ajustDataForTransaction({dataTransaction})
+    const dataForSave: Transaction = ajustDataForTransaction({ dataTransaction })
+    
 
     if (!dataForSave) return
 

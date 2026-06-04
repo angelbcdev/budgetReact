@@ -25,9 +25,8 @@ export type Category =
   | "savings"
   | "credit_card_payment"
   | "other"
-  
   | "mortgage"
-  | "mortgage_Payment"
+  | "mortgage_payment"
   | "moneyTransactions"
   | "savings"
   | "stocks"
@@ -46,7 +45,7 @@ export const allCategoryAvailable: Category[] = [
   "amazon",
   "savings",
   "credit_card_payment",
-  
+
   "other",
   "mortgage",
   "stocks",
@@ -125,10 +124,18 @@ export const CATEGORY_META: Record<TallTypeCategory, TCategory_Meta> = {
   //TODO:
   sell_assets: createMeta("sell assets", "📉", "#fff003"),
   moneyTransactions: createMeta("For Stocks Profit", "📉", "#fff003"),
-  sell_stocks:createMeta("For Stocks Profit", "📉", "#fff003"),
+  sell_stocks: createMeta("For Stocks Profit", "📉", "#fff003"),
   sell_crypto: createMeta("For Stocks Profit", "📉", "#fff003"),
-  transaction_savings_to_mortgage: createMeta("For Stocks Profit", "📉", "#fff003"),
-  transaction_mortgage_to_savings: createMeta("For Stocks Profit", "📉", "#fff003")
+  transaction_savings_to_mortgage: createMeta(
+    "For Stocks Profit",
+    "📉",
+    "#fff003",
+  ),
+  transaction_mortgage_to_savings: createMeta(
+    "For Stocks Profit",
+    "📉",
+    "#fff003",
+  ),
 };
 
 export function getCategoryMeta(category: TallTypeCategory): TCategory_Meta {
@@ -179,20 +186,20 @@ export const TRANSACTION_TYPE_META: Record<
   income: { label: "Income", fill: "#22c55e" },
   transaction_savings_to_mortgage: {
     label: " Savings to Mortgage",
-    fill: "#3b82f6"
+    fill: "#3b82f6",
   },
   transaction_mortgage_to_savings: {
     label: " Mortgage to Savings",
-    fill: "#16a34a"
+    fill: "#16a34a",
   },
   sell_stocks: {
     label: "",
-    fill: "#16a34a"
+    fill: "#16a34a",
   },
   sell_crypto: {
     label: "",
-    fill: "#0e91b9"
-  }
+    fill: "#0e91b9",
+  },
 };
 
 export const TYPE_META = {
