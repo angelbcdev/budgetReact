@@ -8,9 +8,13 @@ import type { Transaction } from "../../Models/DataTransactions";
 
 export type TKEY_SUMMARY =
   | "savingsMortgage"
+  | "monthlyMortgage"
   | "savingsBank"
+  | "monthlyBank"
   | "savingsStocks"
+  | "monthlyStocks"
   | "savingsCrypto"
+  | "monthlyCrypto"
   | "totalBalance"
   | "totalIncome"
   | "totalExpenses"
@@ -27,9 +31,14 @@ export interface ISummaryHomeData {
   totalCardBlue: number;
   totalCheckingAccount: number;
   savingsMortgage: number;
+  monthlyMortgage: number;
+
   savingsBank: number;
+  monthlyBank: number;
   savingsStocks: number;
+  monthlyStocks: number;
   savingsCrypto: number;
+  monthlyCrypto: number;
   databyCatefory: Record<Category, number>;
 }
 
@@ -55,8 +64,12 @@ export const validateSavingDataToShow: TKEY_SUMMARY[] = [
     totalCardBlue: 0,
     totalCheckingAccount: 0,
     savingsMortgage: 0,
+    monthlyMortgage: 0,
     savingsBank: 0,
     savingsStocks: 0,
+    monthlyBank: 0,
+    monthlyStocks: 0,
+    monthlyCrypto: 0,
     savingsCrypto: 0,
     databyCatefory: {
       food: 0,
@@ -108,6 +121,10 @@ export function useSummary(transactions: Transaction[]) {
     });
 
     return {
+      monthlyBank:          a.monthlyBank            + b.monthlyBank,
+      monthlyCrypto:        a.monthlyCrypto          + b.monthlyCrypto,
+      monthlyStocks:        a.monthlyStocks          + b.monthlyStocks,
+      monthlyMortgage:      a.monthlyMortgage       + b.monthlyMortgage,
       totalBalance:         a.totalBalance          + b.totalBalance,
       totalCash:            a.totalCash             + b.totalCash,
       totalIncome:          a.totalIncome           + b.totalIncome,
@@ -225,16 +242,20 @@ export function useSummary(transactions: Transaction[]) {
 
       switch (t.category) {
         case "mortgage":
+          acc.monthlyMortgage += amount;
           acc.savingsMortgage += amount;
           break;
         case "savings":
           acc.savingsBank += amount;
+          acc.monthlyBank += amount;
           break;
         case "stocks":
           acc.savingsStocks += amount;
+          acc.monthlyStocks += amount;
           break;
         case "crypto":
           acc.savingsCrypto += amount;
+          acc.monthlyCrypto += amount;
           break;
       }
       return;

@@ -51,12 +51,13 @@ const emptyData: IMultiTrnsaction = {
 const MultiTransactions = () => {
   const { saveMultipleTransaction, getSubCategoryFor } = useBudgetContext();
   const minRow = 2;
-  const [numberTransactions, setNumberTransactions] = useState(minRow);
+  
   const [allNewsTransactions, setAllNewTransactions] = useState<
     IMultiTrnsaction[]
   >(Array.from({ length: minRow }, () => ({ ...emptyData })));
   const maxRow = 10;
   const [dateForRow, setDateForRow] = useState(new Date().toISOString().split("T")[0]);
+  const [numberTransactions, setNumberTransactions] = useState(allNewsTransactions.length );
 
   const handleRows = (action: "+" | "-") => {
     setAllNewTransactions((prev) => {
@@ -85,6 +86,8 @@ const MultiTransactions = () => {
         Array.from({ length: minRow }, () => ({ ...emptyData })),
       );
     }, 50);
+
+    setNumberTransactions(minRow);
   };
 
   const setAllBillatInce = () => {
@@ -109,7 +112,9 @@ const MultiTransactions = () => {
         }
       })
       .filter(Boolean);
-    setAllNewTransactions(billsData as IMultiTrnsaction[] );
+    setAllNewTransactions(billsData as IMultiTrnsaction[]);
+
+    setNumberTransactions(billsData.length);
   };
 
   const createMultipleTransactions = () => {
@@ -184,7 +189,7 @@ const MultiTransactions = () => {
           <div className="bg-white rounded-md px-4">
             {allNewsTransactions.map((dataRow, i) => (
               <RowNewTransactions
-                key={i}
+                key={dataRow.id}
                 dataRow={dataRow}
                 positionInList={i}
                 setAllNewTransactions={setAllNewTransactions}
@@ -324,7 +329,7 @@ const RowNewTransactions = ({
           const data = subcategoriesData.find((sc) => sc.title === subCategory.title) || new SubCategory({id: null, title: subCategory.title, icon: "", color: "", category: []}) 
             
           return (
-             <SubCategortCardForList sc={data} editSubCategory={() => updateSubCategories(subCategory.title.toLowerCase())} size="M" showColor={dataRow.subcategory.includes(subCategory.title)}  />);
+             <SubCategortCardForList key={subCategory.title} sc={data} editSubCategory={() => updateSubCategories(subCategory.title.toLowerCase())} size="M" showColor={dataRow.subcategory.includes(subCategory.title)}  />);
         })}
       </div>
     </div>
@@ -377,6 +382,7 @@ const MySelector = ({
       </span>
 
       <select
+        title={title}
         name={name}
         defaultValue={"hello"}
         value={value}

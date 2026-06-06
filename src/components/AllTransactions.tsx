@@ -11,7 +11,7 @@ import type { Transaction } from "../Models/DataTransactions";
 import SelectorContainer from "../UI/SelectorContainer";
 import { BiToogleButton } from "../UI/DataShowListCategory";
 import { VALID_ROUTES } from "../Routes/routes";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { SubCategoryCard } from "../UI/SubCategoryCard";
 
 const extraFilters = [
@@ -27,8 +27,16 @@ const extraFilters = [
 
 const AllTransactions = () => {
   const { transactionsData, subcategoriesData } = useBudgetContext();
-  const [activeHeather, setActiveHeather] = useState("Summary");
-  const [activeFilter, setActiveFilter] = useState("All");
+
+     const location = useLocation();
+  
+
+  
+
+
+
+  const [activeHeather, setActiveHeather] = useState(location?.state?.heather || "Summary");
+  const [activeFilter, setActiveFilter] = useState(location?.state ?.filter || "All");
 
   const allSubCategoriesInUse = subcategoriesData.map((s) => s.title).sort((a, b) => a.localeCompare(b))
   const filterHeathers = {
@@ -39,9 +47,7 @@ const AllTransactions = () => {
   }
     
     
-    
-    
-    
+   
     
     
 

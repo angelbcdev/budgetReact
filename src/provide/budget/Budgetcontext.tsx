@@ -78,9 +78,11 @@ export const BudgetContextProvider = ({ children }: { children: ReactElement }) 
   
   const [currentMountIndex, setCurrentMountIndex] = useState(allMonthsData.findIndex((f) => f === lastMonth))
 
-  
   const currentMonthKey = allMonthsData[currentMountIndex] || lastMonth
+  
 
+  
+  
   const currentMonthGoals = goalsMonthly[currentMonthKey || lastMonth ] ?? goalsDataDefault
 
   const summaryHomeData = monthly[currentMonthKey]
