@@ -158,9 +158,7 @@ const AddNewTransactions = () => {
    
     const dataForSave: Transaction = ajustDataForTransaction({ dataTransaction })
     
-    console.log(dataForSave)
-
-    return
+    
 
     if (!dataForSave) return
 
