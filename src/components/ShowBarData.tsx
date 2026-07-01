@@ -6,6 +6,21 @@ import { useBudgetContext } from "../provide/budget";
 
 
 
+const nameMonths = {
+  "01": "January",
+  "02": "February",
+  "03": "March",
+  "04": "April",
+  "05": "May",
+  "06": "June",
+  "07": "July",
+  "08": "August",
+  "09": "September",
+  "10": "October",
+  "11": "November",
+  "12": "December",
+}
+
 
 const ShowBarData = () => {
   const { allMonthsDataSort } = useBudgetContext();
@@ -22,7 +37,7 @@ const ShowBarData = () => {
   "#EC4899", // September - Pink
   "#6366F1", // October - Indigo
   "#14B8A6", // November - Teal
-  "#A855F7", // December - Purple
+  "#FF106a", // December - Purple
   ];
   
 
@@ -54,8 +69,8 @@ const ShowBarData = () => {
 
   if (!ctx) return;
 
-  canvas.width =360;
-  canvas.height = Math.max(320, Object.keys(data).length * 30 + 40);
+  canvas.width =370;
+  canvas.height = Math.max(320, Object.keys(data).length * 30 -8);
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = "white";
@@ -88,7 +103,7 @@ const ShowBarData = () => {
   const maxValue = Math.max(...values, 1);
 
   // Layout
-  const leftMargin = 50;
+  const leftMargin = 80;
   const rightMargin = 90;
   const topMargin = 30;
 
@@ -97,10 +112,10 @@ const ShowBarData = () => {
 
   const chartWidth =
     canvas.width - leftMargin - rightMargin;
-
+  let totalToShow = 0;
   months.forEach((month, index) => {
     const value = values[index];
-
+    totalToShow += value;
     const width = (value / maxValue) * chartWidth;
 
     const y = topMargin + index * rowHeight;
@@ -108,12 +123,12 @@ const ShowBarData = () => {
     // Month
     ctx.font = "14px Roboto";
     ctx.fillStyle = "black";
-    ctx.textAlign = "right";
+    ctx.textAlign = "left";
     ctx.textBaseline = "middle";
 
     ctx.fillText(
-      month.slice(5),
-      leftMargin - 10,
+      nameMonths[month.slice(5) as keyof typeof nameMonths],
+      leftMargin - 70,
       y + barHeight / 2
     );
 
@@ -144,7 +159,7 @@ const ShowBarData = () => {
 
   // Vertical axis
   ctx.beginPath();
-  ctx.moveTo(leftMargin, 5);
+  ctx.moveTo(leftMargin ,25);
   ctx.lineTo(leftMargin, canvas.height - 15);
   ctx.strokeStyle = "#444";
    ctx.stroke();
@@ -157,7 +172,20 @@ const ShowBarData = () => {
     canvas.height - 15
   );
   ctx.strokeStyle = "#444";
-  ctx.stroke();
+   ctx.stroke();
+   ctx.font = "18px Roboto";
+   ctx.fillStyle = "black";
+   ctx.textAlign = "left";
+   ctx.textBaseline = "middle";
+   
+    ctx.fillText(
+      totalToShow.toLocaleString("en-US", {
+        style: "currency",
+        currency: "USD",
+      }),
+      canvas.width - 84,
+      canvas.height - 15
+    );
 
 }, [
   data,
@@ -166,7 +194,8 @@ const ShowBarData = () => {
 ]);
 
   return <section className=" w-full flex flex-col items-center justify-center">
-    <canvas className="rounded-md " ref={canvasRef} />
+    <p className="text-md font-semibold text-start  uppercase  w-full   mb-2" >Data by year</p>
+    <canvas className="rounded-md shadow-md border border-gray-200" ref={canvasRef} />
     <div>
       
       {
@@ -184,8 +213,8 @@ export default ShowBarData;
 const ShowOptions = ({title, action, data,validate}: {title: string, action: (item: keyof ISummaryHomeData) => void, data: string[], validate: string}) => {
   return (
     <section className="  w-92 py-4 " >
-      <p className="text-md font-semibold   uppercase shadow-2xl " >{title}</p>
-      <div className="grid grid-cols-3 gap-2 p-px   border-b  border-gray-400 pb-2">
+      <p className="text-md font-semibold   uppercase   mb-2" >Filtered by {title}</p>
+      <div className="grid grid-cols-3 gap-px p-px   border-b  border-gray-400 pb-2">
         {data.map((item) => {
           const isSelected = item === validate;
           let finalTile = item
@@ -197,10 +226,8 @@ const ShowOptions = ({title, action, data,validate}: {title: string, action: (it
             finalTile = item.split("_").join(" ")
           }
           return(
-            <p key={item} onClick={() => action(item as keyof ISummaryHomeData)} className={`text-sm rounded-sm text-nowrap truncate capitalize w-full overflow-hidden cursor-pointer text-center px-2 py-1 ${isSelected ? "text-blue-600 bg-white shadow-sm" : finalTile === "Back" ? "text-red-600 bg-white" : "text-gray-600 bg-gray-300"}`}  >
-              {
-                finalTile === "Back" && <span>{"< "}</span>
-              }
+            <p key={item} onClick={() => action(item as keyof ISummaryHomeData)} className={`text-sm rounded-sm relative text-nowrap truncate capitalize w-full overflow-hidden cursor-pointer text-center px-2 py-1 ${isSelected ? "text-blue-600 bg-white shadow-sm" : finalTile === "Back" ? "text-red-600 bg-white" : "text-gray-600 bg-gray-300"}`}  >
+              
               {finalTile}</p>
           )
         })}

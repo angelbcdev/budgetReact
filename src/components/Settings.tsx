@@ -137,7 +137,7 @@ const Settings = () => {
         </div>}
          <section className="flex flex-row w-full max-w-94 mx-auto justify-between  items-end mb-2 ">
         <div className="flex flex-row gap-4  pt-4  relative w-44  items-center ">
-          <h3 className="text-2xl font-bold ">{curentDate.month}</h3>
+          <h3 className="text-2xl font-bold ">{curentDate.nameMonth}</h3>
           <h3 className="text-2xl font-light text-gray-600 relative  ">
             {" "}
             {curentDate.year}

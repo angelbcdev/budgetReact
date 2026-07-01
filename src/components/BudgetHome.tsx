@@ -224,7 +224,8 @@ const CardStatus = ({dataCards , onClick}: {dataCards: {
 }
 
 const BillsRemaings = ({onClick}: {onClick?: () => void}) => {
-  const { subcategoriesData, transactionsData, lastMonth } = useBudgetContext();
+  const { subcategoriesData, transactionsData, curentDate } = useBudgetContext();
+  const lastMonth = `${curentDate}-${curentDate.month < 10 ?  `0${curentDate.month}` :  `${curentDate.month}`}`;
 
   const billsAvailable = subcategoriesData.filter((f) =>
     f.category.includes("bills"),
