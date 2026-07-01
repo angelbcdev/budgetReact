@@ -7,6 +7,7 @@ import { DataShowListCategory } from "../UI/DataShowListCategory";
 import { useNavigate } from "react-router";
 import { VALID_ROUTES } from "../Routes/routes";
 import BlurContainer from "../UI/BlurContainer";
+import ChangeMonth from "../UI/changeMonth";
 
 const SubCuantity = ({
   icon,
@@ -96,11 +97,14 @@ const BudgetHome = () => {
       <main className="flex flex-col    w-98 sm:w-160 mx-auto">
         <div className="flex flex-row justify-between items-end mb-4 ">
           <div className="flex flex-row gap-4 pl-2 pt-4  relative w-44 items-center ">
-            <h3 className="text-5xl font-bold ">{curentDate.month}</h3>
+            <h3 className="text-5xl font-bold ">{curentDate.nameMonth}</h3>
             <h6 className="text-2xl font-light text-gray-600 relative  top-3">
               {" "}
               {curentDate.year}
             </h6>
+          </div>
+          <div className=" w-40">
+             <ChangeMonth />
           </div>
         </div>
 
@@ -275,9 +279,10 @@ const SaveGoals = ({dataSavingsGoals , onClick}: {dataSavingsGoals: {
                 Savings Goals{" "}
               </p>
               <div className="grid grid-cols-2 grid-rows-2 gap-2 justify-center pt-2 ">
-                {dataSavingsGoals.map((card) => {
+        {dataSavingsGoals.map((card) => {
+                  const realAmount = Number(card.cuantity) || 0;
                   let percentage =
-                    (Number(card.cuantity) / Number(card.Total)) * 100;
+                    (realAmount / Number(card.Total)) * 100 ;
 
                   if (percentage > 100) {
                     percentage = 100;
@@ -298,7 +303,7 @@ const SaveGoals = ({dataSavingsGoals , onClick}: {dataSavingsGoals: {
                         ></div>
                       </div>
                       <p className="text-sm text-gray-600 text-right font-light ">
-                        ${card.cuantity} / ${card.Total}
+                        ${realAmount} / ${card.Total}
                       </p>
                     </div>
                   );

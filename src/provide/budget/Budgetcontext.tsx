@@ -43,7 +43,8 @@ export interface IBudgetContext {
   global: ISummaryHomeData
   curentDate:{
     year: string,
-    month: string,
+    month: number,
+    nameMonth: string
   }
   validateBalance: (amount?: number) => boolean
   validateMortgageFound: (amount?: number) => boolean
@@ -270,7 +271,8 @@ export const BudgetContextProvider = ({ children }: { children: ReactElement }) 
 
   const curentDate = {
     year: year.toString(),
-    month: nameMonth,
+    nameMonth: nameMonth,
+    month: month - 1,
   }
   const values = {
     title: "this is a test",

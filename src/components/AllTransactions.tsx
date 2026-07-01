@@ -13,6 +13,8 @@ import { BiToogleButton } from "../UI/DataShowListCategory";
 import { VALID_ROUTES } from "../Routes/routes";
 import { useLocation, useNavigate } from "react-router";
 import { SubCategoryCard } from "../UI/SubCategoryCard";
+import ChangeMonth from "../UI/changeMonth";
+
 
 const extraFilters = [
   "Mortgage",
@@ -26,7 +28,7 @@ const extraFilters = [
 ];
 
 const AllTransactions = () => {
-  const { transactionsData, subcategoriesData } = useBudgetContext();
+  const { transactionsData, subcategoriesData  ,curentDate } = useBudgetContext();
 
      const location = useLocation();
   
@@ -54,10 +56,8 @@ const AllTransactions = () => {
   const [search, setSearch] = useState("");
   const inputRer = useRef<HTMLInputElement>(null);
 
-  const currentMonth = new Date().getMonth();
-  const currentMonthName = new Date().toLocaleString("en-US", {
-    month: "long",
-  });
+  const currentMonth = curentDate ;
+
   const [filterByMonth, setFilterByMonth] = useState(true);
   const navigate = useNavigate();
   const dataForTransactions = transactionsData; //.filter(t => fliterCategoryAvailable.includes(t.category));
@@ -68,10 +68,10 @@ const AllTransactions = () => {
     dataForTransactions,
     allSubCategoriesInUse
   });
-
+  
   const groups: Record<string, Transaction[]> = groupByDate(
     filtered,
-    currentMonth,
+    currentMonth.month,
     filterByMonth,
   );
 
@@ -91,28 +91,34 @@ const AllTransactions = () => {
   const hasFilterActive = search.length > 1 || activeFilter !== "All";
   const totalForFilter = filtered.reduce((acc, value) => {
     const data = new Date(value.date);
-    if (filterByMonth && data.getMonth() !== currentMonth) return acc;
+    if (filterByMonth && data.getMonth() !== currentMonth.month) return acc;
     return (acc += value.amount);
   }, 0);
   return (
     <Layout>
-      <div className="   mx-auto">
+      <div className="   mx-auto flex flex-col gap-4">
         <div className="sticky top-0  bg-white p-4 ">
           <div className="flex flex-row gap-4 pl-2 pt-4  relative  items-center  ">
             <h3 className="text-3xl font-bold ">Transactions</h3>
             <h6 className="text-3xl font-light text-gray-600 ">
               {" "}
-              {currentMonthName}
+              {curentDate.nameMonth}
             </h6>
           </div>
 
-          <div className="flex gap-2 mt-2  flex-row items-center justify-between w-90 sm:w-160 mx-auto">
+         
+
+         
+        </div>
+   
+        {/* HEADER */}
+         <div className="flex gap-2 mt-1  flex-row items-center justify-between w-90 sm:w-160 mx-auto">
             <input
               ref={inputRer}
               onChange={(e) => setSearch(e.target.value)}
               type="text"
               placeholder="Search"
-              className="bg-gray-50 border border-gray-300 text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-80 sm:w-140 p-2.5"
+              className="bg-gray-50 h-8 border border-gray-300 text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-80 sm:w-140 p-2.5"
             />
             <button
               onClick={resetSearch}
@@ -120,15 +126,13 @@ const AllTransactions = () => {
                 hasFilterActive
                   ? "text-white bg-red-500 border-white shadow"
                   : "text-gray-500 bg-gray-200 border-gray-500 "
-              } border  size-10 rounded-full flex justify-center items-center `}
+              } border  size-8 rounded-full flex justify-center items-center `}
             >
               {allIcons.trashCan}
             </button>
           </div>
-        </div>
-
-        {/* HEADER */}
-        <div className="sticky w-92 sm:w-160 mx-auto top-0  backdrop-blur-xl border-b border-black/10 px-2 pt-2 pb-1">
+        <div className="sticky w-92 sm:w-160 mx-auto top-0  backdrop-blur-xl border-b border-black/10 px-2 flex flex-col gap-1 pb-2 pt-1">
+         
           <div className="flex justify-between items-end">
             <h1 className="text-xl font-semibold text-gray-900">Categories</h1>
    
@@ -139,7 +143,7 @@ const AllTransactions = () => {
             )}
             <BiToogleButton
               data={[true, false]}
-              title={["Month", "All"]}
+              title={[curentDate.nameMonth, "All"]}
               valueSort={filterByMonth}
               setSortToggle={setFilterByMonth}
             />
@@ -175,6 +179,11 @@ const AllTransactions = () => {
               />
               </div>
           </div>
+          
+            {filterByMonth &&
+              <ChangeMonth />
+            }
+          
         </div>
 
         <div className="h-110 w-88 sm:w-160   overflow-scroll rounded-b-2xl    mx-auto ">
@@ -290,7 +299,7 @@ const AllTransactions = () => {
                 </section>
               </div>
             ))}
-          <div className=" w-full h-20"></div>
+          <div className=" w-full h-40"></div>
         </div>
       </div>
     </Layout>

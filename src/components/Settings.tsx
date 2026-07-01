@@ -10,7 +10,7 @@ import { MyInputText } from "./MultiTransactions";
 
 
 const Settings = () => {
-  const { changeMountToShow, curentDate, currentMonthGoals,stocksProfit ,saveStocksProfit } =
+  const { changeMountToShow ,currentMonthGoals, curentDate, stocksProfit ,saveStocksProfit } =
     useBudgetContext();
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);

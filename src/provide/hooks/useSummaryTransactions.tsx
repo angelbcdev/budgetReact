@@ -55,7 +55,7 @@ export const validateSavingDataToShow: TKEY_SUMMARY[] = [
   "savingsCrypto",
 ];
 
-  const createEmptySummary = (): ISummaryHomeData => ({
+  export const createEmptySummary = (): ISummaryHomeData => ({
     totalBalance: 0,
     totalCash: 0,
     totalIncome: 0,
