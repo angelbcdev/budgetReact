@@ -7,12 +7,12 @@ import {
   type ReactElement,
 } from "react";
 import { BudgetContext } from "./data";
-import {        GoogleSheetsServiciesTransactions } from "../../Services/Servicies";
+import {        GoogleSheetsServiciesTransactions, ServiciesLocalTransactions } from "../../Services/Servicies";
 import { Transaction } from "../../Models/DataTransactions";
 
 import { useSummary, type ISummaryHomeData } from "../hooks/useSummaryTransactions";
 import { goalsDataDefault, type TKEY_GOALS, type TKEY_MONTHS } from "../interfaces";
-import { GoogleSheetsServiciesSubCategories,  type IServiciesDBSubCategories } from "../../Services/ServiciesSubCategory";
+import { GoogleSheetsServiciesSubCategories,  ServiciesLocalSubCategories,  type IServiciesDBSubCategories } from "../../Services/ServiciesSubCategory";
 import type { SubCategory } from "../../components/SubCategoryEddit";
 // import { settings } from "../../api";
 
@@ -143,8 +143,8 @@ export const BudgetContextProvider = ({ children }: { children: ReactElement }) 
   }
 
   
-  const dataBase =new GoogleSheetsServiciesTransactions() // new ServiciesLocalTransactions()  //
-  const dataBaseSubCategories:IServiciesDBSubCategories = new GoogleSheetsServiciesSubCategories() // new ServiciesLocalSubCategories() //
+  const dataBase = new ServiciesLocalTransactions()  // new GoogleSheetsServiciesTransactions() //
+  const dataBaseSubCategories:IServiciesDBSubCategories =  new ServiciesLocalSubCategories() //new GoogleSheetsServiciesSubCategories() //
 
   useEffect(() => {
 

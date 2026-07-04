@@ -2,8 +2,50 @@ import { useEffect, useRef, useState } from "react";
 import type { ISummaryHomeData } from "../provide/hooks/useSummaryTransactions";
 import {createEmptySummary } from "../provide/hooks/useSummaryTransactions";
 import { useBudgetContext } from "../provide/budget";
+import ChangeMonth from "../UI/changeMonth";
 
 
+
+type TShowData = "Year" | "Monthtly"
+
+const ShowBarData = ()=>{
+  const [showData , setShowData]= useState<TShowData>("Monthtly")
+
+  const changeView = ()=>{
+    setShowData(showData == "Year" ? "Monthtly" : "Year")
+  }
+  return(<section>
+    <div className="flex justify-center mb-2">
+     <p className="text-md font-semibold text-start  uppercase  w-full   mb-2" >Data by {showData}</p>
+
+     <button className=" w-48 bg-red-200 rounded-xl font-bold text-md " onClick={changeView}>Change view</button>
+     </div>
+  {showData == "Year" && <ShowBarDataYeard/>}
+  {showData == "Monthtly" && <ShowDataMonth/>}
+  </section>)
+}
+
+
+const ShowDataMonth =()=>{
+    const {
+    summaryHomeData,
+    curentDate,
+    global,
+    currentMonthGoals,
+   
+  } = useBudgetContext();
+
+  return(
+    <section>
+      <div className=" w-90 flex justify-between ">
+           <span>  {curentDate.nameMonth}</span>
+             <div className=" w-30">
+              <ChangeMonth />
+             </div>
+          </div>
+    </section>
+  )
+}
 
 
 const nameMonths = {
@@ -22,7 +64,10 @@ const nameMonths = {
 }
 
 
-const ShowBarData = () => {
+
+
+
+const ShowBarDataYeard = () => {
   const { allMonthsDataSort } = useBudgetContext();
   const data = allMonthsDataSort
   const colorsByMonths = [
@@ -194,7 +239,7 @@ const ShowBarData = () => {
 ]);
 
   return <section className=" w-full flex flex-col items-center justify-center">
-    <p className="text-md font-semibold text-start  uppercase  w-full   mb-2" >Data by year</p>
+   
     <canvas className="rounded-md shadow-md border border-gray-200" ref={canvasRef} />
     <div>
       

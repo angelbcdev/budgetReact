@@ -104,6 +104,7 @@ const BudgetHome = () => {
             </h6>
           </div>
           <div className=" w-40">
+  
              <ChangeMonth />
           </div>
         </div>
