@@ -32,17 +32,40 @@ const ShowDataMonth =()=>{
     curentDate,
     global,
     currentMonthGoals,
-   
+   allMonthsDataSort
   } = useBudgetContext();
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const monthToShow = curentDate.month < 10 ? `0${curentDate.month+1}`: curentDate.month+ 1
+
+
+   useEffect(() => {
+  if (!canvasRef.current) return;
+  const setDataToShow = allMonthsDataSort[curentDate.year+"-"+monthToShow]
+    console.log(curentDate.year+monthToShow)
+    console.log(setDataToShow)
+  const canvas = canvasRef.current;
+  const ctx = canvas.getContext("2d");
+
+  if (!ctx) return;
+
+  canvas.width =370;
+  canvas.height = Math.max(320, 5 * 30 -8);
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "white";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+   },[])
 
   return(
-    <section>
+    <section className="flex flex-col  gap-2">
       <div className=" w-90 flex justify-between ">
            <span>  {curentDate.nameMonth}</span>
+           <span>  {monthToShow}</span>
              <div className=" w-30">
               <ChangeMonth />
              </div>
           </div>
+           <canvas className="rounded-md shadow-md border border-gray-200" ref={canvasRef} />
     </section>
   )
 }
