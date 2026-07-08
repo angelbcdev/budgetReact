@@ -93,11 +93,31 @@ export const makeFilter = ({
 
   return [];
 };
+
+export const nameMonths = {
+  "01": "January",
+  "02": "February",
+  "03": "March",
+  "04": "April",
+  "05": "May",
+  "06": "June",
+  "07": "July",
+  "08": "August",
+  "09": "September",
+  "10": "October",
+  "11": "November",
+  "12": "December",
+};
+
 export type ChartBar = {
   label: string;
   value: string;
 };
 
+type ChartDataByMonth = Record<string, ChartBar[]>;
+
+const getMonthName = (month: number) =>
+  nameMonths[String(month + 1).padStart(2, "0") as keyof typeof nameMonths];
 export function createChartData({
   group,
   dataForTransactions,
@@ -118,28 +138,35 @@ export function createChartData({
     "Sub Cat": string[];
   };
   filterMonth: boolean;
-  currentMonth: number; // 0 = January, 11 = December
-}): ChartBar[] {
-  return filterHeaders[group].map((filter) => {
-    let transactions = makeFilter({
-      search,
-      activeFilter: filter,
-      dataForTransactions,
-      allSubCategoriesInUse,
-    });
+  currentMonth: number;
+}): ChartDataByMonth {
+  const result: ChartDataByMonth = {};
 
-    if (filterMonth && currentMonth !== undefined) {
-      transactions = transactions.filter((t) => {
-        const month = new Date(t.date).getMonth();
-        return month === currentMonth;
+  const months = filterMonth
+    ? [currentMonth]
+    : Array.from({ length: 12 }, (_, i) => i);
+
+  months.forEach((month) => {
+    const monthName = getMonthName(month);
+
+    result[monthName] = filterHeaders[group].map((filter) => {
+      const transactions = makeFilter({
+        search,
+        activeFilter: filter,
+        dataForTransactions,
+        allSubCategoriesInUse,
+      }).filter((t) => {
+        return new Date(t.date).getMonth() === month;
       });
-    }
 
-    const total = transactions.reduce((sum, t) => sum + t.amount, 0);
+      const total = transactions.reduce((sum, t) => sum + t.amount, 0);
 
-    return {
-      label: filter,
-      value: String(total.toFixed(2)),
-    };
+      return {
+        label: filter,
+        value: total.toFixed(2),
+      };
+    });
   });
+
+  return result;
 }
