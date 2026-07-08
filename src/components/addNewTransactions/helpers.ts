@@ -18,9 +18,11 @@ export const emptyNotification = {
 export const emptyNewTransactions = ({
   defaultCategory,
   defaultTypeTransaction,
+  defaultPaymentMethod,
 }: {
   defaultCategory: Category;
   defaultTypeTransaction: TransactionType;
+  defaultPaymentMethod: PaymentMethod;
 }): ITransaction => ({
   title: defaultCategory,
   description: "",
@@ -28,7 +30,7 @@ export const emptyNewTransactions = ({
   amount: "0",
   category: defaultCategory,
   type: defaultTypeTransaction,
-  paymentMethod: "credit_card_red",
+  paymentMethod: defaultPaymentMethod,
   subcategory: [],
 });
 
@@ -135,7 +137,7 @@ export const ajustDataForTransaction = ({
 
   const validateMoveSavings =
     dataTransaction.type == "transaction_savings_to_mortgage";
-
+  console.log(dataTransaction);
   const checkValidationsPayment = (): PaymentMethod => {
     if (validatePayMortgage) {
       return "mortgage";

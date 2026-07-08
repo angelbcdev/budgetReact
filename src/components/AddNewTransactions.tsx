@@ -52,6 +52,7 @@ const AddNewTransactions = () => {
   const [defaultTypeTransaction, setDefaultTypeTransaction] =
     useState<TransactionType>("spending");
   const [defaultCategory, setDefaultCategory] = useState<Category>("food");
+  const [defaultPaymentMethod, setDefaultPaymentMethod] = useState<PaymentMethod>("credit_card_red");
   const [showModal, setShowModal] = useState(false);
   const [categoryToShow, setCategoryToShow] = useState<string[]>(
     fliterCategoryAvailable,
@@ -61,7 +62,7 @@ const AddNewTransactions = () => {
   const [animate, setAnimate] = useState(false);
 
   const [dataTransaction, setDataTransaction] = useState<ITransaction>({
-    ...emptyNewTransactions({ defaultCategory, defaultTypeTransaction })
+    ...emptyNewTransactions({ defaultCategory, defaultTypeTransaction ,defaultPaymentMethod })
   });
 
   const triggerAnimation = () => {
@@ -173,7 +174,7 @@ const AddNewTransactions = () => {
       })
 
 
-      setDataTransaction({ ...emptyNewTransactions({ defaultCategory, defaultTypeTransaction }) });
+      setDataTransaction({ ...emptyNewTransactions({ defaultCategory, defaultTypeTransaction ,defaultPaymentMethod }) });
     });
   };
 
@@ -184,6 +185,7 @@ const AddNewTransactions = () => {
       case "spending":
         setCategoryToShow(fliterCategoryAvailable);
         setDefaultCategory("food");
+        setDefaultPaymentMethod("credit_card_red");
         setDataTransaction((data) => ({
           ...data,
           title: null,
@@ -195,6 +197,7 @@ const AddNewTransactions = () => {
       case "saving":
         setCategoryToShow(savingsMethodAvailable);
         setDefaultCategory("savings");
+        setDefaultPaymentMethod("checking");
         setDataTransaction((data) => ({
           ...data,
           title: "Savings",
@@ -207,6 +210,7 @@ const AddNewTransactions = () => {
       case "credit_card_payment":
         setCategoryToShow(paymentMethodAvailable.filter((method) => (method !== "savings_account" && method !== "cash")));
         setDefaultCategory("credit_card_red");
+        setDefaultPaymentMethod("checking");
         setDataTransaction((data) => ({
           ...data,
           title: "payment",
@@ -252,7 +256,7 @@ const AddNewTransactions = () => {
           <p >Subcategory:{dataTransaction.subcategory.length }</p>
         </div>}
         <div className="flex relative ">
-          <h3 className="text-xl font-bold ">New Transaction</h3>
+          <h3 className="text-xl font-bold ">New Transaction { defaultPaymentMethod}</h3>
            {Number(dataTransaction.amount || 0) != 0 && (
             <button
               onClick={() =>
