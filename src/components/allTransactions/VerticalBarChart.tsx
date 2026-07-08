@@ -52,14 +52,22 @@ export const HorizontalBarChart = ({
 
 
     // Canvas size
-    canvas.width = 380;
+    canvas.width = 360;
     canvas.height = Math.max(
       0,
-      data.length * 32 + 40
+      data.length * 32 + 28
     );
 
 
     ctx.clearRect(
+      0,
+      0,
+      canvas.width,
+      canvas.height
+    );
+
+    ctx.fillStyle = "#fff";
+     ctx.fillRect(
       0,
       0,
       canvas.width,
@@ -175,11 +183,11 @@ export const HorizontalBarChart = ({
 
 
   return (
-    <div className=" w-96 sm:w-160 h-auto overflow-hidden mx-auto ">
+    <div className=" w-90 sm:w-160 h-auto overflow-hidden mx-auto ">
 
       <canvas
         ref={canvasRef}
-        className="block"
+        className="block rounded-md pt-1"
       />
 
     </div>

@@ -324,7 +324,7 @@ export function useSummary(transactions: Transaction[]) {
 
   const allMonthsData = useMemo(() => {
     return Object.keys(monthly);
-  }, [monthly]);
+  }, [monthly]).sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
 
   // 🔹 accumulated monthly (cada mes incluye el acumulado de todos los anteriores)
   const acumulateMonth = useMemo(() => {

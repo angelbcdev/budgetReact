@@ -8,7 +8,7 @@ import type { ISummaryHomeData, } from "../provide/hooks/useSummaryTransactions"
 
 import { validateSavingDataToShow, type TKEY_SUMMARY } from "../provide/hooks/useSummaryTransactions";
 import { DataShowListCategory } from "../UI/DataShowListCategory";
-import ShowBarData from "./ShowBarData";
+
 
 
 const ShowGrap = () => {
@@ -73,7 +73,7 @@ const searchDataMonth = (search: "Current" | "Last") => {
         </div> 
       </div>
       <section className="flex flex-col overflow-scroll w-93 sm:w-180   mb-4 h-170 pt-4  gap-4  mx-auto    bg-gsray-800 ">
-            <ShowBarData  />
+          
         <SelectorMultipleUI
           data={allMonthsData}
           year={curentDate.year}

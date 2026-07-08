@@ -256,7 +256,7 @@ const AddNewTransactions = () => {
           <p >Subcategory:{dataTransaction.subcategory.length }</p>
         </div>}
         <div className="flex relative ">
-          <h3 className="text-xl font-bold ">New Transaction { defaultPaymentMethod}</h3>
+          <h3 className="text-xl font-bold ">New Transaction </h3>
            {Number(dataTransaction.amount || 0) != 0 && (
             <button
               onClick={() =>
