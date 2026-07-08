@@ -14,51 +14,33 @@ import { VALID_ROUTES } from "../Routes/routes";
 import { useLocation, useNavigate } from "react-router";
 import { SubCategoryCard } from "../UI/SubCategoryCard";
 import ChangeMonth from "../UI/changeMonth";
+import { createChartData, makeFilter } from "./allTransactions/makeFilter";
+import  { HorizontalBarChart } from "./allTransactions/VerticalBarChart";
 
 
-const extraFilters = [
-  "Mortgage",
-  "Spend",
-  "Earn",
-  "Saved",
-  "Cards",
-  "Blue Card",
-  "Red Card",
-  "C.Payment",
-];
+
 
 const AllTransactions = () => {
   const { transactionsData, subcategoriesData  ,curentDate } = useBudgetContext();
-
-     const location = useLocation();
-  
-
-  
-
-
-
+  const location = useLocation();
   const [activeHeather, setActiveHeather] = useState(location?.state?.heather || "Summary");
   const [activeFilter, setActiveFilter] = useState(location?.state ?.filter || "All");
-
-  const allSubCategoriesInUse = subcategoriesData.map((s) => s.title).sort((a, b) => a.localeCompare(b))
-  const filterHeathers = {
-    "Summary": ["All", "Spend", "Earn", "Saved"],
+  const allSubCategoriesInUse = subcategoriesData?.map((s) => s.title).sort((a, b) => a.localeCompare(b)) || [];
+ 
+    
+  const filterHeaders = {
+    "Summary": ["All", "Earn", "Spend", "Saved"],
     "Categories": [...fliterCategoryAvailable.map((c) => c)],
     "Cards": ["Cards", "Blue Card", "Red Card", "C.Payment"],
-    "Sub Cat": allSubCategoriesInUse,
+    "Sub Cat": [...allSubCategoriesInUse],
   }
-    
-    
-   
-    
-    
 
   const [search, setSearch] = useState("");
   const inputRer = useRef<HTMLInputElement>(null);
 
   const currentMonth = curentDate ;
-
   const [filterByMonth, setFilterByMonth] = useState(true);
+  const [showList, setShowList] = useState(true);
   const navigate = useNavigate();
   const dataForTransactions = transactionsData; //.filter(t => fliterCategoryAvailable.includes(t.category));
 
@@ -68,12 +50,30 @@ const AllTransactions = () => {
     dataForTransactions,
     allSubCategoriesInUse
   });
-  
+
+
+
+
   const groups: Record<string, Transaction[]> = groupByDate(
     filtered,
     currentMonth.month,
     filterByMonth,
   );
+
+    let chartData = createChartData({
+    group: activeHeather,
+    dataForTransactions,
+    search,
+    allSubCategoriesInUse,
+      filterHeaders: {...filterHeaders,Categories:[...fliterCategoryAvailable.map((c) => c) ,"mortgage" ,"mortgage_payment"]},
+    filterMonth: filterByMonth,
+    currentMonth: currentMonth.month
+  }).filter((f) => f.label !== "All" && f.label !== "Cards");
+  
+  if (activeHeather == "Sub Cat") {
+    chartData = chartData.filter((f) => Number(f.value) > 0).sort((a, b) => Number(b.value) - Number(a.value));
+  }
+
 
   const resetSearch = () => {
     setSearch("");
@@ -96,7 +96,7 @@ const AllTransactions = () => {
   }, 0);
   return (
     <Layout>
-      <div className="   mx-auto flex flex-col gap-4">
+      <div className="   mx-auto flex flex-col gap-2">
         <div className="sticky top-0  bg-white p-4 ">
           <div className="flex flex-row gap-4 pl-2 pt-4  relative  items-center  ">
             <h3 className="text-3xl font-bold ">Transactions</h3>
@@ -104,6 +104,11 @@ const AllTransactions = () => {
               {" "}
               {curentDate.nameMonth}
             </h6>
+
+            <button
+              onClick={() => setShowList(!showList)}
+              className={`border rounded-md p-1 shadow  absolute right-4 text-white ${showList ? "rotate-90 bg-blue-500" : "rotate-0 bg-green-500"} transition-all duration-300 ease-in-out`}
+            >{showList ? allIcons.chartIcon : allIcons.listIcon}</button>
           </div>
 
          
@@ -130,13 +135,15 @@ const AllTransactions = () => {
             >
               {allIcons.trashCan}
             </button>
-          </div>
+        </div>
+        <div>
+          
         <div className="sticky w-92 sm:w-160 mx-auto top-0  backdrop-blur-xl border-b border-black/10 px-2 flex flex-col gap-1 pb-2 pt-1">
          
           <div className="flex justify-between items-end">
             <h1 className="text-xl font-semibold text-gray-900">Categories</h1>
    
-            {hasFilterActive && (
+            {(hasFilterActive && showList )&& (
               <p className="text-sm font-light pb-px ">
                 TOTAL: {totalForFilter.toFixed(2)}
               </p>
@@ -151,11 +158,11 @@ const AllTransactions = () => {
           {/* FILTER */}
           <div className="   rounded-md mt-2 flex flex-col gap-1 ">
             <div className="flex flex-row gap-2">
-               {Object.keys(filterHeathers).map((filter) => {
+               {Object.keys(filterHeaders).map((filter) => {
               return (
                 <section
                   className={`px-3 py-1 text-[14px]  font-semibold rounded-md cursor-pointer ${filter === activeHeather ? "bg-white text-blue-500" : "bg-gray-200 text-gray-600"}`}
-                  onClick={() => { setActiveHeather(filter);  setActiveFilter(filterHeathers[filter as keyof typeof filterHeathers][0]);}}
+                  onClick={() => { setActiveHeather(filter);  setActiveFilter(filterHeaders[filter as keyof typeof filterHeaders][0]);}}
                   key={filter}
                 >
                   {filter}
@@ -164,9 +171,9 @@ const AllTransactions = () => {
             })}
             </div>
             <div className="max-h-20 overflow-scroll mx-auto rounded-md ">
-            <SelectorContainer
+           {showList && <SelectorContainer
               options={
-                filterHeathers[activeHeather as keyof typeof filterHeathers] || []
+                filterHeaders[activeHeather as keyof typeof filterHeaders] || []
                   
               }
               selecteOption={activeFilter}
@@ -176,7 +183,7 @@ const AllTransactions = () => {
                 if (inputRer.current) inputRer.current.value = "";
               }}
                
-              />
+              />}
               </div>
           </div>
           
@@ -184,9 +191,26 @@ const AllTransactions = () => {
               <ChangeMonth />
             }
           
+          </div>
+          
+         {showList ? <TransactionList groups={groups} manualNavigation={manualNavigation} /> :  <HorizontalBarChart data={chartData} />}
         </div>
+           
+        
+      </div>
+    </Layout>
+  );
+};
 
-        <div className="h-110 w-88 sm:w-160   overflow-scroll rounded-b-2xl    mx-auto ">
+export default AllTransactions;
+
+
+
+const TransactionList = ({ groups , manualNavigation }: { groups: Record<string, Transaction[]> ; manualNavigation: (data: Transaction) => void }) => {
+  
+
+  return (
+    <div className="h-110 w-88 sm:w-160   overflow-scroll rounded-b-2xl    mx-auto ">
           {/* LIST */}
           {Object.entries(groups)
             .sort((a, b) => b[0].localeCompare(a[0]))
@@ -301,102 +325,8 @@ const AllTransactions = () => {
             ))}
           <div className=" w-full h-40"></div>
         </div>
-      </div>
-    </Layout>
-  );
-};
-
-export default AllTransactions;
-
-const makeFilter = ({
-  search,
-  activeFilter,
-  dataForTransactions,
-  allSubCategoriesInUse,
-}: {
-  search: string;
-  activeFilter: string;
-    dataForTransactions: Transaction[];
-  allSubCategoriesInUse: string[];
-}): Transaction[] => {
-  const minimunSearch = 3;
-
-  if (search.length >= minimunSearch) {
-    return dataForTransactions.filter(
-      (t) =>
-        t.title.toLowerCase().includes(search.toLowerCase()) ||
-        t.description.toLowerCase().includes(search.toLowerCase()) ||
-        t.category.toLowerCase().includes(search.toLowerCase()) ||
-        t.subcategory.join(" ").toLowerCase().includes(search.toLowerCase()) ||
-        t.paymentMethod.toLowerCase().includes(search.toLowerCase()),
-    );
-  }
- 
-
-  if (activeFilter === "All") {
-    return dataForTransactions;
-  }
-  if (allSubCategoriesInUse.includes(activeFilter)) {
-   
-   
-    return dataForTransactions.filter(
-      (t) =>
-        t.subcategory.includes(activeFilter) 
-    );
-  }
-  if (!extraFilters.includes(activeFilter)) {
-    return dataForTransactions.filter((t) => t.category === activeFilter);
-  }
- 
-  if (activeFilter === "Spend") {
-    return dataForTransactions.filter((t) => t.type === "spending" || t.category === "mortgage_payment");
-  }
-  if (activeFilter === "Earn") {
-    return dataForTransactions.filter(
-      (t) =>
-        t.paymentMethod === "paycheck" ||
-        t.type == "sell_crypto" ||
-        t.type == "sell_stocks",
-    );
-  }
-  if (activeFilter === "Saved") {
-    return dataForTransactions.filter((t) => t.type === "saving");
-  }
-  if (activeFilter === "C.Payment") {
-    return dataForTransactions.filter(
-      (t) =>
-        t.type === "credit_card_payment" &&
-        t.category !== "mortgage_payment" &&
-        t.category !== "checking",
-    );
-  }
-  // """" ""
-
-  
-  
-
-
-
-  if (activeFilter === "Cards") {
-    return dataForTransactions.filter(
-      (t) =>
-        t.paymentMethod === "credit_card_red" ||
-        t.paymentMethod === "credit_card_blue",
-    );
-  }
-  if (activeFilter === "Red Card") {
-    return dataForTransactions.filter(
-      (t) => t.paymentMethod === "credit_card_red",
-    );
-  }
-  if (activeFilter === "Blue Card") {
-    return dataForTransactions.filter(
-      (t) => t.paymentMethod === "credit_card_blue",
-    );
-  }
-
-  return [];
-};
+  )
+}
 
 function getTxnAmountStyle(txn: Transaction) {
   if (
