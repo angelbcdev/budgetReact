@@ -225,17 +225,21 @@ const CardStatus = ({dataCards , onClick}: {dataCards: {
 
 const BillsRemaings = ({onClick}: {onClick?: () => void}) => {
   const { subcategoriesData, transactionsData, curentDate } = useBudgetContext();
-  const lastMonth = `${curentDate}-${curentDate.month < 10 ?  `0${curentDate.month}` :  `${curentDate.month}`}`;
+  
 
   const billsAvailable = subcategoriesData.filter((f) =>
     f.category.includes("bills"),
   );
 
-  const billsTransitions = transactionsData.filter(
-    (f) =>
-      f.category === "bills" &&
-      new Date(f.date).getMonth() === new Date(lastMonth).getMonth() + 1,
+    const billsTransitions = transactionsData.filter((f) => {
+      const [year, month] = String(f.date).split("-").map(Number);
+      
+  return (
+    f.category === "bills" &&
+    year  === Number(curentDate.year) &&
+   ( month - 1) === curentDate.month
   );
+});
   return (
     <section onClick={onClick}>
       <p className="text-xl text-gray-500 font-md pl-2 mb-2  ">
