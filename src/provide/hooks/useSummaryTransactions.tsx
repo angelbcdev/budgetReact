@@ -291,7 +291,7 @@ export function useSummary(transactions: Transaction[]) {
     const global = createEmptySummary();
     const monthly: MonthlySummary = {};
 
-    transactions.forEach((t) => {
+    transactions?.forEach((t) => {
       const dateString = new Date(t.date).toISOString().split("T")[0];
       const [year, month] = dateString.split("-");
       const key = `${year}-${month}`; // "2026-04"
