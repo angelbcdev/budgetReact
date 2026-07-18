@@ -27,17 +27,15 @@ export class ServiciesLocalTransactions implements IServiciesDB {
   handleUpdate(data: Transaction[]): Promise<boolean> {
     localStorage.setItem(KEY_SERVICES.TRANSACIONS, JSON.stringify(data));
     return new Promise((resolve) => {
-     
       resolve(true);
-    })
+    });
   }
 
   handleDeleteOne(data: Transaction[]): Promise<boolean> {
     localStorage.setItem(KEY_SERVICES.TRANSACIONS, JSON.stringify(data));
     return new Promise((resolve) => {
-     
       resolve(true);
-    })
+    });
   }
   handleDelete(): Promise<boolean> {
     return new Promise((resolve) => {
@@ -68,10 +66,9 @@ export class ServiciesLocalTransactions implements IServiciesDB {
     localStorage.setItem(KEY_SERVICES.TRANSACIONS, JSON.stringify(data));
     const db = new GoogleSheetsServiciesTransactions();
     db.handleBackup(data);
-     return new Promise((resolve) => {
-     
+    return new Promise((resolve) => {
       resolve();
-    })
+    });
   }
 }
 
@@ -79,10 +76,9 @@ export class GoogleSheetsServiciesTransactions implements IServiciesDB {
   constructor() {}
   handleUpdate(data: Transaction[]): Promise<boolean> {
     this.handleBackup(data);
-     return new Promise((resolve) => {
-     
+    return new Promise((resolve) => {
       resolve(true);
-    })
+    });
   }
   async handleBackup(data?: Transaction[]): Promise<void> {
     if (!data) return;
@@ -114,10 +110,9 @@ export class GoogleSheetsServiciesTransactions implements IServiciesDB {
   handleDeleteOne(data: Transaction[]): Promise<boolean> {
     this.handleBackup(data);
 
-     return new Promise((resolve) => {
-     
+    return new Promise((resolve) => {
       resolve(true);
-    })
+    });
   }
 
   async getSheetData() {

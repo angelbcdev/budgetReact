@@ -216,6 +216,7 @@ const AllTransactions = () => {
                 {Object.entries(chartData).map(([month, data]) => {
                   let newData = data.filter((f) => f.label !== "All" && f.label !== "Cards") //.filter((f) => Number(f.value) > 0)
 
+
                   if (activeHeather == "Sub Cat") {
                     newData = newData.filter((f) => Number(f.value) > 0).sort((a, b) => Number(b.value) - Number(a.value))
                   }
@@ -294,7 +295,7 @@ const TransactionList = ({
                             {txn.title}{" "}
                             {txn.porcentage > 0 && (
                               <span className="text-[10px] text-gray-400 h-4">
-                                {txn.amount / txn.porcentage} x{" "}
+                                {Number(txn.amount / txn.porcentage).toFixed(2)} x{" "}
                                 {txn.porcentage.toFixed(2)}
                               </span>
                             )}

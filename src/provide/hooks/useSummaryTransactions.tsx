@@ -168,6 +168,7 @@ export function useSummary(transactions: Transaction[]) {
     if ((t.type === "sell_stocks" || t.type == "sell_crypto") || t.category === "sell_assets") {
       switch (t.type) {
         case "sell_stocks":
+         
           acc.savingsStocks -= (amount / t.porcentage);
           acc.totalBalance += amount ;
           break;

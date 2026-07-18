@@ -137,7 +137,7 @@ export const ajustDataForTransaction = ({
 
   const validateMoveSavings =
     dataTransaction.type == "transaction_savings_to_mortgage";
-  console.log(dataTransaction);
+
   const checkValidationsPayment = (): PaymentMethod => {
     if (validatePayMortgage) {
       return "mortgage";

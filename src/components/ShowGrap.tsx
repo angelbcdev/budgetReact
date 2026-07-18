@@ -61,7 +61,7 @@ const searchDataMonth = (search: "Current" | "Last") => {
   const moreData = [{category: 'ForStocksProfit', cuantity: stocksProfit} ,{category: 'Balance', cuantity: global.totalBalance},{category: 'Cash', cuantity: global.totalCash}]
   const dataToShow = [...moreData, ...globalData]
   
-
+  // console.log(dataCurrentMonth)
 
   const totalAvailable = dataToShow.reduce((acc, item) => acc + item.cuantity, 0);
   return(
