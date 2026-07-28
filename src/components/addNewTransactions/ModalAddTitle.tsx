@@ -62,7 +62,7 @@ export  const ModalAddTitle = ({
       {/* FORM */}
       <form
         onClick={(e) => e.stopPropagation()}
-        className="bg-white rounded-3xl p-4 w-100 max-w-md h-115  max-h-140 relative top-4"
+          className="bg-white rounded-3xl px-4 py-6 w-100 max-w-md h-115  max-h-140 relative top-20"
         onSubmit={(e) => {
           e.preventDefault();
           buttonRef.current?.click(); // trigger done
@@ -120,16 +120,8 @@ export  const ModalAddTitle = ({
           <p className="text-lg font-semibold ">Other categories</p>
         </div>
 
-        {/* BUTTON */}
-        <button
-          ref={buttonRef}
-          onClick={() => setShowModal(false)}
-          type="submit"
-          className="mt-4 bg-blue-600 h-13 w-full text-white rounded-lg text-base font-semibold"
-        >
-          Done
-        </button>
-        <div className="grid grid-cols-3 h-22 gap-1 pt-3   overflow-scroll">
+       
+        <div className="grid grid-cols-3 h-28 gap-1 pt-3   mb-4 overflow-scroll">
           
 
             {
@@ -141,7 +133,16 @@ export  const ModalAddTitle = ({
                 )
               })
             }
-        </div>
+          </div>
+           {/* BUTTON */}
+        <button
+          ref={buttonRef}
+          onClick={() => setShowModal(false)}
+          type="submit"
+          className=" bg-blue-600 h-13 w-full text-white rounded-lg text-base font-semibold"
+        >
+          Done
+        </button>
       </form>
     </div>}
     </>

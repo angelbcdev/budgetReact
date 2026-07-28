@@ -2,6 +2,8 @@ import {
   
   useEffect,
  
+  useRef,
+ 
   useState,
  
   type ReactElement,
@@ -68,10 +70,15 @@ const goalsMonthly: TKEY_MONTHS = {
 
 
 export const BudgetContextProvider = ({ children }: { children: ReactElement }) => {
-  const [isLoading, setIsLoading] = useState(false )
+  const [isLoading, setIsLoading] = useState(true )
   const [transactionsData, setTransactionsData] = useState<Transaction[]>([])
   const [subcategoriesData, setSubcategoriesData] = useState<SubCategory[]>([])
-  const [stocksProfit, setStocksProfit] = useState(10)
+  const hasRun = useRef(false);
+
+  const stored = typeof window !== "undefined"
+    ? window.localStorage.getItem("stocksProfit")
+    : 100
+  const [stocksProfit, setStocksProfit] = useState(parseInt(stored as string, 10) || 10)
 
   
   const { global, monthly, lastMonth, allMonthsData , acumulateMonth
@@ -148,10 +155,15 @@ export const BudgetContextProvider = ({ children }: { children: ReactElement }) 
   const dataBaseSubCategories:IServiciesDBSubCategories = new GoogleSheetsServiciesSubCategories() // new ServiciesLocalSubCategories() //
 
   useEffect(() => {
+    if (hasRun.current) return;
 
-   
+  hasRun.current = true;
 
-    setIsLoading(true)
+    dataBaseSubCategories.getSheetData().then((data) => {
+      setSubcategoriesData(data)
+    })
+
+    // setIsLoading(true)
     dataBase.getSheetData().then((data) => {
       
        setIsLoading(false)
@@ -159,16 +171,10 @@ export const BudgetContextProvider = ({ children }: { children: ReactElement }) 
       
     
     })
-    dataBaseSubCategories.getSheetData().then((data) => {
-      setSubcategoriesData(data)
-    })
-    const stored = typeof window !== "undefined"
-    ? window.localStorage.getItem("stocksProfit")
-    : null
+   
+    
 
-  if (stored !== null) {
-    setStocksProfit(parseInt(stored, 10) || 10)
-  }
+ 
    
   }, [])
 
