@@ -227,17 +227,27 @@ const BillsRemaings = ({onClick}: {onClick?: () => void}) => {
   const { subcategoriesData, transactionsData, curentDate } = useBudgetContext();
   
 
-  const billsAvailable = subcategoriesData.filter((f) =>
+  const billsAvailable = subcategoriesData?.filter((f) =>
     f.category.includes("bills"),
   );
 
+  const otherTransactionToTrack = subcategoriesData.filter(st => st.title == "send money")
+
+  
+
     const billsTransitions = transactionsData.filter((f) => {
       const [year, month] = String(f.date).split("-").map(Number);
+
+      const validationByMonth =   year  === Number(curentDate.year) &&
+   ( month - 1) === curentDate.month
+
+      if (f.title == "other" && f.subcategory.includes("send money") && validationByMonth) { 
+        return true;
+      }
       
   return (
-    f.category === "bills" &&
-    year  === Number(curentDate.year) &&
-   ( month - 1) === curentDate.month
+    f.category === "bills" && validationByMonth
+  
   );
 });
   return (
@@ -246,7 +256,7 @@ const BillsRemaings = ({onClick}: {onClick?: () => void}) => {
         Bills Pending{" "}
       </p>
       <div className=" grid grid-cols-3 gap-2 ">
-        {billsAvailable.map((bill) => {
+        {[...billsAvailable,...otherTransactionToTrack].map((bill) => {
           const isPaid = billsTransitions.some((f) =>
             f.subcategory.includes(bill.title),
           );
